@@ -53,14 +53,14 @@
 |----|------|--------|--------|------------|-------|
 | T013 | `game/assets.py` — cached image/frame/directional/sound loaders + asset-path accessors | [x] | T016,T017,T030 | T002,T003 | Replaces dual importers; headless-safe convert |
 | T014 | `game/sprites.py` — `DirectionalSprite` / `FrameSprite` / `ImageSprite` bases (hitbox decoupled from image) | [x] | T031,T032,T033,T034,T035,T036 | — | Replaces original d_sprite/s_sprite |
-| T015 | `game/app.py` — App + main game loop wiring `write_state` → `poll_mcp_command` each frame, owns StateMachine + active screen + AudioManager | [ ] | T017,T019,T037,T045,T047,T060 | T003,T004,T009,T013,T016 | `run_game()` imports this lazily |
-| T016 | `game/audio.py` — AudioManager (per-level music, SFX, `toggle_music`/`toggle_sfx`); mixer-availability safe | [ ] | T015,T018,T035 | T013 | Wired to `toggle_music`/`toggle_sfx` MCP handlers |
-| T017 | `game/screens/start.py` — StartScreen (scrolling title bg, blurb, control list, "Press Space Bar to Play") | [ ] | T019,T020,T021 | T013,T014,T015 | Story-driven UI |
-| T018 | Wire AudioManager into App + connect `toggle_music`/`toggle_sfx` poll handlers to AudioManager | [ ] | T035 | T015,T016 | poll_mcp_command already routes to audio_manager |
-| T019 | Register StartScreen in App/state machine + confirm `jump_to_start` reaches it | [ ] | T020,T021 | T015,T017 | START is default state |
-| T020 | `tests/test_start.py` — pure logic unit tests for StartScreen | [ ] | T022 | T010,T017,T019 | |
-| T021 | `tests/test_mcp_verify_start.py` — bridge roundtrip + pixel sample + screenshot to `testscreenshots/` | [ ] | T022 | T017,T019 | |
-| T022 | Run pytest (start suite green) + review Start screenshot vs checklist | [ ] | T100,T101 | T020,T021 | Phase 2 verification |
+| T015 | `game/app.py` — App + main game loop wiring `write_state` → `poll_mcp_command` each frame, owns StateMachine + active screen + AudioManager | [x] | T017,T019,T037,T045,T047,T060 | T003,T004,T009,T013,T016 | `run_game()` imports this lazily |
+| T016 | `game/audio.py` — AudioManager (per-level music, SFX, `toggle_music`/`toggle_sfx`); mixer-availability safe | [x] | T015,T018,T035 | T013 | Wired to `toggle_music`/`toggle_sfx` MCP handlers |
+| T017 | `game/screens/start.py` — StartScreen (scrolling title bg, blurb, control list, "Press Space Bar to Play") | [x] | T019,T020,T021 | T013,T014,T015 | Story-driven UI |
+| T018 | Wire AudioManager into App + connect `toggle_music`/`toggle_sfx` poll handlers to AudioManager | [x] | T035 | T015,T016 | poll_mcp_command already routes to audio_manager |
+| T019 | Register StartScreen in App/state machine + confirm `jump_to_start` reaches it | [x] | T020,T021 | T015,T017 | START is default state |
+| T020 | `tests/test_start.py` — pure logic unit tests for StartScreen | [x] | T022 | T010,T017,T019 | |
+| T021 | `tests/test_mcp_verify_start.py` — bridge roundtrip + pixel sample + screenshot to `testscreenshots/` | [x] | T022 | T017,T019 | |
+| T022 | Run pytest (start suite green) + review Start screenshot vs checklist | [x] | T100,T101 | T020,T021 | Phase 2 verification |
 
 ---
 
