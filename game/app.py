@@ -41,6 +41,9 @@ class App:
         if state == GameState.START:
             from game.screens.start import StartScreen
             return StartScreen(self.screen, self.sm, self.audio)
+        if state == GameState.RUNNING:
+            from game.screens.play import PlayScreen
+            return PlayScreen(self.screen, self.sm, self.audio)
         return None
 
     # ------------------------------------------------------------------

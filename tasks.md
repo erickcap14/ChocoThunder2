@@ -70,15 +70,15 @@
 
 | ID | Task | Status | Blocks | Blocked By | Notes |
 |----|------|--------|--------|------------|-------|
-| T030 | `game/entities/__init__.py` exports + shared entity helpers | [ ] | T031,T032,T033,T034,T035 | T002,T003,T013 | entities/ currently empty |
-| T031 | `Player` entity — click-to-move navigation toward target, directional animation | [ ] | T036 | T014,T030 | Story 1 `movement` |
-| T032 | `Poo` entity — spacebar drop with elapsed-time cooldown accumulator | [ ] | T036,T103 | T014,T030 | Story 2 `pooping`; Fixed Bug #3 (no reused repeating timer) |
-| T033 | `Obstacle` entity — FIXED collision: blocks/pushes out, never permanently sticks | [ ] | T036,T103 | T014,T030 | Story 6 `obstacles`; Fixed Bug #2 |
-| T034 | `NPC` entity — random patrol + chase within `NPC_CHASE_RADIUS`; catch sends to "the farm" | [ ] | T036 | T014,T030 | Story 5 `npc_ai` |
-| T035 | `PowerUp` cake + REAL timer-based invincibility (`INVINCIBLE_SECONDS`); tenants can't catch, surprises worth bonus | [ ] | T036,T103 | T014,T016,T030 | Story 4 `powerup_invincibility`; Fixed Bug #1 (was cosmetic), Bug #3 |
-| T036 | `game/screens/play.py` — PlayScreen: room map, HUD (score + timer), per-level countdown, scoring (+1 / +5), collision wiring, cake spawn cadence | [ ] | T037,T038,T041,T042,T058,T103 | T031,T032,T033,T034,T035 | Stories 3 `scoring`, 7 timer; removes Fixed Bug #4 event guard |
-| T037 | Register PlayScreen in App/state machine + confirm `jump_to_running` reaches it | [ ] | T038,T041,T042 | T015,T036 | |
-| T038 | Wire PlayScreen screen-action poll handlers: `set_level`, `spawn_powerup`, `spawn_npc`, `drop_poo`, `set_invincible` | [ ] | T039,T042 | T036,T037 | MCP tools already exist (T008); methods must implement matching names |
+| T030 | `game/entities/__init__.py` exports + shared entity helpers | [x] | T031,T032,T033,T034,T035 | T002,T003,T013 | entities/ currently empty |
+| T031 | `Player` entity — click-to-move navigation toward target, directional animation | [x] | T036 | T014,T030 | Story 1 `movement` |
+| T032 | `Poo` entity — spacebar drop with elapsed-time cooldown accumulator | [x] | T036,T103 | T014,T030 | Story 2 `pooping`; Fixed Bug #3 (no reused repeating timer) |
+| T033 | `Obstacle` entity — FIXED collision: blocks/pushes out, never permanently sticks | [x] | T036,T103 | T014,T030 | Story 6 `obstacles`; Fixed Bug #2 |
+| T034 | `NPC` entity — random patrol + chase within `NPC_CHASE_RADIUS`; catch sends to "the farm" | [x] | T036 | T014,T030 | Story 5 `npc_ai` |
+| T035 | `PowerUp` cake + REAL timer-based invincibility (`INVINCIBLE_SECONDS`); tenants can't catch, surprises worth bonus | [x] | T036,T103 | T014,T016,T030 | Story 4 `powerup_invincibility`; Fixed Bug #1 (was cosmetic), Bug #3 |
+| T036 | `game/screens/play.py` — PlayScreen: room map, HUD (score + timer), per-level countdown, scoring (+1 / +5), collision wiring, cake spawn cadence | [x] | T037,T038,T041,T042,T058,T103 | T031,T032,T033,T034,T035 | Stories 3 `scoring`, 7 timer; removes Fixed Bug #4 event guard |
+| T037 | Register PlayScreen in App/state machine + confirm `jump_to_running` reaches it | [x] | T038,T041,T042 | T015,T036 | |
+| T038 | Wire PlayScreen screen-action poll handlers: `set_level`, `spawn_powerup`, `spawn_npc`, `drop_poo`, `set_invincible` | [x] | T039,T042 | T036,T037 | MCP tools already exist (T008); methods must implement matching names |
 | T039 | Confirm/verify the 5 screen-action MCP tools drive PlayScreen live (no new tools needed) | [ ] | T102 | T038 | server.py tools already registered |
 | T041 | `tests/test_play.py` — unit tests: move, cooldown, no-stick collision, chase AI, invincibility timer, scoring +1/+5, timer | [ ] | T043 | T010,T036,T037 | Cover every fixed bug |
 | T042 | `tests/test_mcp_verify_play.py` — roundtrip (`set_level`/`spawn_*`/`drop_poo`/`set_invincible`) + pixel sample + screenshot | [ ] | T043 | T036,T037,T038 | |
