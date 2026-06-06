@@ -129,11 +129,11 @@
 
 | ID | Task | Status | Blocks | Blocked By | Notes |
 |----|------|--------|--------|------------|-------|
-| T100 | Run full pytest suite green (all unit + MCP-verify) | [ ] | T104 | T022,T043,T057,T063 | Release gate |
-| T101 | Review every screenshot in `testscreenshots/` against per-screen checklists | [ ] | T104 | T022,T043,T057,T063 | |
-| T102 | Exercise all 13 MCP tools live against the running game (state jumps + every screen action) | [ ] | T104 | T039,T060 | get_state, jumps, set_level, spawn_*, drop_poo, set_invincible, toggle_music/sfx |
-| T103 | Confirm all 6 fixed bugs (Appendix B) + the demo 4th level behave as specified | [ ] | T104 | T032,T033,T035,T036,T044,T061 | Bugs #1-#6 |
-| T104 | Update `changelog.md` (Phases 2-6) + Phase 6 release sign-off | [ ] | T110 | T100,T101,T102,T103 | Gate to iOS |
+| T100 | Run full pytest suite green (all unit + MCP-verify) | [x] | T104 | T022,T043,T057,T063 | Release gate |
+| T101 | Review every screenshot in `testscreenshots/` against per-screen checklists | [x] | T104 | T022,T043,T057,T063 | |
+| T102 | Exercise all 13 MCP tools live against the running game (state jumps + every screen action) | [x] | T104 | T039,T060 | get_state, jumps, set_level, spawn_*, drop_poo, set_invincible, toggle_music/sfx |
+| T103 | Confirm all 6 fixed bugs (Appendix B) + the demo 4th level behave as specified | [x] | T104 | T032,T033,T035,T036,T044,T061 | Bugs #1-#6 |
+| T104 | Update `changelog.md` (Phases 2-6) + Phase 6 release sign-off | [x] | T110 | T100,T101,T102,T103 | Gate to iOS |
 
 ---
 
@@ -261,7 +261,7 @@ T111 → T112
 | Metric | Count |
 |--------|-------|
 | Total | 67 |
-| Done | 58 |
+| Done | 63 |
 | In Progress | 0 |
-| Remaining | 9 |
+| Remaining | 4 |
 | Blocked | 0 |

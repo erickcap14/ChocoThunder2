@@ -2,6 +2,59 @@
 
 All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 
+## [1.0.0] — Phase 6 complete: Full QA / Release Gate ✓
+### Verified (T100–T104)
+
+**T100 — Full pytest suite green**
+109/109 tests pass across all phases (unit + MCP-verify):
+- Phase 1: 12 bridge tests
+- Phase 2: 9 start-screen tests
+- Phase 3: 25 play-screen tests (entities, AI, scoring, collisions)
+- Phase 4: 39 transition/end/scoreboard tests
+- Phase 5: 24 levels-manifest tests
+
+**T101 — All 7 screenshots reviewed**
+| Screenshot | Result |
+|---|---|
+| `start_verified.png` | ✅ Title, blurb, controls, "Press Space Bar to Play" |
+| `play_verified.png` | ✅ Room map, Sally, NPC, furniture, HUD (Score/Timer) |
+| `transition_verified.png` | ✅ Black card, level name, punny subtitle, score, Enter prompt |
+| `end_win_verified.png` | ✅ Win image (white dog), "You Win!", final score, scoreboard prompt |
+| `end_lose_verified.png` | ✅ Lose image (farm), "Game Over", final score, scoreboard prompt |
+| `scoreboard_verified.png` | ✅ Name entry cursor, score display, Enter prompt |
+| `level4_verified.png` | ✅ Level 4 room, char2+char3 NPCs, obstacles, HUD — demo level confirmed |
+
+**T102 — All 13 MCP tools exercised via bridge**
+| Tool | Covered by |
+|---|---|
+| `get_state` | `test_mcp_bridge.py::test_state_roundtrip` |
+| `jump_to_start/transition/running/end/scoreboard` | `test_mcp_bridge.py::test_poll_jumps` (parametrized) |
+| `set_level` | `test_mcp_verify_levels.py` (n=1..4) + `test_mcp_verify_play.py` |
+| `spawn_powerup` | `test_mcp_verify_play.py` + `test_mcp_bridge.py::test_poll_screen_actions` |
+| `spawn_npc` | `test_mcp_verify_play.py` + `test_mcp_bridge.py::test_poll_screen_actions` |
+| `drop_poo` | `test_mcp_verify_play.py` + `test_mcp_bridge.py::test_poll_screen_actions` |
+| `set_invincible` | `test_mcp_verify_play.py` + `test_mcp_bridge.py::test_poll_screen_actions` |
+| `toggle_music` | `test_mcp_bridge.py::test_poll_audio_toggles` |
+| `toggle_sfx` | `test_mcp_bridge.py::test_poll_audio_toggles` |
+
+**T103 — All 6 fixed bugs + 4th level confirmed**
+| Bug | Fix | Test |
+|---|---|---|
+| #1 Invincibility was cosmetic | Real timer-based (`INVINCIBLE_SECONDS`) | `test_play.py` invincibility tests |
+| #2 Obstacle permanently sticks | AABB SAT `push_out()` | `test_play.py::test_obstacle_collision` |
+| #3 Reused repeating timer | Elapsed-time accumulator | `test_play.py::test_poo_cooldown_blocks_drop` |
+| #4 Nonsensical event guard | Removed from PlayScreen | Code audit + docstring |
+| #5 Malformed score crash | Tolerant `rindex(",")` parsing | `test_scoreboard.py` malformed-line tests |
+| #6 Dead code present | Native dict/list/deque, no FIFO/LinkedList | Code audit (700 lines removed) |
+| 4th level extensibility | `LevelSpec` append proves design | `test_mcp_verify_levels.py::test_set_level_4_*` |
+
+### Phase 6 Release Sign-Off
+> **Status: GATE PASSED** — ChocolateThunder2: ElectricBoogaloo is feature-complete
+> for the desktop target. All Phases 1–6 done. Phase 7 (iPad/iOS packaging) is
+> next, gated behind this sign-off.
+
+---
+
 ## [0.7.0] — Phase 5 complete: Data-driven levels
 ### Added
 - `game/levels.py` — `LevelSpec` frozen dataclass (map_image, npcs, obstacle_room, music,
