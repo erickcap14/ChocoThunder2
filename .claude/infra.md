@@ -2,75 +2,74 @@
 
 Purpose: This file describes the project's technical foundation, including the method of hosting, the programming languages, the coding standards, and how to run the code.
 
-> Use this file to tell your AI assistant about the environment where your application will be built and run. Fill out each section as best you can. Simple, plain English is perfect!
-
 ---
 
 ## What We're Building
 
-> Think of this like a quick intro for a new team member. What is the app made of?
-
-- **Programming Language:** [e.g., Python, JavaScript, etc.]
-- **Main Framework/Tool:** [e.g., None, React, Next.js, Flask, etc.]
-- **A Quick Summary:** [Describe the app in one simple sentence. e.g., "A simple website to track my book collection." You can also reference prd.md for full details of the project and its features.]
+- **Programming Language:** Python 3.13
+- **Main Framework/Tool:** `pygame-ce` (community edition) for the game engine; `pygame_gui` for any managed UI widgets; `mcp` / `FastMCP` for the Game State MCP harness sidecar.
+- **A Quick Summary:** A single-player, top-down 2D arcade game (ChocolateThunder2: ElectricBoogaloo) that runs entirely on a local machine — no network, no server, no browser.
 
 ---
 
-<!-- This Section is optional. Use only if developing locally. -->
-
 ## How to Run it on Your Computer
 
-> These are the instructions for getting the app started on a local machine. It helps the AI create setup scripts and give you the right commands.
+- **Installation Command:** `pip install -r requirements.txt`
+- **Startup Command:** `./run.sh` (or `python main.py` directly)
+- **Local Address:** Not applicable — this is a native pygame window, not a web app.
 
-- **Installation Command:** [The single command to install everything it needs. e.g., `pip install -r requirements.txt` or `npm install`]
-- **Startup Command:** [The single command to start the app. e.g., `python app.py` or `npm run dev`]
-- **Local Address:** [Where can you see it running in your browser? e.g., `http://localhost:8000`]
+> **Note:** `pygame-ce` and upstream `pygame` collide; never install both. Always use `pygame-ce` as specified in `requirements.txt`.
 
 ---
 
 ## Project Architecture & Conventions
 
-> This section outlines the file structure and architectural patterns based on the chosen framework. I've provided an EXAMPLE for Next.js
-
-Note: The following is an example. You MUST replace this with actual information for your codebase/project:
-
-- **Framework:** `Next.js`
+- **Framework:** Python / pygame-ce (no web framework)
 - **Directory Structure:**
-  - **Static Assets:** All images, fonts, and other static files **must** be placed in the `/public` directory.
-  - **UI Components:** Reusable React components are located in `/src/components`.
-  - **API Routes:** All server-side API logic is handled in files within the `/src/app/api` directory.
-  - **Styling:** Global styles are defined in `/src/app/globals.css`. Component-specific styles should be co-located with the component using CSS Modules.
+  - **`game/`** — All runtime game code.
+    - `config.py` — Single source of truth for all constants, tuning values, colours, and on-disk paths.
+    - `state_machine.py` — `GameState` enum + `StateMachine.force_state`.
+    - `app.py` — `App` class + main game loop (wires `write_state` → `poll_mcp_command` each frame).
+    - `assets.py` — Cached image/sound loaders; headless-safe `convert`.
+    - `sprites.py` — `DirectionalSprite`, `FrameSprite`, `ImageSprite` base classes.
+    - `audio.py` — `AudioManager` (per-level music, SFX, `toggle_music`/`toggle_sfx`).
+    - `entities/` — `Player`, `Poo`, `Obstacle`, `NPC`, `PowerUp` entities.
+    - `screens/` — One file per screen: `start.py`, `play.py`, `transition.py`, `end.py`, `scoreboard.py`.
+    - `levels.py` — `LevelSpec` data classes; adding a level = appending one entry here + dropping assets.
+  - **`assets/`** — All normalized game assets (lowercase tree). Never modify the original `../ChocolateThunder/`.
+  - **`mcp_server/`** — `state_bridge.py` (file IPC) + `server.py` (FastMCP, 13 tools).
+  - **`.implementations/`** — IPC JSON files written at runtime (`game_state.json`, `game_command.json`, `test_log.json`). **Git-ignored.** Never commit this directory.
+  - **`tests/`** — `conftest.py`, `logger.py`, and all `test_*.py` files.
+  - **`testscreenshots/`** — MCP-verify screenshots saved by tests. Committed to git as visual evidence.
+  - **`docs/`**, **`agents/`**, **`commands/`**, **`prompts/`**, **`templates/`** — Project-level documentation and agent tooling.
 
 ---
 
 ## Code Generation Style Guide
 
-When writing or modifying code, I will adhere to the following standards:
+When writing or modifying code, adhere to the following standards:
 
-- **Variable Naming:** All variable and function names will use `camelCase`.
-- **File Naming:** All filenames will use `PascalCase`.
-- **Comments:** I will write clear, concise comments to explain complex logic blocks.
-- **Linting:** Before committing, I will run the linter with, for example, `npm run lint -- --fix` to automatically correct style issues.
-- **Constants:** Global constants will be written in `UPPER_SNAKE_CASE`.
+- **Variable / function naming:** `snake_case` throughout (Python convention).
+- **Class naming:** `PascalCase`.
+- **Constants:** `UPPER_SNAKE_CASE`, defined in `game/config.py` — never hardcoded elsewhere.
+- **File naming:** `snake_case.py`.
+- **Comments:** Only when the *why* is non-obvious. No docstring blocks on obvious code.
+- **Linting:** Run `python -m pytest` before committing to catch import errors and basic test regressions.
+- **Import style:** Absolute imports; avoid star imports.
+- **No tkinter:** The original's dual-toolkit handoff is removed. All UI is pygame / pygame_gui only.
+- **No `if/elif` level switches:** Levels are purely data-driven via `LevelSpec` in `game/levels.py`.
 
 ---
 
-<!-- This Section is optional. Use only if running on a cloud provider or service platform. -->
-
 ## Where it Lives on the Internet & Who its Friends Are
 
-> Will this app be online? Does it talk to other services? This helps the AI understand the app's neighborhood.
-
-- **Hosting Provider:** [Where will the app be deployed? e.g., "Just on my local computer," Vercel, Railway, AWS, etc.]
-- **Specific Services and Unique identifying details:** [provide the details. Are you running this using Google GKE? if so, what is the container name, cluster details, etc? Is this a static hosted website on S3? If so what is the bucket name, CloudFront distro ID, etc?]
-- **External Services (its "Friends"):** [List any other tools it relies on. e.g., "None," Supabase for the database, Stripe for payments, etc.]
+- **Hosting Provider:** Local machine only — this is a native desktop application, not deployed anywhere.
+- **External Services:** None. No network calls, no analytics, no cloud backend. The game is fully offline.
 
 ---
 
 ## Where Your Data is Stored
 
-> This is one of the most important parts! How does your app remember things? This prevents the AI from trying to save files or data in the wrong place.
-
-- **Data Storage Method:** [How is data saved? e.g., "In a CSV file named `data.csv`," "In a Supabase database," "Nowhere, it doesn't save data."]
-- **Important Notes:** [Mention any rules. e.g., "User profile pictures are saved with Supabase Storage."]
-- **Scheme Details:** [Provide any details about the data scehema to ensure that your ai tool has a complete picture of the data model and data architecture.]
+- **Data Storage Method:** A single plain-text file, `scores.txt`, at the project root. Each line is `name,score`. The high-score parser tolerates malformed lines (Fixed Bug #5 from the original).
+- **Important Notes:** `scores.txt` is public, local data — no PII, no encryption needed.
+- **IPC files:** `.implementations/game_state.json` and `.implementations/game_command.json` are runtime-only scratch files; they are gitignored and ephemeral.

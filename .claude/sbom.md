@@ -1,55 +1,64 @@
-<!-- PLEASE NOTE: ALL DATA PROVIDED HERE IS AN EXAMPLE! REMOVE AND POPULATE FOR YOUR APPLICATION OR PROJECT! -->
+# Software Bill of Materials (SBOM)
 
-# Software Bill of Materials (SBOM) Blueprint
+Purpose: This file lists all approved technologies, libraries, and dependencies for ChocolateThunder2: ElectricBoogaloo, with their pinned version ranges and licenses.
 
-Purpose: This file lists all the approved technologies, libraries, and dependencies that can be used in the project, including their specific versions.
-
-> Use this file to define the approved technologies and dependencies for your project. This helps ensure consistency and security across your development environment. The AI developer must adhere to this list and the specified versions described.
+> **Conflict priority:** This file and `security.md` are Priority 1 — they override all other context documents. Do not add, remove, or upgrade a dependency without updating this file.
 
 ---
 
 ## 0. Technology Stack Overview
 
-This section provides a comprehensive view of all approved technologies, frameworks, and libraries that can be used in this project. Each component has been carefully selected for security, performance, and maintainability.
-
-| Category            | Component Name          | Version   | Rationale / Usage                                           |
-| :------------------ | :---------------------- | :-------- | :---------------------------------------------------------- |
-| **Language**        | `Python`                | `3.11`    | _Example: For local data processing scripts._               |
-| **Language**        | `TypeScript`            | `5.3`     | _Example: The primary language for the web app._            |
-| **Runtime**         | `Node.js`               | `20.x`    | _Example: The environment for running the web application._ |
-| **Framework**       | `Next.js`               | `^14.2.0` | _Example: The core web framework for the app._              |
-| **Database**        | `MySQL`                 | `8.0`     | _Example: For storing data on a local machine._             |
-| **Database Client** | `@supabase/supabase-js` | `^2.43.0` | _Example: The primary client for database interactions._    |
-| **Key Library**     | `Pillow`                | `10.1.0`  | _Example: Required for all image manipulation._             |
-| **Key Library**     | `zod`                   | `^3.23.0` | _Example: Required for all server-side data validation._    |
-| **UI Library**      | `React`                 | `18.2.0`  | _Example: The core library for building user interfaces._   |
-| **Styling**         | `Tailwind CSS`          | `3.4`     | _Example: The primary utility for all styling._             |
+| Category | Component | Version Constraint | License | Usage |
+|:---|:---|:---|:---|:---|
+| **Language** | Python | `>=3.10, developed on 3.13` | PSF-2.0 | Runtime; `mcp` requires ≥3.10 |
+| **Game Engine** | `pygame-ce` | `>=2.5, <3` | LGPL-2.1 | Rendering, event loop, audio mixer, sprite management |
+| **UI Widgets** | `pygame_gui` | `>=0.6, <0.7` | MIT | Managed UI elements where a widget genuinely helps; depends on `pygame-ce` |
+| **MCP Sidecar** | `mcp` (FastMCP) | `>=1.2` | MIT | Game State MCP server; `mcp.server.fastmcp.FastMCP` |
+| **Test Runner** | `pytest` | `>=8.0` | MIT | Unit tests + MCP-roundtrip screenshot tests |
 
 ---
 
-## 1. Version Management & Updates
+## 1. Dependency Rules
 
-To keep the project secure and stable, we'll manage updates carefully.
-
-- **Update Strategy:** Dependencies will be updated manually. Before updating a major version (e.g., from `1.x` to `2.x`), we will test the application to ensure nothing breaks.
-- **Security Scanning:** We will periodically run `npm audit` (for Node.js) or a similar command for other languages to check for known security vulnerabilities.
+- **`pygame-ce` vs upstream `pygame`:** These two packages share the `pygame` namespace and **will collide** if both are installed. Only `pygame-ce` is permitted.
+- **`pygame_gui` depends on `pygame-ce`:** Installing `pygame_gui` pulls in `pygame-ce` automatically; never swap in upstream `pygame`.
+- **No new runtime dependencies** without updating this file and reviewing licenses.
+- **Dev-only tools** (linters, type checkers, formatters) do not need to appear here but should be separate from `requirements.txt` if added.
 
 ---
 
-## 2. Documentation & Resources
+## 2. Version Management & Updates
 
-This section provides links to essential documentation and resources for the technologies used in this project.
+- **Strategy:** Manual, conservative. Before bumping a version range, run the full `pytest` suite locally.
+- **Major bumps** (e.g., `pygame-ce` 3.x) require explicit review — API surface changes are common between major versions.
+- **Security scanning:** Run `pip-audit` periodically against `requirements.txt`. There are no network-facing dependencies, so the attack surface is low.
 
-- **Core Framework Documentation:**
+---
 
-  - **Tailwind CSS Docs:** https://tailwindcss.com/docs
-  - **React Testing Library Docs:** https://testing-library.com/docs/react-testing-library/intro/
-  - **Next.js Documentation:** https://nextjs.org/docs
-  - **Supabase Documentation:** https://supabase.com/docs
+## 3. Licenses Summary
 
-- **Development Tools:**
-  - **TypeScript Handbook:** https://www.typescriptlang.org/docs/
-  - **Node.js Documentation:** https://nodejs.org/docs/
-  - **Python Documentation:** https://docs.python.org/
+| License | Components | Obligation |
+|:---|:---|:---|
+| PSF-2.0 | Python | Attribution in distribution |
+| LGPL-2.1 | pygame-ce | Dynamic linking OK; ship LGPL notice if distributing binaries |
+| MIT | pygame_gui, mcp, pytest | Attribution in distribution |
 
-<!-- Add More here as needed! -->
+> For the iPad packaging milestone (Phase 7), LGPL compliance for `pygame-ce` will need to be revisited if the pygbag/Capacitor build statically links the library.
+
+---
+
+## 4. Asset Provenance
+
+All game assets (sprites, spritesheets, maps, music, SFX) are reused unchanged from the original Chocolate Thunder CS3021 class project. They are stored in `assets/` (normalized lowercase tree). The original folder (`../ChocolateThunder/`) is never modified.
+
+> Licensing of these assets follows the original course project's terms. They are not redistributed publicly and are used solely for this private rebuild.
+
+---
+
+## 5. Documentation & Resources
+
+- pygame-ce: https://pyga.me/docs/
+- pygame_gui: https://pygame-gui.readthedocs.io/
+- FastMCP (mcp package): https://github.com/jlowin/fastmcp
+- pytest: https://docs.pytest.org/
+- Python: https://docs.python.org/3/

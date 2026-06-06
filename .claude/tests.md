@@ -1,79 +1,116 @@
-<!-- NOTE: THIS ENTIRE FILE IS OPTIONAL! YOU CAN, AND SHOULD, AVOID USING THIS FILE UNLESS YOU KNOW EXACTLY HOW TO IMPLEMENT THIS. WHEN IN DOUBT, ANY LLM SHOULD BE ABLE TO HELP YOU FIGURE THIS OUT FOR YOUR PROJECT! -->
-
 # Testing Strategy
 
-Purpose: This file outlines the strategy for testing the application to ensure it works correctly and prevent future bugs.
-
-> This file explains how we'll test the application to make sure it works correctly and doesn't break when we make changes. A good testing plan gives us confidence to build and release new features.
+Purpose: This file outlines the strategy for testing ChocolateThunder2: ElectricBoogaloo — a Python/pygame-ce game with a FastMCP sidecar used as the automation harness.
 
 ---
 
-## 1. Our Testing Philosophy
+## 1. Testing Philosophy
 
-> What is our main goal for testing? We don't need to test every single line of code. Let's define what's most important.
+**Overall Goal: Every screen must be verifiable end-to-end without a display or audio device.**
 
-- **Overall Goal:** [e.g., Ensure the most critical user journeys always work, Achieve 80% code coverage, Prevent regressions]
+Because pygame cannot be driven by Playwright (browser-only), testing uses two complementary layers:
 
-  - **_Example 1 (Local Python App):_**
-    **Overall Goal: Ensure the core logic is correct.** The main goal is to verify that the data processing functions produce the correct output for a given input.
+1. **Headless unit tests** — pure logic, no display required, run fast everywhere.
+2. **MCP-roundtrip tests** — Claude Code (or CI) drives the running game via the Game State MCP server, confirms state transitions, and saves screenshots to `testscreenshots/` as visual evidence.
 
-  - **_Example 2 (Next.js + Supabase App):_**
-    **Overall Goal: Ensure the most critical user journeys always work.** We want to guarantee that a user can always sign up, log in, create a post, and view their dashboard.
-
----
-
-## 2. Types of Tests We Will Write
-
-> Different kinds of tests check different things. Here's a quick breakdown of what we'll use.
-
-- **Unit Tests:** [Do we write these? What do they test? e.g., Yes, for individual functions and UI components in isolation.]
-- **Integration Tests:** [Do we write these? What do they test? e.g., Yes, to check if our UI components correctly fetch data from the backend.]
-- **End-to-End (E2E) Tests:** [Do we write these? What do they test? e.g., No, not at this stage. OR Yes, to simulate a full user journey in a real browser.]
-
-  - **_Example 1 (Local Python App):_**
-    **Unit Tests: Yes, for individual functions.** We will write tests to check that each data transformation function works as expected.
-    **Integration Tests: No.** The script is simple and doesn't have many integrated parts.
-    **End-to-End (E2E) Tests: No.**
-
-  - **_Example 2 (Next.js + Supabase App):_**
-    **Unit Tests: Yes, for individual React components and utility functions.** We'll test that components render correctly given specific props.
-    **Integration Tests: Yes, to check if UI components correctly interact with Supabase.** For example, we'll test that clicking the "Log In" button calls the `supabase.auth.signInWithPassword` function.
-    **End-to-End (E2E) Tests: Yes, for the login and new post flows.** We will write a small number of E2E tests to simulate these critical paths from start to finish.
+The goal is not 100% line coverage; it is confidence that every screen can be reached, rendered, and exercised through the MCP bridge so that regressions are caught automatically.
 
 ---
 
-## 3. Testing Frameworks & Tools
+## 2. Types of Tests
 
-> What software will we use to write and run our tests?
+| Type | Tool | Description |
+|:---|:---|:---|
+| **Unit (headless)** | `pytest` + dummy SDL | Pure logic tests for each screen and entity. No display or audio hardware needed. SDL is driven headlessly via `SDL_VIDEODRIVER=dummy` + `SDL_AUDIODRIVER=dummy`. |
+| **MCP-roundtrip** | `pytest` + live game + MCP sidecar | Bridge roundtrip tests. Jump to a screen via MCP, poll `get_state`, pixel-sample the surface, and save a screenshot. |
+| **Bridge / IPC** | `pytest` | Tests for `mcp_server/state_bridge.py` file IPC primitives in isolation. |
 
-- **Main Testing Tool(s):** [e.g., pytest, Jest, React Testing Library, Cypress]
-- **How to Run Tests (Command):** [e.g., `pytest`, `npm test`, `npm run cypress:open`]
-
-  - **_Example 1 (Local Python App):_**
-    **Main Testing Tool(s): `pytest`**. It's a standard, easy-to-use testing framework for Python.
-    **How to Run Tests (Command): `pytest`**.
-
-  - **_Example 2 (Next.js + Supabase App):_**
-    **Main Testing Tool(s): `Jest` and `React Testing Library`** for unit and integration tests. `Cypress` for end-to-end tests.
-    **How to Run Tests (Command): `npm test`** for Jest, and **`npm run cypress:run`** for Cypress.
+**No E2E browser tests.** Playwright is not used — it cannot drive a pygame window.
 
 ---
 
-## 4. Key Test Scenarios
+## 3. Frameworks & Tools
 
-> Let's list the most important user actions that absolutely must work. This helps us prioritize what to test first. Think back to the "User Stories" in your `prd.md` file.
+- **Test runner:** `pytest` (≥8.0)
+- **Headless fixtures:** `tests/conftest.py` sets `SDL_VIDEODRIVER=dummy` and `SDL_AUDIODRIVER=dummy` before importing pygame. Provides:
+  - `pygame_env` (module-scoped) — initializes a headless `pygame.Surface` for the test module.
+  - `clean_bridge` — wipes `.implementations/game_state.json` and `.implementations/game_command.json` before/after each MCP test.
+- **Structured logging:** `tests/logger.py` + the `@pytest.mark.log_meta(phase, subtask, action)` marker write pass/fail records to `.implementations/test_log.json`.
+- **Screenshots:** MCP-verify tests write PNG files to `testscreenshots/` (committed to git as visual evidence).
 
-- **Scenario 1:** [e.g., A user should be able to log in with correct credentials.]
-- **Scenario 2:** [e.g., A user should see an error if they try to log in with the wrong password.]
-- **Scenario 3:** [e.g., A logged-in user should be able to create a new item.]
+**How to run all tests:**
+```bash
+pytest
+```
 
-  - **_Example 1 (Local Python App):_**
-    **Scenario 1:** The script should correctly parse a standard input file.
-    **Scenario 2:** The script should raise an error if an input file is improperly formatted.
-    **Scenario 3:** The script should produce an output file with the correct calculations.
+**How to run a single screen suite:**
+```bash
+pytest tests/test_start.py tests/test_mcp_verify_start.py -v
+```
 
-  - **_Example 2 (Next.js + Supabase App):_**
-    **Scenario 1:** A user can sign up for a new account.
-    **Scenario 2:** A user can log in and is redirected to the dashboard.
-    **Scenario 3:** A logged-in user can create a new post, and it appears in their list of posts.
-    **Scenario 4:** A user cannot see or edit posts created by another user.
+**How to run bridge-only tests (no display, fastest):**
+```bash
+pytest tests/test_mcp_bridge.py -v
+```
+
+---
+
+## 4. Two-Files-Per-Screen Convention
+
+Each game screen has exactly two test files:
+
+| File | Purpose |
+|:---|:---|
+| `tests/test_<screen>.py` | Pure logic unit tests. Instantiate the screen class with the `pygame_env` fixture, assert state machine transitions, input handling, and scoring math. |
+| `tests/test_mcp_verify_<screen>.py` | MCP-roundtrip tests. Requires the game to be running. Use `clean_bridge` fixture. Call `jump_to_<screen>` via MCP, assert `get_state` returns the correct state, pixel-sample the surface for expected colours, and save `testscreenshots/<screen>_verified.png`. |
+
+**Screen → MCP tool mapping:**
+
+| Screen | `jump_to_*` tool | `GameState` value |
+|:---|:---|:---|
+| Start | `jump_to_start` | `START` |
+| Transition | `jump_to_transition` | `TRANSITION` |
+| Play | `jump_to_running` | `RUNNING` |
+| End | `jump_to_end` | `END` |
+| Scoreboard | `jump_to_scoreboard` | `SCOREBOARD` |
+
+---
+
+## 5. Key Test Scenarios (by PRD story)
+
+| Story | Scenario | Test file |
+|:---|:---|:---|
+| `movement` | Player navigates toward a click target | `test_play.py` |
+| `pooping` | Spacebar drops a Poo; cooldown prevents double-drop | `test_play.py` |
+| `scoring` | +1 for normal Poo, +5 while invincible | `test_play.py` |
+| `powerup_invincibility` | Cake grants timed invincibility; tenants can't catch | `test_play.py` |
+| `npc_ai` | NPC patrols randomly, switches to chase within radius | `test_play.py` |
+| `obstacles` | Player is pushed out of obstacle, never permanently stuck | `test_play.py` |
+| `level_system` | Adding a `LevelSpec` exposes a new level; timer counts down | `test_play.py` |
+| `audio` | `toggle_music` / `toggle_sfx` flip state without crashing headless | `test_play.py` |
+| `scoreboard` | High-score parsing tolerates malformed lines | `test_scoreboard.py` |
+| `game_state_mcp` | All 13 MCP tools registered; state jumps round-trip correctly | `test_mcp_bridge.py` |
+| `headless_tests` | Screenshots saved to `testscreenshots/` for every screen | `test_mcp_verify_*.py` |
+
+---
+
+## 6. Phase Gates
+
+Each phase of development has an explicit test gate that must be green before the next phase begins:
+
+| Phase | Gate |
+|:---|:---|
+| Phase 1 | `test_mcp_bridge.py` — 12 tests green; FastMCP boots + registers all tools |
+| Phase 2 | `test_start.py` + `test_mcp_verify_start.py` green; Start screenshot reviewed |
+| Phase 3 | `test_play.py` + `test_mcp_verify_play.py` green; Play screenshot reviewed |
+| Phase 4 | Transition + End + Scoreboard suites green; screenshots reviewed |
+| Phase 5 | Level 2 `LevelSpec` added; level-switch test green |
+| Phase 6 | Full suite green (all screens); no regressions |
+
+---
+
+## 7. What We Do Not Test
+
+- **Visual correctness** beyond pixel sampling — subjective art is verified by human review of `testscreenshots/`.
+- **Audio output** — mixer is present but output cannot be verified headlessly; toggle state is tested, audio fidelity is not.
+- **iPad / WebAssembly (Phase 7)** — deferred; out of scope until Phase 6 gate is green.

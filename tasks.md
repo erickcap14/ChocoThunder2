@@ -155,10 +155,10 @@
 
 | ID | Task | Status | Blocks | Blocked By | Notes |
 |----|------|--------|--------|------------|-------|
-| T120 | Populate `.claude/sbom.md` with real stack (Python 3.13, pygame-ce, pygame_gui, mcp/FastMCP, pytest) + versions/licenses | [ ] | — | — | Template still has Next.js examples; Priority 1 |
-| T121 | Populate `.claude/infra.md` for the Python/pygame-ce project (run/install commands, directory conventions, data storage = `scores.txt`) | [ ] | — | — | Template still has Next.js example |
-| T122 | Populate `.claude/tests.md` with the real two-files-per-screen strategy (headless pytest + MCP-verify screenshots) | [ ] | — | — | Template still placeholder |
-| T123 | Confirm security baseline: no secrets, single-player/local-only, no network calls; `.implementations/` gitignored | [ ] | — | — | Priority 1; matches security.md baseline |
+| T120 | Populate `.claude/sbom.md` with real stack (Python 3.13, pygame-ce, pygame_gui, mcp/FastMCP, pytest) + versions/licenses | [x] | — | — | Template still has Next.js examples; Priority 1 |
+| T121 | Populate `.claude/infra.md` for the Python/pygame-ce project (run/install commands, directory conventions, data storage = `scores.txt`) | [x] | — | — | Template still has Next.js example |
+| T122 | Populate `.claude/tests.md` with the real two-files-per-screen strategy (headless pytest + MCP-verify screenshots) | [x] | — | — | Template still placeholder |
+| T123 | Confirm security baseline: no secrets, single-player/local-only, no network calls; `.implementations/` gitignored | [x] | — | — | Priority 1; matches security.md baseline |
 
 ---
 
