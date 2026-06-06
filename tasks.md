@@ -79,7 +79,7 @@
 | T036 | `game/screens/play.py` — PlayScreen: room map, HUD (score + timer), per-level countdown, scoring (+1 / +5), collision wiring, cake spawn cadence | [x] | T037,T038,T041,T042,T058,T103 | T031,T032,T033,T034,T035 | Stories 3 `scoring`, 7 timer; removes Fixed Bug #4 event guard |
 | T037 | Register PlayScreen in App/state machine + confirm `jump_to_running` reaches it | [x] | T038,T041,T042 | T015,T036 | |
 | T038 | Wire PlayScreen screen-action poll handlers: `set_level`, `spawn_powerup`, `spawn_npc`, `drop_poo`, `set_invincible` | [x] | T039,T042 | T036,T037 | MCP tools already exist (T008); methods must implement matching names |
-| T039 | Confirm/verify the 5 screen-action MCP tools drive PlayScreen live (no new tools needed) | [ ] | T102 | T038 | server.py tools already registered |
+| T039 | Confirm/verify the 5 screen-action MCP tools drive PlayScreen live (no new tools needed) | [x] | T102 | T038 | server.py tools already registered |
 | T041 | `tests/test_play.py` — unit tests: move, cooldown, no-stick collision, chase AI, invincibility timer, scoring +1/+5, timer | [x] | T043 | T010,T036,T037 | Cover every fixed bug |
 | T042 | `tests/test_mcp_verify_play.py` — roundtrip (`set_level`/`spawn_*`/`drop_poo`/`set_invincible`) + pixel sample + screenshot | [x] | T043 | T036,T037,T038 | |
 | T043 | Run pytest (play suite green) + review Play screenshot vs checklist | [x] | T100,T101 | T041,T042 | Phase 3 verification |
