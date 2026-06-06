@@ -1,0 +1,8 @@
+# ChocolateThunder2: ElectricBoogaloo — runtime + tooling
+# Requires Python >= 3.10 (the `mcp` package needs it).
+# pygame-ce is the community edition and the `import pygame` provider that
+# pygame_gui depends on; do NOT also install upstream `pygame` (they collide).
+pygame-ce>=2.5,<3
+pygame_gui>=0.6,<0.7
+mcp>=1.2          # FastMCP lives in mcp.server.fastmcp
+pytest>=8.0
