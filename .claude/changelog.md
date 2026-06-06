@@ -2,6 +2,62 @@
 
 All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 
+## [0.6.0] — Phase 4 complete: Transition, End & Scoreboard screens
+### Added
+- `game/scores.py` — `load_scores()` / `save_scores()` / `add_score()`: tolerant
+  `scores.txt` parsing using `rindex(",")` so names may contain commas; malformed
+  lines are silently skipped. Fixes Bug #5. `config.MAX_HIGH_SCORES = 10`.
+- `game/screens/transition.py` — `TransitionScreen(screen, sm, audio, level, score)`:
+  solid black card with the just-completed level number, a punny subtitle per level
+  ("Working Out A Big One", "Sem-Poo-Ku", "The Final Defecation"), accumulated score,
+  and "Press Enter to Continue". ENTER on level < 3 → RUNNING; on level 3 → END.
+- `game/screens/end.py` — `EndScreen(screen, sm, audio, score, win)`: full-screen
+  win/lose image (`assets/endscreens/win.jpg` / `lose.jpg`) with a semi-transparent
+  overlay, headline, final score, flavour text, and ENTER/SPACE → SCOREBOARD.
+- `game/screens/scoreboard.py` — `ScoreboardScreen(screen, sm, audio, score)`: two
+  phases — ENTRY (type name, ENTER submits via `scores.add_score`) and VIEW (top-10
+  table with rank/name/score columns, ENTER/SPACE → START). Replaces the original
+  tkinter popup. Story 9 complete.
+- `game/screens/play.py` — `resume(level, score)` method for cross-level progression
+  without resetting accumulated score (distinct from `set_level` which resets for MCP
+  testing).
+- `game/app.py` — `_make_screen` now handles all 5 `GameState` values; score and level
+  are carried across transitions (TRANSITION → RUNNING via `PlayScreen.resume`,
+  PlayScreen/TransitionScreen → END with win-flag detection).
+
+### Tests
+- `tests/test_transition.py` (7) + `tests/test_mcp_verify_transition.py` (3)
+- `tests/test_end.py` (8) + `tests/test_mcp_verify_end.py` (4)
+- `tests/test_scoreboard.py` (14) + `tests/test_mcp_verify_scoreboard.py` (3)
+- Screenshots: `transition_verified.png`, `end_win_verified.png`,
+  `end_lose_verified.png`, `scoreboard_verified.png`.
+- **Phase 4 gate: 85/85 tests passing.**
+- Closes T044–T057 (ChocoThunder2-rqq epic).
+
+---
+
+## [0.5.0] — Phase 3 complete: PlayScreen + MCP handlers + test suite
+### Added
+- `game/screens/play.py` — `PlayScreen(screen, sm, audio)`: core gameplay screen.
+  Draws the level room map (3 levels, distinct assets/music), renders all entity groups,
+  shows HUD (score top-left, timer top-right, INVINCIBLE indicator centre), wires all
+  collisions, and manages per-level countdown. Scoring: +1 normal, +5 powered.
+  Automatic cake spawn every `POWERUP_SPAWN_SECONDS` when none on screen.
+  Fixes Bug #4 (MOUSEBUTTONDOWN handled directly, no UI_BUTTON_PRESSED guard).
+- `game/app.py` — `_make_screen` extended with `GameState.RUNNING` → `PlayScreen`.
+- `PlayScreen` MCP poll handler methods: `set_level(n)`, `spawn_powerup()`,
+  `spawn_npc()`, `drop_poo()`, `set_invincible(on)` — all dispatched by
+  `main.poll_mcp_command`. Closes T038 (MCP wiring).
+- `tests/test_play.py` (18) — covers click-to-move, poo cooldown (Bug #3), obstacle
+  push-out (Bug #2), NPC catch → END, invincibility (Bug #1), scoring +1/+5, timer
+  expiry → TRANSITION, cake auto-spawn, and all 5 MCP handlers.
+- `tests/test_mcp_verify_play.py` (7) — full MCP bridge roundtrips for all 5 screen
+  actions + RUNNING state write + `play_verified.png` screenshot.
+- **Phase 3 gate: 46/46 tests passing.**
+- Closes T036–T043 (ChocoThunder2-vnd epic).
+
+---
+
 ## [0.4.0] — Phase 3 (partial): Entity layer complete
 ### Added
 - `game/entities/__init__.py` — package entry point; exports `DIRECTIONS`, `clamp_rect`,
