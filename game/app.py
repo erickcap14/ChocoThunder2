@@ -38,12 +38,51 @@ class App:
 
     # ------------------------------------------------------------------
     def _make_screen(self, state: GameState):
+        prev = self._active_screen
+
         if state == GameState.START:
             from game.screens.start import StartScreen
             return StartScreen(self.screen, self.sm, self.audio)
+
         if state == GameState.RUNNING:
             from game.screens.play import PlayScreen
-            return PlayScreen(self.screen, self.sm, self.audio)
+            ps = PlayScreen(self.screen, self.sm, self.audio)
+            try:
+                from game.screens.transition import TransitionScreen
+                if isinstance(prev, TransitionScreen):
+                    ps.resume(prev.level + 1, prev.score)
+            except ImportError:
+                pass
+            return ps
+
+        if state == GameState.TRANSITION:
+            from game.screens.transition import TransitionScreen
+            return TransitionScreen(
+                self.screen, self.sm, self.audio,
+                level=getattr(prev, "level", 1),
+                score=getattr(prev, "score", 0),
+            )
+
+        if state == GameState.END:
+            from game.screens.end import EndScreen
+            try:
+                from game.screens.transition import TransitionScreen
+                win = isinstance(prev, TransitionScreen)
+            except ImportError:
+                win = False
+            return EndScreen(
+                self.screen, self.sm, self.audio,
+                score=getattr(prev, "score", 0),
+                win=win,
+            )
+
+        if state == GameState.SCOREBOARD:
+            from game.screens.scoreboard import ScoreboardScreen
+            return ScoreboardScreen(
+                self.screen, self.sm, self.audio,
+                score=getattr(prev, "score", 0),
+            )
+
         return None
 
     # ------------------------------------------------------------------

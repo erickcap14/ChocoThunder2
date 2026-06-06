@@ -112,6 +112,13 @@ class PlayScreen:
         self.audio.stop_music()
         self._build_level(self.level)
 
+    def resume(self, level: int, score: int) -> None:
+        """Advance to a new level carrying accumulated score (level transition)."""
+        self.level = max(1, min(level, len(_LEVELS)))
+        self.score = score
+        self.audio.stop_music()
+        self._build_level(self.level)
+
     def spawn_powerup(self) -> None:
         self._powerups.add(PowerUp(self._random_pos()))
         self._powerup_spawn_timer = config.POWERUP_SPAWN_SECONDS

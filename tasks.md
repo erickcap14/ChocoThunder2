@@ -92,19 +92,19 @@
 
 | ID | Task | Status | Blocks | Blocked By | Notes |
 |----|------|--------|--------|------------|-------|
-| T044 | `game/scores.py` — read/write top-10 high scores; tolerant parsing of malformed lines | [ ] | T048,T055,T058,T103 | T003 | Story 9; Fixed Bug #5 (no crash on bad lines) |
-| T045 | `game/screens/transition.py` — black card with level name + punny subtitle, "Press Enter to Continue" | [ ] | T046,T051,T052 | T015,T014 | PRD Key Screens |
-| T046 | Register TransitionScreen in App/state machine + confirm `jump_to_transition` reaches it | [ ] | T051,T052,T060 | T015,T045 | |
-| T047 | `game/screens/end.py` — End screen: win/lose image, final score, thank-you, prompt to view scoreboard | [ ] | T049,T053,T054 | T015,T014 | PRD Key Screens |
-| T048 | `game/screens/scoreboard.py` — in-engine name entry + top-10 list (replaces tkinter) | [ ] | T049,T055,T056 | T044,T015,T014 | Story 9 `scoreboard` |
-| T049 | Register End + Scoreboard in App/state machine + confirm `jump_to_end` / `jump_to_scoreboard` reach them | [ ] | T053,T054,T055,T056 | T015,T047,T048 | |
-| T051 | `tests/test_transition.py` — transition logic unit tests | [ ] | T057 | T010,T045,T046 | |
-| T052 | `tests/test_mcp_verify_transition.py` — roundtrip + screenshot | [ ] | T057 | T045,T046 | |
-| T053 | `tests/test_end.py` — end screen logic (win vs lose) unit tests | [ ] | T057 | T010,T047,T049 | |
-| T054 | `tests/test_mcp_verify_end.py` — roundtrip + screenshot | [ ] | T057 | T047,T049 | |
-| T055 | `tests/test_scoreboard.py` — name entry + tolerant score parsing (incl. malformed lines) | [ ] | T057 | T010,T044,T048,T049 | Fixed Bug #5 |
-| T056 | `tests/test_mcp_verify_scoreboard.py` — roundtrip + screenshot | [ ] | T057 | T048,T049 | |
-| T057 | Run pytest (transition/end/scoreboard suites green) + review screenshots vs checklists | [ ] | T100,T101 | T051,T052,T053,T054,T055,T056 | Phase 4 verification |
+| T044 | `game/scores.py` — read/write top-10 high scores; tolerant parsing of malformed lines | [x] | T048,T055,T058,T103 | T003 | Story 9; Fixed Bug #5 (no crash on bad lines) |
+| T045 | `game/screens/transition.py` — black card with level name + punny subtitle, "Press Enter to Continue" | [x] | T046,T051,T052 | T015,T014 | PRD Key Screens |
+| T046 | Register TransitionScreen in App/state machine + confirm `jump_to_transition` reaches it | [x] | T051,T052,T060 | T015,T045 | |
+| T047 | `game/screens/end.py` — End screen: win/lose image, final score, thank-you, prompt to view scoreboard | [x] | T049,T053,T054 | T015,T014 | PRD Key Screens |
+| T048 | `game/screens/scoreboard.py` — in-engine name entry + top-10 list (replaces tkinter) | [x] | T049,T055,T056 | T044,T015,T014 | Story 9 `scoreboard` |
+| T049 | Register End + Scoreboard in App/state machine + confirm `jump_to_end` / `jump_to_scoreboard` reach them | [x] | T053,T054,T055,T056 | T015,T047,T048 | |
+| T051 | `tests/test_transition.py` — transition logic unit tests | [x] | T057 | T010,T045,T046 | |
+| T052 | `tests/test_mcp_verify_transition.py` — roundtrip + screenshot | [x] | T057 | T045,T046 | |
+| T053 | `tests/test_end.py` — end screen logic (win vs lose) unit tests | [x] | T057 | T010,T047,T049 | |
+| T054 | `tests/test_mcp_verify_end.py` — roundtrip + screenshot | [x] | T057 | T047,T049 | |
+| T055 | `tests/test_scoreboard.py` — name entry + tolerant score parsing (incl. malformed lines) | [x] | T057 | T010,T044,T048,T049 | Fixed Bug #5 |
+| T056 | `tests/test_mcp_verify_scoreboard.py` — roundtrip + screenshot | [x] | T057 | T048,T049 | |
+| T057 | Run pytest (transition/end/scoreboard suites green) + review screenshots vs checklists | [x] | T100,T101 | T051,T052,T053,T054,T055,T056 | Phase 4 verification |
 
 ---
 
