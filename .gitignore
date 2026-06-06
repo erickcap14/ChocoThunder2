@@ -1,0 +1,17 @@
+# Runtime IPC + logs (regenerated each run)
+.implementations/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+
+# OS
+.DS_Store
+
+# Beads / Dolt files (added by bd init)
+.dolt/
+*.db
+.beads-credential-key

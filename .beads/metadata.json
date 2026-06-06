@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "embedded",
+  "dolt_database": "ChocoThunder2",
+  "project_id": "3da7b0c9-a5cf-4671-b1ec-5cefbd04dab3"
+}
