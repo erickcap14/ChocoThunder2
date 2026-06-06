@@ -2,6 +2,34 @@
 
 All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 
+## [0.4.0] — Phase 3 (partial): Entity layer complete
+### Added
+- `game/entities/__init__.py` — package entry point; exports `DIRECTIONS`, `clamp_rect`,
+  and all five entity classes. `clamp_rect(rect, bounds)` is the shared boundary helper
+  used by `Player` and `NPC`.
+- `game/entities/player.py` — `Player(DirectionalSprite)`: click-to-move toward a
+  `set_target(pos)` at `PLAYER_SPEED` px/frame, directional animation, and real
+  timer-based invincibility (`set_invincible(bool)` / `_invincible_remaining` accumulator).
+  Fixes Bug #1 (invincibility was cosmetic) and Bug #3 (no repeating timer).
+- `game/entities/poo.py` — `Poo(FrameSprite)`: animated surprise sprite placed at Sally's
+  position; `powered` flag selects the correct frame set. Drop cooldown is managed by
+  PlayScreen (dt accumulator), fixing Bug #3 for the cooldown path too.
+- `game/entities/obstacle.py` — `Obstacle(ImageSprite)`: immovable furniture sprite with
+  `push_out(rect)` using minimum-overlap axis separation (AABB SAT). Fixes Bug #2
+  (original zeroed position on overlap → soft-lock).
+- `game/entities/npc.py` — `NPC(DirectionalSprite)`: two-mode AI — random `PATROL` with
+  retargeting on arrival, `CHASE` when `distance(npc, player) ≤ NPC_CHASE_RADIUS`.
+  `is_chasing` property exposed for PlayScreen catch detection.
+- `game/entities/powerup.py` — `PowerUp(FrameSprite)`: three-frame animated cake sprite.
+  PlayScreen detects collection and calls `player.set_invincible(True)`.
+
+### Verified
+- All 5 entities import cleanly from `game.entities`; smoke-tested under headless SDL.
+- Full pytest suite still green: 21/21 passing.
+- Closes T030–T035 (ChocoThunder2-14f, -y3g, -daq, -owa, -znj, -dlm).
+
+---
+
 ## [0.3.0] — Phase X: Context templates filled
 ### Added
 - `.claude/infra.md` populated with Python/pygame-ce stack, directory conventions,
