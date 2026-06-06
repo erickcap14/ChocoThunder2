@@ -11,15 +11,8 @@ from __future__ import annotations
 import pygame
 
 from game import config
+from game.levels import LEVELS
 from game.state_machine import GameState
-
-_MAX_LEVELS = 3
-
-_SUBTITLES: dict[int, str] = {
-    1: "Working Out A Big One",
-    2: "Sem-Poo-Ku",
-    3: "The Final Defecation",
-}
 
 _PROMPT = "Press Enter to Continue"
 
@@ -51,7 +44,7 @@ class TransitionScreen:
     # ------------------------------------------------------------------
     def handle_event(self, event: pygame.event.Event) -> None:
         if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-            if self.level >= _MAX_LEVELS:
+            if self.level >= len(LEVELS):
                 self.sm.force_state(GameState.END)
             else:
                 self.sm.force_state(GameState.RUNNING)
@@ -62,7 +55,7 @@ class TransitionScreen:
     def draw(self) -> None:
         self.screen.fill(config.BLACK)
 
-        subtitle = _SUBTITLES.get(self.level, "")
+        subtitle = LEVELS[self.level - 1].transition_subtitle if 1 <= self.level <= len(LEVELS) else ""
 
         self._blit_centered(
             self._font_title,

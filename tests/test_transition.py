@@ -68,9 +68,10 @@ def test_enter_advances_to_running_on_level2(pygame_env):
 
 @pytest.mark.log_meta(phase="phase_4", subtask="4.1", action="enter goes to end on final level")
 def test_enter_goes_to_end_on_final_level(pygame_env):
-    """ENTER on level 3 (_MAX_LEVELS) transitions to END."""
+    """ENTER on the final level (len(LEVELS)) transitions to END."""
+    from game.levels import LEVELS
     sm = StateMachine(GameState.TRANSITION)
-    screen = TransitionScreen(pygame_env, sm, _FakeAudio(), level=3, score=999)
+    screen = TransitionScreen(pygame_env, sm, _FakeAudio(), level=len(LEVELS), score=999)
 
     event = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_RETURN, mod=0, unicode="\r")
     screen.handle_event(event)

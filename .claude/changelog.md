@@ -2,6 +2,35 @@
 
 All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 
+## [0.7.0] — Phase 5 complete: Data-driven levels
+### Added
+- `game/levels.py` — `LevelSpec` frozen dataclass (map_image, npcs, obstacle_room, music,
+  transition_subtitle) + `LEVELS` list of 4 entries. Single source of truth: adding a level
+  is one `LevelSpec` append + dropping assets — zero if/elif edits anywhere.
+- `assets/maps/level4.png` — demo 4th level asset (proves extensibility). Level 4 uses
+  char2+char3 NPCs, genericroom obstacles, Thunderstruck music, "Double Down Dirty Dog"
+  subtitle.
+- `tests/test_levels.py` — 17 unit tests: manifest structure (4 levels, unique names/maps,
+  frozen dataclass), PlayScreen initializes/set_level for all 4 levels, TransitionScreen
+  subtitle sourced from manifest.
+- `tests/test_mcp_verify_levels.py` — 7 bridge tests: `set_level` roundtrip for n=1..4,
+  state write/read carries level field, level-1 render is non-black, level-4 renders and
+  saves `testscreenshots/level4_verified.png`.
+
+### Changed
+- `game/screens/play.py` — Removed hardcoded `_LEVELS` dict; now reads from `LEVELS`
+  manifest. `set_level`, `resume`, `spawn_npc` all use `len(LEVELS)` for range clamping.
+- `game/screens/transition.py` — Removed `_MAX_LEVELS = 3` and `_SUBTITLES` dict;
+  uses `len(LEVELS)` for final-level check and `LEVELS[n-1].transition_subtitle` for text.
+- `tests/test_transition.py` — Final-level test now uses `len(LEVELS)` instead of
+  hardcoded `3`, staying correct as more levels are added.
+
+### Verified
+- Full pytest suite green: 109/109 passing (24 new Phase 5 tests).
+- Closes T058–T063 (ChocoThunder2-dzt).
+
+---
+
 ## [0.6.0] — Phase 4 complete: Transition, End & Scoreboard screens
 ### Added
 - `game/scores.py` — `load_scores()` / `save_scores()` / `add_score()`: tolerant

@@ -17,30 +17,10 @@ import pygame
 
 from game import assets, config
 from game.entities import NPC, Obstacle, Player, Poo, PowerUp
+from game.levels import LEVELS
 from game.state_machine import GameState
 
 _HUD_H = 50  # px reserved at the top for score + timer
-
-_LEVELS: dict[int, dict] = {
-    1: {
-        "map":   "level1.png",
-        "room":  "genericroom",
-        "music": "A1-Thunderstruck_01.mp3",
-        "npcs":  ["char1"],
-    },
-    2: {
-        "map":   "level2.png",
-        "room":  "gym",
-        "music": "05 I Wanna Rock.mp3",
-        "npcs":  ["char1", "char2"],
-    },
-    3: {
-        "map":   "level3.png",
-        "room":  "japaneseroom",
-        "music": "14 Angel.mp3",
-        "npcs":  ["char1", "char2", "char3"],
-    },
-}
 
 
 class PlayScreen:
@@ -64,10 +44,11 @@ class PlayScreen:
     # ------------------------------------------------------------------
 
     def _build_level(self, n: int) -> None:
-        spec = _LEVELS.get(n, _LEVELS[1])
+        idx = max(0, min(n - 1, len(LEVELS) - 1))
+        spec = LEVELS[idx]
 
         self._map = assets.load_image(
-            str(assets.map_image(spec["map"])),
+            str(assets.map_image(spec.map_image)),
             (config.SCREEN_WIDTH, config.SCREEN_HEIGHT),
         )
 
@@ -76,7 +57,7 @@ class PlayScreen:
         )
 
         self._obstacles = pygame.sprite.Group()
-        obs_folder = assets.obstacle_dir(spec["room"])
+        obs_folder = assets.obstacle_dir(spec.obstacle_room)
         obs_images = sorted(obs_folder.glob("*.png"), key=lambda p: p.name)
         positions = [(x, y) for x in config.OBSTACLE_X for y in config.OBSTACLE_Y]
         random.shuffle(positions)
@@ -85,7 +66,7 @@ class PlayScreen:
             self._obstacles.add(Obstacle(surf, positions[i % len(positions)]))
 
         self._npcs = pygame.sprite.Group()
-        for char in spec["npcs"]:
+        for char in spec.npcs:
             self._npcs.add(NPC(char, self._random_pos(), self._play_bounds))
 
         self._poos: pygame.sprite.Group = pygame.sprite.Group()
@@ -95,7 +76,7 @@ class PlayScreen:
         self._poo_cooldown_remaining: float = 0.0
         self._powerup_spawn_timer: float = config.POWERUP_SPAWN_SECONDS
 
-        self.audio.play_music(spec["music"])
+        self.audio.play_music(spec.music)
 
     def _random_pos(self) -> tuple[int, int]:
         x = random.randint(self._play_bounds.left + 50, self._play_bounds.right - 50)
@@ -107,14 +88,14 @@ class PlayScreen:
     # ------------------------------------------------------------------
 
     def set_level(self, n: int) -> None:
-        self.level = max(1, min(n, len(_LEVELS)))
+        self.level = max(1, min(n, len(LEVELS)))
         self.score = 0
         self.audio.stop_music()
         self._build_level(self.level)
 
     def resume(self, level: int, score: int) -> None:
         """Advance to a new level carrying accumulated score (level transition)."""
-        self.level = max(1, min(level, len(_LEVELS)))
+        self.level = max(1, min(level, len(LEVELS)))
         self.score = score
         self.audio.stop_music()
         self._build_level(self.level)
@@ -124,8 +105,7 @@ class PlayScreen:
         self._powerup_spawn_timer = config.POWERUP_SPAWN_SECONDS
 
     def spawn_npc(self) -> None:
-        spec = _LEVELS.get(self.level, _LEVELS[1])
-        char = random.choice(spec["npcs"])
+        char = random.choice(LEVELS[self.level - 1].npcs)
         self._npcs.add(NPC(char, self._random_pos(), self._play_bounds))
 
     def drop_poo(self) -> None:

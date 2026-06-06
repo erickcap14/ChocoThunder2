@@ -114,12 +114,12 @@
 
 | ID | Task | Status | Blocks | Blocked By | Notes |
 |----|------|--------|--------|------------|-------|
-| T058 | `game/levels.py` — `LevelSpec` dataclass (map image, NPC art, NPC count, obstacle room, music, transition text) + ordered manifest | [ ] | T059,T060,T061 | T036,T044 | No if/elif; appending = new level |
-| T059 | Port the 3 original levels into the manifest (map, NPC, obstacles, music, punny subtitles) | [ ] | T061,T062 | T058 | Story 7 `level_system` |
-| T060 | Wire LevelSpec into App + PlayScreen + TransitionScreen (level advance, `set_level` MCP) | [ ] | T061,T062,T102 | T015,T036,T046,T058 | Drives per-level music via AudioManager |
-| T061 | Add a demo 4th level (new entry + assets) to prove extensibility | [ ] | T062,T103 | T058,T059,T060 | PRD extensibility requirement |
-| T062 | `tests/test_levels.py` + `tests/test_mcp_verify_levels.py` — manifest loads, 4 levels selectable via `set_level`, screenshots per level | [ ] | T063 | T059,T060,T061 | |
-| T063 | Run pytest (levels suite green) + review per-level screenshots vs checklists | [ ] | T100,T101 | T062 | Phase 5 verification |
+| T058 | `game/levels.py` — `LevelSpec` dataclass (map image, NPC art, NPC count, obstacle room, music, transition text) + ordered manifest | [x] | T059,T060,T061 | T036,T044 | No if/elif; appending = new level |
+| T059 | Port the 3 original levels into the manifest (map, NPC, obstacles, music, punny subtitles) | [x] | T061,T062 | T058 | Story 7 `level_system` |
+| T060 | Wire LevelSpec into App + PlayScreen + TransitionScreen (level advance, `set_level` MCP) | [x] | T061,T062,T102 | T015,T036,T046,T058 | Drives per-level music via AudioManager |
+| T061 | Add a demo 4th level (new entry + assets) to prove extensibility | [x] | T062,T103 | T058,T059,T060 | PRD extensibility requirement |
+| T062 | `tests/test_levels.py` + `tests/test_mcp_verify_levels.py` — manifest loads, 4 levels selectable via `set_level`, screenshots per level | [x] | T063 | T059,T060,T061 | |
+| T063 | Run pytest (levels suite green) + review per-level screenshots vs checklists | [x] | T100,T101 | T062 | Phase 5 verification |
 
 ---
 
@@ -260,8 +260,8 @@ T111 → T112
 
 | Metric | Count |
 |--------|-------|
-| Total | 56 |
-| Done | 14 |
+| Total | 67 |
+| Done | 58 |
 | In Progress | 0 |
-| Remaining | 42 |
-| Blocked | 38 |
+| Remaining | 9 |
+| Blocked | 0 |
