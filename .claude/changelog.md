@@ -2,6 +2,26 @@
 
 All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 
+## [Unreleased] — Artwork Upgrade (PixelLab) phase planned
+
+### Added (docs + backlog only — no code yet)
+- **PRD Stories 13–17** (`.claude/prd.md` §2): a pre-iOS-ship Artwork Upgrade phase generating an
+  optional, toggle-selected art set with the PixelLab MCP, stored in a root-level `pixellab/` tree
+  mirroring `assets/`. `art_backgrounds`, `art_characters`, `art_obstacles`, `art_transitions`,
+  `art_startscreen`. Originals stay the default and are never deleted.
+- **Beads epic `ChocoThunder2-41u`** + 5 feature issues; `art_backgrounds` (`ChocoThunder2-bez`)
+  establishes the `pixellab/` tree + `ART_SET` toggle and blocks the other four. Resolver-seam
+  design + `lru_cache` startup-only caveat recorded on `bez`.
+
+### Changed
+- `.claude/prd.md` §1 non-goal "No new art style" amended to allow the optional toggle-selected set.
+- `.claude/sbom.md`: new §4c PixelLab-generated-asset provenance (dev-time only; confirm license
+  before public distribution; not a runtime dependency).
+- `.claude/security.md`: note PixelLab MCP is dev-time only — no outbound calls in the shipped game.
+- `.claude/infra.md`: `pixellab/` added to the directory structure.
+
+---
+
 ## [Unreleased] — UI test mode + help text fixes
 
 ### Added
