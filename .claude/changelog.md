@@ -2,6 +2,17 @@
 
 All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 
+## [Unreleased] — Title style applied globally
+
+### Changed
+- `fonts.blit_outlined` promoted to `game/fonts.py` as shared helper (was
+  private to `StartScreen`). All screens that previously used `config.BROWN`
+  for headlines now use gold-yellow fill + deep-red 2px outline:
+  EndScreen ("You Win!" / "Game Over"), TransitionScreen ("Level X Complete!"),
+  ScoreboardScreen ("Enter Your Name:" + "HIGH SCORES").
+
+---
+
 ## [Unreleased] — Title screen polish
 
 ### Changed
