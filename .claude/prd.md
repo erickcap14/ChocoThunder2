@@ -23,7 +23,10 @@ Purpose: This file defines what we are building and for whom, focusing on the pr
 * **What this app will NOT do:**
   * No online/multiplayer — single-player, local only.
   * No accounts, ads, microtransactions, or network calls.
-  * No new art style — it deliberately reuses the original's sprites and audio.
+  * No new art style *by default* — it deliberately reuses the original's sprites and audio.
+    *(Exception: a pre-iOS-ship art-upgrade phase adds an **optional, toggle-selected**
+    PixelLab-generated art set in `pixellab/`. The originals remain the canonical default and
+    are never deleted; see Stories 13–17.)*
   * No level *editor* in-app (levels are added by developers via a data manifest).
 
 ---
@@ -63,6 +66,30 @@ repo, **Scribe owns beads writes** — run `/scribe` to create these.
 * **Story 12 — `ios_packaging` (deferred):** As a product owner, I want the game to
   **eventually ship to iPad** so that it reaches a touch audience. *(See roadmap; the riskiest,
   most uncertain milestone.)*
+
+### Artwork Upgrade Phase (pre-iOS ship)
+
+> A polished art set generated with the **PixelLab MCP** (https://www.pixellab.ai/mcp), stored
+> in a root-level **`pixellab/`** tree mirroring `assets/`, selected at runtime by an `ART_SET`
+> toggle in `game/config.py`. PixelLab is a **dev-time generator** — only committed PNGs ship,
+> so the offline-runtime and supply-chain rules in `security.md`/`sbom.md` are preserved. The
+> ground-truth originals stay the default and are never deleted (fully reversible). Stories are
+> listed in implementation order.
+
+* **Story 13 — `art_backgrounds`:** As a developer, I want **top-down tileset backgrounds
+  generated via the PixelLab MCP into `pixellab/maps/`, selectable by an `ART_SET` config
+  toggle**, so that levels can ship upgraded backgrounds for the iOS build without deleting the
+  ground-truth originals. *(Establishes the `pixellab/` tree + toggle; provenance recorded in
+  `sbom.md`.)*
+* **Story 14 — `art_characters`:** As a player, I want **Sally and the tenant NPCs to use new
+  PixelLab-generated directional spritesheets** (`pixellab/characters/`, `pixellab/npc/`) so
+  that the characters look polished on iOS, with the originals still available via the toggle.
+* **Story 15 — `art_obstacles`:** As a player, I want **refreshed furniture/obstacle sprites**
+  (`pixellab/obstacles/<room>/`) so that each room matches the upgraded look.
+* **Story 16 — `art_transitions`:** As a player, I want **upgraded transition-screen artwork**
+  so that level intros feel premium instead of plain black cards.
+* **Story 17 — `art_startscreen`:** As a player, I want a **polished start/title screen** so
+  that the game's first impression meets iOS-store quality.
 
 ---
 

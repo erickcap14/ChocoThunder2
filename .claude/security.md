@@ -41,6 +41,12 @@ These rules apply unconditionally to every change in this project:
 - **How we check dependencies:** Manual review of PyPI pages + `pip-audit` run periodically. The attack surface is low (no web stack, no auth libraries, no database drivers).
 - **`pygame-ce` LGPL note:** If the project ever bundles a binary distribution (e.g., for the pygbag iPad milestone), LGPL-2.1 compliance for `pygame-ce` must be confirmed — dynamic linking requirements apply. This is flagged in `sbom.md` as well.
 - **Rule for adding new dependencies:** Any new dependency must appear in a PR that also updates `sbom.md` with version constraint, license, and rationale.
+- **PixelLab MCP is dev-time only (Artwork Upgrade phase):** The PixelLab MCP
+  (https://www.pixellab.ai/mcp) is used **only during development** to generate the optional
+  upgraded art set in `pixellab/`. It introduces **no outbound network call in the shipped
+  game** — only committed static PNGs are distributed, so the "No network calls" rule (§0) and
+  the offline-only guarantee are preserved. Generated-asset provenance is recorded in
+  `sbom.md` §4c. The original assets remain read-only copies (§6) and stay the default art set.
 
 ---
 

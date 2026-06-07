@@ -45,6 +45,7 @@ Purpose: This file describes the project's technical foundation, including the m
     - `screens/` — One file per screen: `start.py`, `play.py`, `transition.py`, `end.py`, `scoreboard.py`.
     - `levels.py` — `LevelSpec` data classes; adding a level = appending one entry here + dropping assets.
   - **`assets/`** — All normalized game assets (lowercase tree). Never modify the original `../ChocolateThunder/`.
+  - **`pixellab/`** — Optional upgraded art set (Artwork Upgrade phase, pre-iOS ship) generated dev-time via the PixelLab MCP. Mirrors the `assets/` layout (`maps/`, `characters/`, `npc/`, `obstacles/<room>/`, …); selected at runtime by the `ART_SET` toggle in `game/config.py`. Committed static PNGs only — no runtime network calls.
   - **`mcp_server/`** — `state_bridge.py` (file IPC) + `server.py` (FastMCP, 13 tools).
   - **`.implementations/`** — IPC JSON files written at runtime (`game_state.json`, `game_command.json`, `test_log.json`). **Git-ignored.** Never commit this directory.
   - **`tests/`** — `conftest.py`, `logger.py`, and all `test_*.py` files.

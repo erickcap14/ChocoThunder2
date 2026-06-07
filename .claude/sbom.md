@@ -76,6 +76,19 @@ All game assets (sprites, spritesheets, maps, music, SFX) are reused unchanged f
 
 > Licensing of these assets follows the original course project's terms. They are not redistributed publicly and are used solely for this private rebuild.
 
+### 4c. PixelLab-generated assets (Artwork Upgrade phase — pre-iOS ship)
+
+| Asset set | Tool | License / Terms | Source | Path |
+|------|------|---------|--------|------|
+| Upgraded backgrounds, character/NPC spritesheets, obstacle sprites, transition + start-screen art | PixelLab MCP | Per PixelLab terms (confirm before public distribution) | https://www.pixellab.ai/mcp | `pixellab/` (mirrors `assets/` layout) |
+
+> **Dev-time generation, not a runtime dependency.** PixelLab is invoked only during
+> development to produce static PNGs that are committed to the repo. The shipped game performs
+> **no outbound calls** to PixelLab and the `mcp` runtime dependency list above is unchanged.
+> The PixelLab art set is **optional**, selected via the `ART_SET` toggle in `game/config.py`;
+> the original assets in §4b remain the canonical default. Confirm PixelLab's output-licensing
+> terms before any public distribution of the iOS build.
+
 ---
 
 ## 5. Documentation & Resources
