@@ -82,10 +82,13 @@ def _smoke(frames: int) -> None:
     print(f"smoke complete: final state = {sm.state.name}")
 
 
-def run_game() -> None:
+def run_game(test_mode: bool = False) -> None:
     """Launch the real game (screens wired in from Phase 2 onward)."""
     from game.app import App  # imported lazily; built in later phases
-    App().run()
+    app = App()
+    if test_mode:
+        app.enable_test_mode()
+    app.run()
 
 
 def main() -> None:
@@ -94,12 +97,14 @@ def main() -> None:
                         help="run the headless MCP smoke harness instead of the game")
     parser.add_argument("--frames", type=int, default=120,
                         help="frames to run in --smoke mode")
+    parser.add_argument("--test", action="store_true",
+                        help="UI walkthrough mode: arrow keys cycle all screens")
     args = parser.parse_args()
 
     if args.smoke:
         _smoke(args.frames)
     else:
-        run_game()
+        run_game(test_mode=args.test)
 
 
 if __name__ == "__main__":
