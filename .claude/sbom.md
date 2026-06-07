@@ -16,6 +16,19 @@ Purpose: This file lists all approved technologies, libraries, and dependencies 
 | **MCP Sidecar** | `mcp` (FastMCP) | `>=1.2` | MIT | Game State MCP server; `mcp.server.fastmcp.FastMCP` |
 | **Test Runner** | `pytest` | `>=8.0` | MIT | Unit tests + MCP-roundtrip screenshot tests |
 
+### Build Tooling (Phase 7 — WASM/iPad path, build-only)
+
+These are **not** runtime dependencies. They live in `requirements-build.txt` (not
+`requirements.txt`) and are installed only when producing the WebAssembly bundle.
+
+| Category | Component | Version Constraint | License | Usage |
+|:---|:---|:---|:---|:---|
+| **WASM Packager** | `pygbag` | `>=0.9, <1` | MIT | Compiles the Python/pygame-ce game to WebAssembly (Emscripten + CPython-wasm) for the browser/iPad build. Build-only; never imported by the desktop game. |
+
+> **LGPL obligation (now live for Phase 7):** the pygbag WASM artifact bundles `pygame-ce`
+> (LGPL-2.1). Any distributed web/iPad build **must ship the LGPL-2.1 notice**. Confirm
+> dynamic-vs-static linking obligations before public distribution (see §3).
+
 ---
 
 ## 1. Dependency Rules

@@ -20,6 +20,14 @@ Purpose: This file describes the project's technical foundation, including the m
 
 > **Note:** `pygame-ce` and upstream `pygame` collide; never install both. Always use `pygame-ce` as specified in `requirements.txt`.
 
+> **Phase 7 exception (WASM/browser target):** The desktop-only "no browser" statement
+> above describes the v1.0.0 shipped product. Phase 7 (iPad packaging) introduces a
+> **secondary build target**: the game is compiled to WebAssembly with `pygbag` (build-only
+> tool, see `sbom.md`) and runs in a browser via `web_main.py` (`App.run_async`). The MCP
+> harness is **disabled** under WASM (no sidecar process / shared filesystem in the browser
+> sandbox); the desktop build and its MCP path are unchanged. Browser-build verification uses
+> Playwright, not pytest/MCP. This is a sanctioned exception, not a change to the desktop runtime.
+
 ---
 
 ## Project Architecture & Conventions

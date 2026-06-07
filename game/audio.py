@@ -6,6 +6,8 @@ every public method silently no-ops if ``_mixer_ok`` is False.
 
 from __future__ import annotations
 
+import sys
+
 import pygame
 
 from game import assets
@@ -15,7 +17,13 @@ class AudioManager:
     def __init__(self):
         self.music_on: bool = True
         self.sfx_on: bool = True
-        self._mixer_ok: bool = pygame.mixer.get_init() is not None
+        # Audio is disabled under WASM/Emscripten: pygbag's SDL_mixer ships
+        # without MP3 support and decoding the (MP3) assets can abort the runtime.
+        # Treat the browser build like the headless case — every method no-ops.
+        # (Re-enable once assets are converted to OGG; see Phase 7 follow-up.)
+        self._mixer_ok: bool = (
+            pygame.mixer.get_init() is not None and sys.platform != "emscripten"
+        )
         self._sounds: dict[str, pygame.mixer.Sound] = {}
         if self._mixer_ok:
             self._preload_sfx()

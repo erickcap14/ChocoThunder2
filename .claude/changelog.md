@@ -2,6 +2,45 @@
 
 All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 
+## [Unreleased] — Phase 7 (T110): pygbag → WASM spike
+
+Exploratory spike to de-risk the iPad path. Scope was **T110 only** (compile to
+WebAssembly + load in a browser); touch (T111) and Capacitor (T112) remain deferred.
+
+### Added
+- `web_main.py` — async pygbag entry point (`asyncio.run(main())` → `App.run_async()`),
+  free of desktop-only imports (no argparse / `mcp_server` / `main`).
+- `App.run_async()` + shared `App._tick()` — the per-frame loop is now shared by the
+  desktop (sync) and WASM (async, yields with `await asyncio.sleep(0)`) drivers.
+- `requirements-build.txt` — build-only `pygbag>=0.9,<1` (MIT), kept out of runtime deps.
+
+### Changed
+- `App` gates the MCP harness behind `_mcp_enabled` (`sys.platform != "emscripten"`):
+  the desktop build is unchanged; the browser build skips file-IPC (no sidecar/filesystem
+  in the sandbox). MCP imports are now lazy so the WASM bundle never pulls them in.
+- `AudioManager` treats Emscripten as mixer-unavailable — pygbag's SDL_mixer lacks MP3
+  support and decoding the (MP3) assets aborted the WASM runtime at startup. With audio
+  off under WASM, the runtime advanced from a hang to "Ready to start".
+- `.claude/infra.md`, `.claude/sbom.md` — recorded the WASM/browser build target (P2
+  exception to "no browser") and the pygbag build dependency + pygame-ce LGPL-2.1 obligation
+  for distributed builds (P1).
+
+### Fixed
+- Flaky `test_obstacle_pushes_player_out`: PlayScreen places obstacles with the global
+  `random`, so the test was order-dependent. Added an autouse `_seed_rng` fixture
+  (`random.seed(0)` per test) — suite is now deterministic and order-independent.
+
+### Verified / Known gaps
+- ✅ Desktop unchanged: 109/109 pytest green (deterministic) + smoke harness passes.
+- ✅ WASM build compiles (`pygbag --build`) → valid `index.html` + 30 MB bundle.
+- ✅ Browser load: cpython312 boots, game archive downloads byte-exact, 0 fatal Python
+  errors, reaches pygbag's "Ready to start" (evidence: `testscreenshots/wasm_ready_to_start.png`).
+- ⚠️ In-browser gameplay render **not confirmed in headless Playwright** — pygbag's UME
+  "click/touch to start" gate isn't satisfied by synthetic input. Needs a real/headed
+  browser. (Follow-up issue.)
+- ⚠️ Follow-ups: convert MP3 → OGG for WASM audio; persist `scores.txt` via IndexedDB/
+  localStorage; touch-control layer (T111).
+
 ## [1.0.0] — Phase 6 complete: Full QA / Release Gate ✓
 ### Verified (T100–T104)
 

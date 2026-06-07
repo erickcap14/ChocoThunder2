@@ -8,6 +8,10 @@ __pycache__/
 venv/
 .pytest_cache/
 
+# pygbag WASM build output + staging (Phase 7)
+build/
+wasm_src/
+
 # OS
 .DS_Store
 

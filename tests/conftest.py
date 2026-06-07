@@ -9,6 +9,7 @@
 from __future__ import annotations
 
 import os
+import random
 
 import pytest
 
@@ -20,6 +21,18 @@ import pygame  # noqa: E402
 
 from game.config import SCREEN_HEIGHT, SCREEN_WIDTH, STATE_FILE, COMMAND_FILE  # noqa: E402
 from tests.logger import log_test  # noqa: E402
+
+
+@pytest.fixture(autouse=True)
+def _seed_rng():
+    """Seed the global RNG before every test.
+
+    PlayScreen places obstacles/NPCs with the global ``random`` module, so any
+    test that inspects those positions is otherwise sensitive to how many random
+    calls ran before it (test order, import side effects). Seeding per-test makes
+    the whole suite deterministic and order-independent.
+    """
+    random.seed(0)
 
 
 @pytest.fixture(scope="module")

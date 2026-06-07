@@ -5,17 +5,23 @@ Each frame the loop:
   2. Calls poll_mcp_command(...)  — apply any command the MCP server queued
   3. Detects state changes        — swaps active screen
   4. Dispatches events, updates, draws
+
+The MCP harness (steps 1–2) is a desktop dev/test sidecar: it needs a second
+local process and a shared filesystem, neither of which exist in the browser
+WASM sandbox. So those steps are gated behind ``_mcp_enabled`` and skipped under
+Emscripten. The desktop path (``run``) and the WASM path (``run_async``) share
+the same per-frame body in ``_tick``.
 """
 
 from __future__ import annotations
+
+import sys
 
 import pygame
 
 from game import config
 from game.audio import AudioManager
 from game.state_machine import GameState, StateMachine
-from main import poll_mcp_command
-from mcp_server.state_bridge import write_state
 
 
 class App:
@@ -32,6 +38,10 @@ class App:
         self.clock = pygame.time.Clock()
         self.sm = StateMachine(GameState.START)
         self.audio = AudioManager()
+
+        # MCP file-IPC only works on desktop CPython; the browser WASM sandbox
+        # has no sidecar process or shared filesystem.
+        self._mcp_enabled = sys.platform != "emscripten"
 
         self._active_screen = self._make_screen(self.sm.state)
         self._last_state = self.sm.state
@@ -86,10 +96,14 @@ class App:
         return None
 
     # ------------------------------------------------------------------
-    def run(self) -> None:
-        running = True
-        while running:
-            dt = self.clock.tick(config.FPS) / 1000.0
+    def _tick(self, dt: float) -> bool:
+        """Advance one frame. Returns False when the game should stop.
+
+        Shared by the desktop (``run``) and WASM (``run_async``) loops.
+        """
+        if self._mcp_enabled:
+            from main import poll_mcp_command  # desktop-only; pulls in mcp_server
+            from mcp_server.state_bridge import write_state
 
             write_state(
                 self.sm.state.name,
@@ -101,22 +115,51 @@ class App:
             )
             poll_mcp_command(self.sm, self._active_screen, self.audio)
 
-            if self.sm.state is not self._last_state:
-                self._active_screen = self._make_screen(self.sm.state)
-                self._last_state = self.sm.state
+        if self.sm.state is not self._last_state:
+            self._active_screen = self._make_screen(self.sm.state)
+            self._last_state = self.sm.state
 
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-                elif self._active_screen is not None:
-                    self._active_screen.handle_event(event)
+        running = True
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+            elif self._active_screen is not None:
+                self._active_screen.handle_event(event)
 
-            if self._active_screen is not None:
-                self._active_screen.update(dt)
-                self._active_screen.draw()
+        if self._active_screen is not None:
+            self._active_screen.update(dt)
+            self._active_screen.draw()
 
-            pygame.display.flip()
+        pygame.display.flip()
+        return running
 
+    # ------------------------------------------------------------------
+    def run(self) -> None:
+        """Desktop entry: synchronous loop with the MCP harness active."""
+        running = True
+        while running:
+            dt = self.clock.tick(config.FPS) / 1000.0
+            running = self._tick(dt)
+
+        from mcp_server.state_bridge import write_state
         write_state(self.sm.state.name, running=False, score=0, level=1,
                     music_on=self.audio.music_on, sfx_on=self.audio.sfx_on)
+        pygame.quit()
+
+    # ------------------------------------------------------------------
+    async def run_async(self) -> None:
+        """WASM/browser entry (pygbag): async loop that yields each frame.
+
+        pygbag runs CPython-on-WASM in the browser's single thread, so the loop
+        must hand control back with ``await asyncio.sleep(0)`` every frame. MCP
+        is disabled here (see ``_mcp_enabled``).
+        """
+        import asyncio
+
+        running = True
+        while running:
+            dt = self.clock.tick(config.FPS) / 1000.0
+            running = self._tick(dt)
+            await asyncio.sleep(0)
+
         pygame.quit()

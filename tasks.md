@@ -143,9 +143,12 @@
 
 | ID | Task | Status | Blocks | Blocked By | Notes |
 |----|------|--------|--------|------------|-------|
-| T110 | Compile game to WebAssembly with pygbag (keep Python/pygame code) | [ ] | T111 | T104 | DEFERRED/exploratory |
+| T110 | Compile game to WebAssembly with pygbag (keep Python/pygame code) | [x] | T111 | T104 | Async loop refactor (`web_main.py`, `App.run_async`/`_tick`), MCP gated to desktop, build green. WASM build compiles + loads in browser (cpython312 boots, archive byte-exact, reaches "Ready to start"). In-browser gameplay render unconfirmed in headless Playwright (UME gate) → T113. |
 | T111 | Add touch-control layer (tap→move, on-screen button→poop) | [ ] | T112 | T110 | DEFERRED/exploratory |
-| T112 | Wrap web build as iPad app via PWA / Capacitor | [ ] | — | T111 | DEFERRED/exploratory |
+| T112 | Wrap web build as iPad app via PWA / Capacitor | [ ] | — | T111 | Xcode-only (no paid Apple acct): simulator + free-provisioning route. DEFERRED |
+| T113 | Confirm in-browser gameplay render in a real/headed browser (past pygbag UME gate) | [ ] | — | T110 | Discovered in T110: headless Playwright can't satisfy pygbag's click-to-start gesture |
+| T114 | Convert MP3 audio assets → OGG and re-enable audio under WASM | [ ] | — | T110 | Discovered in T110: pygbag SDL_mixer lacks MP3; audio currently disabled under Emscripten |
+| T115 | Persist `scores.txt` under WASM via IndexedDB/localStorage | [ ] | — | T110 | Discovered in T110: WASM MEMFS is ephemeral, scores don't survive reload |
 
 ---
 
@@ -260,8 +263,8 @@ T111 → T112
 
 | Metric | Count |
 |--------|-------|
-| Total | 67 |
-| Done | 63 |
+| Total | 70 |
+| Done | 64 |
 | In Progress | 0 |
-| Remaining | 4 |
+| Remaining | 6 |
 | Blocked | 0 |
