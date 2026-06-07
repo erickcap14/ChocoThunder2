@@ -2,6 +2,19 @@
 
 All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 
+## [Unreleased] — Desktop launcher + startup fix
+
+### Added
+- `run.sh` made executable (`chmod +x`)
+- `ct2_desktop` alias added to `~/.zshrc` pointing to `run.sh`
+
+### Fixed
+- `App.__init__` crash (`AttributeError: 'App' object has no attribute '_active_screen'`):
+  `_active_screen` is now set to `None` before the first `_make_screen()` call so `prev`
+  is always defined on the initial construction pass.
+
+---
+
 ## [Unreleased] — Phase 7 (T110): pygbag → WASM spike
 
 Exploratory spike to de-risk the iPad path. Scope was **T110 only** (compile to

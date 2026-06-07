@@ -43,6 +43,7 @@ class App:
         # has no sidecar process or shared filesystem.
         self._mcp_enabled = sys.platform != "emscripten"
 
+        self._active_screen = None
         self._active_screen = self._make_screen(self.sm.state)
         self._last_state = self.sm.state
 
