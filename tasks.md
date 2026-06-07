@@ -1,6 +1,6 @@
 # Project Tasks
 
-> Last updated: 2026-06-06 | Generated from: .claude/ context files
+> Last updated: 2026-06-07 | Generated from: .claude/ context files
 
 ## Legend
 
@@ -152,6 +152,22 @@
 
 ---
 
+## Phase 8: Artwork Upgrade (PixelLab) — pre-iOS ship
+
+> Objective: Generate an optional, toggle-selected polished art set with the PixelLab MCP, stored in a root-level `pixellab/` tree mirroring `assets/`, selected by `ART_SET`. PixelLab is dev-time only — only committed PNGs ship; the game stays offline. Beads epic `ChocoThunder2-41u`; PRD Stories 13–17. **Hard gate on every art-gen task: confirm the visual direction with the user (style, palette, top-down perspective, reference, size) and get sign-off BEFORE calling the PixelLab MCP.**
+
+| ID | Task | Status | Blocks | Blocked By | Notes |
+|----|------|--------|--------|------------|-------|
+| T130 | `art_pipeline_foundation` — `config.ART_SET`/`art_root()` + `pixellab/` tree + `assets.py` `_art()` resolver with per-asset fallback to `assets/`; `tests/test_assets_artset.py` (original-parity + fallback). No image gen. | [ ] | T131 | T104 | beads `ChocoThunder2-hvu`; `levels.py` unchanged; lru_cache fixed at startup |
+| T131 | `art_backgrounds` — **confirm visual direction → generate** top-down tilesets via PixelLab into `pixellab/maps/` (4 levels) | [ ] | T132,T133,T134,T135 | T130 | beads `ChocoThunder2-bez`; Story 13; provenance → sbom.md §4c |
+| T132 | `art_characters` — **confirm → generate** Sally + tenant NPC spritesheets (`pixellab/characters/`, `pixellab/npc/`) | [ ] | T136 | T131 | beads `ChocoThunder2-hy3`; Story 14 |
+| T133 | `art_obstacles` — **confirm → generate** furniture/obstacle sprites (`pixellab/obstacles/<room>/`) | [ ] | T136 | T131 | beads `ChocoThunder2-cgo`; Story 15; collision sizes unchanged |
+| T134 | `art_transitions` — **confirm → generate** upgraded transition-screen artwork | [ ] | T136 | T131 | beads `ChocoThunder2-2rm`; Story 16 |
+| T135 | `art_startscreen` — **confirm → generate** polished start/title artwork | [ ] | T136 | T131 | beads `ChocoThunder2-ash`; Story 17 |
+| T136 | Phase 8 verification: pytest green incl. `ART_SET` fallback; review screenshots for both art sets; confirm no runtime PixelLab calls (offline preserved) | [ ] | — | T131,T132,T133,T134,T135 | Art-phase sign-off; feeds Phase 7 iOS build |
+
+---
+
 ## Phase X: Cross-Cutting / Documentation
 
 > Objective: Fill the unfilled blueprint templates and capture supply-chain/security facts so context files match reality. (security.md/sbom.md are Priority-1 per the conflict matrix.)
@@ -255,6 +271,16 @@ T103 → T104
 T104 → T110
 T110 → T111
 T111 → T112
+T104 → T130
+T130 → T131
+T131 → T132
+T131 → T133
+T131 → T134
+T131 → T135
+T132 → T136
+T133 → T136
+T134 → T136
+T135 → T136
 ```
 
 ---
@@ -263,8 +289,8 @@ T111 → T112
 
 | Metric | Count |
 |--------|-------|
-| Total | 70 |
+| Total | 77 |
 | Done | 64 |
 | In Progress | 0 |
-| Remaining | 6 |
-| Blocked | 0 |
+| Remaining | 13 |
+| Blocked | 6 |
