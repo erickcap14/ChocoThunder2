@@ -2,6 +2,16 @@
 
 All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 
+## [Unreleased] — Title screen polish
+
+### Changed
+- Overlay box widened 820→960px; body font reduced 32→26pt so all instruction
+  lines fit horizontally inside the panel (longest line was 1115px vs 820px box).
+- Title "CHOCOLATE THUNDER 2" and subtitle now render with gold-yellow fill +
+  deep-red 2px outline (`_blit_outlined`) — AC/DC thunderbolt aesthetic.
+
+---
+
 ## [Unreleased] — Desktop launcher + startup fix
 
 ### Added
