@@ -12,6 +12,15 @@ All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 - **Beads epic `ChocoThunder2-41u`** + 5 feature issues; `art_backgrounds` (`ChocoThunder2-bez`)
   establishes the `pixellab/` tree + `ART_SET` toggle and blocks the other four. Resolver-seam
   design + `lru_cache` startup-only caveat recorded on `bez`.
+- **Resolver foundation split out** as `art_pipeline_foundation` (`ChocoThunder2-hvu`, ready):
+  `config.ART_SET`/`art_root()` + `assets.py` `_art()` per-asset fallback + `test_assets_artset.py`,
+  no image generation; blocks `art_backgrounds`.
+- **Confirm-before-generate gate** added to all five art-gen issues' acceptance criteria and
+  persisted via `bd remember` (`artwork-upgrade-confirm-visual-direction-before-generating`):
+  agree the visual direction with the user (style, palette, top-down perspective, reference, size)
+  and get sign-off before any PixelLab MCP call.
+- **`tasks.md` Phase 8** added (`T130`–`T136`) mapped to the beads IDs, with dependency graph +
+  summary updated (Total 77, Remaining 13, Blocked 6).
 
 ### Changed
 - `.claude/prd.md` §1 non-goal "No new art style" amended to allow the optional toggle-selected set.
