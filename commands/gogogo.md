@@ -39,6 +39,11 @@ Would you like me to set it up now? (This is a one-time setup that works across 
   - Continue without committing
 - If there are remote changes (behind origin), pull them with `git pull`
 
+> **Project gotcha — screenshot churn:** Running `python -m pytest` regenerates the
+> committed `testscreenshots/*.png` (MCP-verify evidence). If no rendering code changed this
+> session, the resulting diffs are non-deterministic re-render noise — `git restore
+> testscreenshots/` rather than committing them.
+
 ### 3. Load Project Context
 Read and internalize the full project context:
 
@@ -55,6 +60,11 @@ Read and internalize the full project context:
 - Run `bd list` to see all tracked issues
 - Run `bd ready` to identify available work
 - Note any issues with status "in_progress" that may need continuation
+
+> **Project gotcha — beads sync:** This repo has **no Dolt remote configured**, so `bd dolt
+> push` / `bd sync` won't work. Beads syncs via the committed `.beads/issues.jsonl` (a passive
+> export the commit hook regenerates) — just `git add .beads/issues.jsonl` and push with your
+> other changes.
 
 ### 4. Environment Check
 - Verify environment files exist (e.g., `.env.local`, `.env`)
