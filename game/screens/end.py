@@ -77,7 +77,7 @@ class EndScreen:
 
         # Headline.
         headline = "You Win!" if self.win else "Game Over"
-        self._blit_centered(self._font_large, headline, config.BROWN, y=180)
+        fonts.blit_outlined(self.screen, self._font_large, headline, y=180)
 
         # Final score.
         self._blit_centered(

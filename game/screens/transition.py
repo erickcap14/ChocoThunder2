@@ -57,11 +57,8 @@ class TransitionScreen:
 
         subtitle = LEVELS[self.level - 1].transition_subtitle if 1 <= self.level <= len(LEVELS) else ""
 
-        self._blit_centered(
-            self._font_title,
-            f"Level {self.level} Complete!",
-            config.BROWN,
-            y=220,
+        fonts.blit_outlined(
+            self.screen, self._font_title, f"Level {self.level} Complete!", y=220
         )
         self._blit_centered(
             self._font_sub,

@@ -30,10 +30,6 @@ _CONTROLS = (
 )
 _PROMPT = "Press Space Bar to Play"
 
-_TITLE_FILL    = (255, 215,   0)   # gold yellow
-_TITLE_OUTLINE = (200,   0,   0)   # deep red
-_OUTLINE_PX    = 2
-
 
 class StartScreen:
     def __init__(self, screen: pygame.Surface, state_machine, audio):
@@ -97,8 +93,8 @@ class StartScreen:
         self.screen.blit(self._overlay, self._overlay_rect)
 
         # Title — yellow fill with red outline.
-        self._blit_outlined(self._font_title, _TITLE_1, y=80)
-        self._blit_outlined(self._font_sub,   _TITLE_2, y=148)
+        fonts.blit_outlined(self.screen, self._font_title, _TITLE_1, y=80)
+        fonts.blit_outlined(self.screen, self._font_sub,   _TITLE_2, y=148)
 
         # Blurb + controls — vertically centered inside the overlay panel.
         y = self._text_top
@@ -123,13 +119,3 @@ class StartScreen:
         rect = surf.get_rect(centerx=config.SCREEN_WIDTH // 2, top=y)
         self.screen.blit(surf, rect)
 
-    def _blit_outlined(self, font: pygame.font.Font, text: str, y: int) -> None:
-        cx = config.SCREEN_WIDTH // 2
-        outline = font.render(text, True, _TITLE_OUTLINE)
-        fill    = font.render(text, True, _TITLE_FILL)
-        for dx in range(-_OUTLINE_PX, _OUTLINE_PX + 1):
-            for dy in range(-_OUTLINE_PX, _OUTLINE_PX + 1):
-                if dx == 0 and dy == 0:
-                    continue
-                self.screen.blit(outline, outline.get_rect(centerx=cx + dx, top=y + dy))
-        self.screen.blit(fill, fill.get_rect(centerx=cx, top=y))

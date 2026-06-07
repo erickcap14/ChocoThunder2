@@ -64,7 +64,7 @@ class ScoreboardScreen:
         cy = config.SCREEN_HEIGHT // 2
 
         # Title
-        self._blit_centered(self._font_title, "Enter Your Name:", config.BROWN, y=160)
+        fonts.blit_outlined(self.screen, self._font_title, "Enter Your Name:", y=160)
 
         # Name box
         name_display = self._name if self._name else " "
@@ -100,7 +100,7 @@ class ScoreboardScreen:
     # ------------------------------------------------------------------  view phase
     def _draw_view(self) -> None:
         # Title
-        self._blit_centered(self._font_title, "HIGH SCORES", config.BROWN, y=60)
+        fonts.blit_outlined(self.screen, self._font_title, "HIGH SCORES", y=60)
 
         # Table header
         col_rank  = config.SCREEN_WIDTH // 2 - 260
