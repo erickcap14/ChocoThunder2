@@ -2,6 +2,35 @@
 
 All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 
+## [Unreleased] — UI test mode + help text fixes
+
+### Added
+- `--test` CLI flag (`python main.py --test`): 16-screen UI walkthrough mode.
+  - Cycles: Start → (PreLevel → Play → Transition) × 4 levels → End Win → End Lose → Scoreboard.
+  - `←`/`→` arrow keys navigate backward/forward; state-machine transitions from screens are blocked.
+  - Play screens: sprites animate in place (no movement), timer replaced with "NO TIMER" in amber.
+  - Bottom bar shows `TEST MODE | X / 16: Screen Label`; arrow indicators at mid-left/mid-right.
+- `GameState.PRELEVEL` + `PreLevelScreen` (`game/screens/prelevel.py`): black intro card shown
+  **before** each level starts (level name + punny intro teaser + "Press Enter to Begin").
+  - Level 1 intro fires from the Start screen (SPACE → PRELEVEL, not RUNNING).
+  - Subsequent level intros fire from the post-level TransitionScreen (Enter → PRELEVEL → RUNNING).
+  - `LevelSpec` gains `intro_subtitle` field with a teaser for each of the 4 levels.
+- `Hover-For-Help` overlay in PlayScreen HUD: centred button; hovering freezes game timer and entity
+  movement while sprites continue animating; overlay lists all controls.
+
+### Fixed
+- Help button text overflow: font 28→18pt, button 160→176px ("? Hover for Help" = 155px).
+- Help overlay text overflow: font 28→22pt, panel 680→640px, line text tightened — max line 562px
+  now fits in 640px panel with margin.
+
+### Tests
+- `tests/test_prelevel.py` added (11 tests).
+- `tests/test_start.py` + `tests/test_transition.py` updated for PRELEVEL routing.
+- `tests/test_levels.py` updated to cover `intro_subtitle` field.
+- All 81 unit tests pass.
+
+---
+
 ## [Unreleased] — Title style applied globally
 
 ### Changed
