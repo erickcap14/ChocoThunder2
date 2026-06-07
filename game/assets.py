@@ -105,3 +105,7 @@ def music_path(name: str) -> Path:
 
 def sfx_path(name: str) -> Path:
     return config.ASSETS / "sounds" / "sfx" / name
+
+
+def font_path(name: str) -> Path:
+    return config.ASSETS / "fonts" / name

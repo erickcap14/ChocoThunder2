@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import pygame
 
-from game import assets, config
+from game import assets, config, fonts
 from game.state_machine import GameState
 
 
@@ -47,10 +47,10 @@ class EndScreen:
         )
 
     def _setup_fonts(self) -> None:
-        self._font_large  = pygame.font.Font(None, 80)
-        self._font_medium = pygame.font.Font(None, 52)
-        self._font_body   = pygame.font.Font(None, 36)
-        self._font_prompt = pygame.font.Font(None, 40)
+        self._font_large  = fonts.load(80)
+        self._font_medium = fonts.load(52)
+        self._font_body   = fonts.load(36)
+        self._font_prompt = fonts.load(40)
 
     def _setup_overlay(self) -> None:
         w, h = config.SCREEN_WIDTH, config.SCREEN_HEIGHT

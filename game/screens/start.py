@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import pygame
 
-from game import assets, config
+from game import assets, config, fonts
 from game.state_machine import GameState
 
 _SCROLL_SPEED = 80  # px/sec; background scrolls left
@@ -55,10 +55,10 @@ class StartScreen:
         self._bg_x: float = 0.0
 
     def _setup_fonts(self) -> None:
-        self._font_title  = pygame.font.Font(None, 72)
-        self._font_sub    = pygame.font.Font(None, 48)
-        self._font_body   = pygame.font.Font(None, 32)
-        self._font_prompt = pygame.font.Font(None, 40)
+        self._font_title  = fonts.load(72)
+        self._font_sub    = fonts.load(48)
+        self._font_body   = fonts.load(32)
+        self._font_prompt = fonts.load(40)
 
     def _setup_overlay(self) -> None:
         w, h = 820, 310
@@ -67,6 +67,10 @@ class StartScreen:
         self._overlay_rect = self._overlay.get_rect(
             center=(config.SCREEN_WIDTH // 2, config.SCREEN_HEIGHT // 2 + 30)
         )
+        # Center the blurb + controls block inside the panel.
+        self._body_line_h = self._font_body.get_linesize()
+        block_h = self._body_line_h * (len(_BLURB) + len(_CONTROLS)) + 10
+        self._text_top = self._overlay_rect.top + (h - block_h) // 2
 
     # ------------------------------------------------------------------
     def handle_event(self, event: pygame.event.Event) -> None:
@@ -94,18 +98,17 @@ class StartScreen:
         self._blit_centered(self._font_title,  _TITLE_1, config.BROWN,      y=80)
         self._blit_centered(self._font_sub,    _TITLE_2, config.BROWN,      y=148)
 
-        # Blurb.
-        y = 220
+        # Blurb + controls — vertically centered inside the overlay panel.
+        y = self._text_top
         for line in _BLURB:
             self._blit_centered(self._font_body, line, config.WHITE, y=y)
-            y += 34
+            y += self._body_line_h
 
-        # Controls.
-        y += 10
+        y += 10  # gap between blurb and controls
         for line in _CONTROLS:
             color = config.WHITE if not line.startswith("  ") else (200, 200, 200)
             self._blit_centered(self._font_body, line, color, y=y)
-            y += 32
+            y += self._body_line_h
 
         # Prompt.
         self._blit_centered(self._font_prompt, _PROMPT, config.GREEN, y=630)

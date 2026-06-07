@@ -15,7 +15,7 @@ import random
 
 import pygame
 
-from game import assets, config
+from game import assets, config, fonts
 from game.entities import NPC, Obstacle, Player, Poo, PowerUp
 from game.levels import LEVELS
 from game.state_machine import GameState
@@ -31,7 +31,7 @@ class PlayScreen:
         self.score: int = 0
         self.level: int = 1
 
-        self._font_hud = pygame.font.Font(None, 40)
+        self._font_hud = fonts.load(40)
 
         self._play_bounds = pygame.Rect(
             0, _HUD_H, config.SCREEN_WIDTH, config.SCREEN_HEIGHT - _HUD_H

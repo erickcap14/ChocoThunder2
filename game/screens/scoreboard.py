@@ -8,7 +8,7 @@ Two phases:
 from __future__ import annotations
 
 import pygame
-from game import config, scores
+from game import config, fonts, scores
 from game.state_machine import GameState
 
 
@@ -27,10 +27,10 @@ class ScoreboardScreen:
 
     # ------------------------------------------------------------------
     def _setup_fonts(self) -> None:
-        self._font_title  = pygame.font.Font(None, 60)
-        self._font_name   = pygame.font.Font(None, 48)
-        self._font_row    = pygame.font.Font(None, 36)
-        self._font_prompt = pygame.font.Font(None, 36)
+        self._font_title  = fonts.load(60)
+        self._font_name   = fonts.load(48)
+        self._font_row    = fonts.load(36)
+        self._font_prompt = fonts.load(36)
 
     # ------------------------------------------------------------------
     def handle_event(self, event: pygame.event.Event) -> None:

@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import pygame
 
-from game import config
+from game import config, fonts
 from game.levels import LEVELS
 from game.state_machine import GameState
 
@@ -36,10 +36,10 @@ class TransitionScreen:
 
     # ------------------------------------------------------------------
     def _setup_fonts(self) -> None:
-        self._font_title  = pygame.font.Font(None, 72)
-        self._font_sub    = pygame.font.Font(None, 48)
-        self._font_score  = pygame.font.Font(None, 36)
-        self._font_prompt = pygame.font.Font(None, 40)
+        self._font_title  = fonts.load(72)
+        self._font_sub    = fonts.load(48)
+        self._font_score  = fonts.load(36)
+        self._font_prompt = fonts.load(40)
 
     # ------------------------------------------------------------------
     def handle_event(self, event: pygame.event.Event) -> None:

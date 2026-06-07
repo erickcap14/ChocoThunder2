@@ -62,6 +62,16 @@ These are **not** runtime dependencies. They live in `requirements-build.txt` (n
 
 ## 4. Asset Provenance
 
+### 4a. Fonts
+
+| Font | Version | License | Source | Path |
+|------|---------|---------|--------|------|
+| Alfa Slab One | v21 | OFL-1.1 (SIL Open Font License) | Google Fonts / fonts.gstatic.com | `assets/fonts/AlfaSlabOne-Regular.ttf` |
+
+The OFL-1.1 permits use, embedding, and redistribution in applications without fee, provided the font is not sold by itself.
+
+### 4b. Sprites, Maps, Music & SFX
+
 All game assets (sprites, spritesheets, maps, music, SFX) are reused unchanged from the original Chocolate Thunder CS3021 class project. They are stored in `assets/` (normalized lowercase tree). The original folder (`../ChocolateThunder/`) is never modified.
 
 > Licensing of these assets follows the original course project's terms. They are not redistributed publicly and are used solely for this private rebuild.
