@@ -22,6 +22,14 @@ from game.state_machine import GameState
 
 _HUD_H = 50  # px reserved at the top for score + timer
 
+_HELP_LINES = (
+    "Controls",
+    "Click anywhere  —  move Sally",
+    "Space Bar        —  leave a chocolate surprise",
+    "Eat a cake       —  become invincible (bonus points!)",
+    "Dodge the tenants  —  they'll send Sally to the farm!",
+)
+
 
 class PlayScreen:
     def __init__(self, screen: pygame.Surface, state_machine, audio):
@@ -31,11 +39,22 @@ class PlayScreen:
         self.score: int = 0
         self.level: int = 1
 
-        self._font_hud = fonts.load(40)
+        self._font_hud  = fonts.load(40)
+        self._font_help = fonts.load(28)
 
         self._play_bounds = pygame.Rect(
             0, _HUD_H, config.SCREEN_WIDTH, config.SCREEN_HEIGHT - _HUD_H
         )
+
+        # Hover-For-Help: button rect sits in the centre of the HUD bar.
+        help_w, help_h = 160, 34
+        self._help_btn = pygame.Rect(
+            (config.SCREEN_WIDTH - help_w) // 2,
+            (_HUD_H - help_h) // 2,
+            help_w,
+            help_h,
+        )
+        self._help_visible: bool = False
 
         self._build_level(self.level)
 
@@ -120,10 +139,13 @@ class PlayScreen:
     # ------------------------------------------------------------------
 
     def handle_event(self, event: pygame.event.Event) -> None:
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            self._player.set_target(event.pos)
+        if event.type == pygame.MOUSEMOTION:
+            self._help_visible = self._help_btn.collidepoint(event.pos)
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if not self._help_visible:
+                self._player.set_target(event.pos)
         elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-            if self._poo_cooldown_remaining <= 0.0:
+            if not self._help_visible and self._poo_cooldown_remaining <= 0.0:
                 self._place_poo()
 
     def _place_poo(self) -> None:
@@ -134,6 +156,13 @@ class PlayScreen:
         self._poo_cooldown_remaining = config.POO_COOLDOWN_SECONDS
 
     def update(self, dt: float) -> None:
+        if self._help_visible:
+            # Freeze game logic but keep sprites cycling their walk frames.
+            self._player.animate(dt)
+            for npc in self._npcs:
+                npc.animate(dt)
+            return
+
         self._poo_cooldown_remaining = max(0.0, self._poo_cooldown_remaining - dt)
         self._level_time_remaining -= dt
 
@@ -198,6 +227,16 @@ class PlayScreen:
              (_HUD_H - timer_surf.get_height()) // 2),
         )
 
+        # Hover-For-Help button in the HUD centre.
+        btn_color = (80, 80, 180) if self._help_visible else (50, 50, 120)
+        pygame.draw.rect(self.screen, btn_color, self._help_btn, border_radius=6)
+        pygame.draw.rect(self.screen, config.WHITE, self._help_btn, width=1, border_radius=6)
+        lbl = self._font_help.render("? Hover for Help", True, config.WHITE)
+        self.screen.blit(
+            lbl,
+            lbl.get_rect(center=self._help_btn.center),
+        )
+
         if self._player.is_invincible:
             inv_surf = self._font_hud.render("INVINCIBLE!", True, config.GREEN)
             self.screen.blit(
@@ -205,3 +244,31 @@ class PlayScreen:
                 ((config.SCREEN_WIDTH - inv_surf.get_width()) // 2,
                  (_HUD_H - inv_surf.get_height()) // 2),
             )
+
+        if self._help_visible:
+            self._draw_help_overlay()
+
+    def _draw_help_overlay(self) -> None:
+        line_h = self._font_help.get_linesize()
+        pad = 30
+        panel_w = 680
+        panel_h = line_h * len(_HELP_LINES) + pad * 2 + 10
+        panel = pygame.Surface((panel_w, panel_h), pygame.SRCALPHA)
+        panel.fill((10, 10, 30, 220))
+        panel_rect = panel.get_rect(
+            center=(config.SCREEN_WIDTH // 2, config.SCREEN_HEIGHT // 2 + 30)
+        )
+        self.screen.blit(panel, panel_rect)
+
+        # Border
+        pygame.draw.rect(self.screen, config.WHITE, panel_rect, width=2, border_radius=8)
+
+        y = panel_rect.top + pad
+        for i, line in enumerate(_HELP_LINES):
+            if i == 0:
+                surf = self._font_help.render(line, True, (255, 220, 60))
+            else:
+                surf = self._font_help.render(line, True, config.WHITE)
+            rect = surf.get_rect(centerx=config.SCREEN_WIDTH // 2, top=y)
+            self.screen.blit(surf, rect)
+            y += line_h + (6 if i == 0 else 2)

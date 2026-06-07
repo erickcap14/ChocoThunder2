@@ -55,12 +55,25 @@ class App:
             from game.screens.start import StartScreen
             return StartScreen(self.screen, self.sm, self.audio)
 
+        if state == GameState.PRELEVEL:
+            from game.screens.prelevel import PreLevelScreen
+            from game.screens.transition import TransitionScreen
+            if isinstance(prev, TransitionScreen):
+                level, score = prev.level + 1, prev.score
+            else:
+                level = getattr(prev, "level", 1)
+                score = getattr(prev, "score", 0)
+            return PreLevelScreen(self.screen, self.sm, self.audio, level=level, score=score)
+
         if state == GameState.RUNNING:
             from game.screens.play import PlayScreen
+            from game.screens.prelevel import PreLevelScreen
             ps = PlayScreen(self.screen, self.sm, self.audio)
             try:
                 from game.screens.transition import TransitionScreen
-                if isinstance(prev, TransitionScreen):
+                if isinstance(prev, PreLevelScreen):
+                    ps.resume(prev.level, prev.score)
+                elif isinstance(prev, TransitionScreen):
                     ps.resume(prev.level + 1, prev.score)
             except ImportError:
                 pass

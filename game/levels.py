@@ -16,7 +16,8 @@ class LevelSpec:
     npcs: List[str]           # character dirs under assets/npc/
     obstacle_room: str        # subdir under assets/obstacles/
     music: str                # filename under assets/sounds/music/
-    transition_subtitle: str  # punny subtitle for TransitionScreen
+    transition_subtitle: str  # punny subtitle for post-level TransitionScreen
+    intro_subtitle: str       # teaser shown on pre-level PreLevelScreen
 
 
 LEVELS: List[LevelSpec] = [
@@ -27,6 +28,7 @@ LEVELS: List[LevelSpec] = [
         obstacle_room="genericroom",
         music="A1-Thunderstruck_01.mp3",
         transition_subtitle="Working Out A Big One",
+        intro_subtitle="One Tenant. One Dog. Infinite Regrets.",
     ),
     LevelSpec(
         name="Level 2",
@@ -35,6 +37,7 @@ LEVELS: List[LevelSpec] = [
         obstacle_room="gym",
         music="05 I Wanna Rock.mp3",
         transition_subtitle="Sem-Poo-Ku",
+        intro_subtitle="Double the Tenants. Double the Drama.",
     ),
     LevelSpec(
         name="Level 3",
@@ -43,6 +46,7 @@ LEVELS: List[LevelSpec] = [
         obstacle_room="japaneseroom",
         music="14 Angel.mp3",
         transition_subtitle="The Final Defecation",
+        intro_subtitle="Three's a Crowd. And a Smell.",
     ),
     LevelSpec(
         name="Level 4",
@@ -51,5 +55,6 @@ LEVELS: List[LevelSpec] = [
         obstacle_room="genericroom",
         music="A1-Thunderstruck_01.mp3",
         transition_subtitle="Double Down Dirty Dog",
+        intro_subtitle="The Grand Finale. Make It Count.",
     ),
 ]

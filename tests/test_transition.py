@@ -43,27 +43,27 @@ def test_transition_initializes(pygame_env):
 
 
 @pytest.mark.log_meta(phase="phase_4", subtask="4.1", action="enter advances level 1")
-def test_enter_advances_to_running_on_level1(pygame_env):
-    """ENTER on level 1 transitions to RUNNING (more levels remain)."""
+def test_enter_advances_to_prelevel_on_level1(pygame_env):
+    """ENTER on level 1 transitions to PRELEVEL (more levels remain)."""
     sm = StateMachine(GameState.TRANSITION)
     screen = TransitionScreen(pygame_env, sm, _FakeAudio(), level=1, score=50)
 
     event = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_RETURN, mod=0, unicode="\r")
     screen.handle_event(event)
 
-    assert sm.state is GameState.RUNNING
+    assert sm.state is GameState.PRELEVEL
 
 
 @pytest.mark.log_meta(phase="phase_4", subtask="4.1", action="enter advances level 2")
-def test_enter_advances_to_running_on_level2(pygame_env):
-    """ENTER on level 2 transitions to RUNNING (one level still remains)."""
+def test_enter_advances_to_prelevel_on_level2(pygame_env):
+    """ENTER on level 2 transitions to PRELEVEL (one level still remains)."""
     sm = StateMachine(GameState.TRANSITION)
     screen = TransitionScreen(pygame_env, sm, _FakeAudio(), level=2, score=200)
 
     event = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_RETURN, mod=0, unicode="\r")
     screen.handle_event(event)
 
-    assert sm.state is GameState.RUNNING
+    assert sm.state is GameState.PRELEVEL
 
 
 @pytest.mark.log_meta(phase="phase_4", subtask="4.1", action="enter goes to end on final level")

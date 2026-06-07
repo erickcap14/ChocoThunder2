@@ -10,7 +10,7 @@ import pytest
 import pygame
 
 from game.screens.start import StartScreen
-from game.state_machine import GameState, StateMachine
+from game.state_machine import GameState, StateMachine  # noqa: F401 (PRELEVEL used in test)
 
 
 # Shared fake objects --------------------------------------------------------
@@ -44,8 +44,8 @@ def test_start_initializes(pygame_env):
 
 
 @pytest.mark.log_meta(phase="phase_2", subtask="2.2", action="space transitions")
-def test_space_transitions_to_running(pygame_env):
-    """SPACE key event causes the state machine to transition to RUNNING."""
+def test_space_transitions_to_prelevel(pygame_env):
+    """SPACE key event causes the state machine to transition to PRELEVEL."""
     sm = StateMachine(GameState.START)
     audio = _FakeAudio()
     screen = StartScreen(pygame_env, sm, audio)
@@ -53,7 +53,7 @@ def test_space_transitions_to_running(pygame_env):
     event = pygame.event.Event(pygame.KEYDOWN, key=pygame.K_SPACE, mod=0, unicode=" ")
     screen.handle_event(event)
 
-    assert sm.state is GameState.RUNNING
+    assert sm.state is GameState.PRELEVEL
     assert audio.music_stopped is True
 
 

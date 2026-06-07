@@ -12,6 +12,7 @@ from enum import Enum
 
 class GameState(Enum):
     START = "START"
+    PRELEVEL = "PRELEVEL"
     TRANSITION = "TRANSITION"
     RUNNING = "RUNNING"
     END = "END"

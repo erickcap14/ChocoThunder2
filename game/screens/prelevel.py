@@ -1,9 +1,7 @@
-"""TransitionScreen — black card shown between levels.
+"""PreLevelScreen — black intro card shown before each level begins.
 
-Displays the just-completed level name, a punny subtitle, the accumulated
-score, and a prompt to continue.  On Enter:
-  - level < _MAX_LEVELS  → GameState.RUNNING  (App builds next PlayScreen)
-  - level >= _MAX_LEVELS → GameState.END       (App builds EndScreen with win=True)
+Displays the upcoming level name, a punny intro teaser, and a prompt to
+continue.  On Enter → GameState.RUNNING (App builds the PlayScreen).
 """
 
 from __future__ import annotations
@@ -14,10 +12,10 @@ from game import config, fonts
 from game.levels import LEVELS
 from game.state_machine import GameState
 
-_PROMPT = "Press Enter to Continue"
+_PROMPT = "Press Enter to Begin"
 
 
-class TransitionScreen:
+class PreLevelScreen:
     def __init__(
         self,
         screen: pygame.Surface,
@@ -29,8 +27,8 @@ class TransitionScreen:
         self.screen = screen
         self.sm = state_machine
         self.audio = audio
-        self.level = level    # the just-completed level number
-        self.score = score    # accumulated score so far
+        self.level = level    # the level about to start
+        self.score = score    # accumulated score carried in
 
         self._setup_fonts()
 
@@ -44,10 +42,7 @@ class TransitionScreen:
     # ------------------------------------------------------------------
     def handle_event(self, event: pygame.event.Event) -> None:
         if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-            if self.level >= len(LEVELS):
-                self.sm.force_state(GameState.END)
-            else:
-                self.sm.force_state(GameState.PRELEVEL)
+            self.sm.force_state(GameState.RUNNING)
 
     def update(self, dt: float) -> None:  # noqa: ARG002
         pass
@@ -55,23 +50,25 @@ class TransitionScreen:
     def draw(self) -> None:
         self.screen.fill(config.BLACK)
 
-        subtitle = LEVELS[self.level - 1].transition_subtitle if 1 <= self.level <= len(LEVELS) else ""
+        idx = max(0, min(self.level - 1, len(LEVELS) - 1))
+        spec = LEVELS[idx]
 
         fonts.blit_outlined(
-            self.screen, self._font_title, f"Level {self.level} Complete!", y=220
+            self.screen, self._font_title, spec.name, y=220
         )
         self._blit_centered(
             self._font_sub,
-            subtitle,
+            spec.intro_subtitle,
             config.WHITE,
             y=310,
         )
-        self._blit_centered(
-            self._font_score,
-            f"Score: {self.score}",
-            config.WHITE,
-            y=385,
-        )
+        if self.score > 0:
+            self._blit_centered(
+                self._font_score,
+                f"Score so far: {self.score}",
+                config.WHITE,
+                y=385,
+            )
         self._blit_centered(
             self._font_prompt,
             _PROMPT,

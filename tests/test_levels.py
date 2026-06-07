@@ -82,7 +82,7 @@ def test_levels_manifest_has_exactly_four():
 @pytest.mark.log_meta(phase="phase_5", subtask="5.3", action="all string fields non-empty")
 def test_all_string_fields_are_non_empty():
     """Every string field on every LevelSpec is a non-empty string."""
-    string_fields = ("name", "map_image", "obstacle_room", "music", "transition_subtitle")
+    string_fields = ("name", "map_image", "obstacle_room", "music", "transition_subtitle", "intro_subtitle")
     for spec in LEVELS:
         for field in string_fields:
             value = getattr(spec, field)

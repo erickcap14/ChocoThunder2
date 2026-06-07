@@ -76,7 +76,7 @@ class StartScreen:
     def handle_event(self, event: pygame.event.Event) -> None:
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
             self.audio.stop_music()
-            self.sm.force_state(GameState.RUNNING)
+            self.sm.force_state(GameState.PRELEVEL)
 
     def update(self, dt: float) -> None:
         self._bg_x -= _SCROLL_SPEED * dt
