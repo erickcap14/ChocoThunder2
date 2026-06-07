@@ -10,6 +10,8 @@ All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
   - `←`/`→` arrow keys navigate backward/forward; state-machine transitions from screens are blocked.
   - Play screens: sprites animate in place (no movement), timer replaced with "NO TIMER" in amber.
   - Bottom bar shows `TEST MODE | X / 16: Screen Label`; arrow indicators at mid-left/mid-right.
+- `run_test.sh` launcher (mirrors `run.sh`): activates `.venv` then runs `main.py --test`.
+  Pairs with the local `ct2_test` zsh alias.
 - `GameState.PRELEVEL` + `PreLevelScreen` (`game/screens/prelevel.py`): black intro card shown
   **before** each level starts (level name + punny intro teaser + "Press Enter to Begin").
   - Level 1 intro fires from the Start screen (SPACE → PRELEVEL, not RUNNING).
