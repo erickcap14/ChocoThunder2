@@ -19,9 +19,9 @@ All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
   pixellab set adds the T-rex.
 - Provenance (character IDs) recorded in `sbom.md §4c`.
 - **Realistic character proportions**: decoupled drawn size from the collision hitbox —
-  `PLAYER_RENDER_SIZE` (108) and `NPC_RENDER_SIZE` (144) drive the sprite while
+  `PLAYER_RENDER_SIZE` (115) and `NPC_RENDER_SIZE` (144) drive the sprite while
   `PLAYER_SIZE`/`NPC_SIZE` remain the hitboxes (gameplay feel unchanged). Sally (dog) is
-  3/4 the NPC size; tenants now read human-height against the furniture. Affects both art sets.
+  4/5 the NPC size; tenants now read human-height against the furniture. Affects both art sets.
 
 ### Verified
 - 125 tests pass (original mode); in-engine render of all 4 levels under `CT2_ART_SET=pixellab`
