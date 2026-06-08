@@ -78,6 +78,30 @@ def test_pixellab_empty_dir_falls_back(monkeypatch, tmp_path):
     assert assets.player_dir() == config.ASSETS / "characters"
 
 
+def test_npc_available_requires_all_directions(monkeypatch, tmp_path):
+    """npc_available is True only when every direction has frames in the active set.
+
+    Guards the char4 pattern: a tenant listed in level data but absent from the active
+    art set must report unavailable so PlayScreen skips it instead of crashing.
+    """
+    monkeypatch.setattr(config, "ART_SET", "pixellab")
+    monkeypatch.setattr(config, "PIXELLAB", tmp_path)
+
+    # No art anywhere for this tenant -> unavailable (falls back to a missing assets/ dir).
+    assert assets.npc_available("char4") is False
+
+    # Plant only 3 of 4 directions -> still unavailable (loader would raise on 'up').
+    for d in ("down", "left", "right"):
+        (tmp_path / "npc" / "char4" / d).mkdir(parents=True)
+        (tmp_path / "npc" / "char4" / d / "0.png").write_bytes(b"")
+    assert assets.npc_available("char4") is False
+
+    # Complete all four directions -> available.
+    (tmp_path / "npc" / "char4" / "up").mkdir(parents=True)
+    (tmp_path / "npc" / "char4" / "up" / "0.png").write_bytes(b"")
+    assert assets.npc_available("char4") is True
+
+
 def test_fonts_music_sfx_never_move(monkeypatch, tmp_path):
     """Fonts/music/sfx stay on assets/ regardless of ART_SET (PixelLab is art only)."""
     monkeypatch.setattr(config, "ART_SET", "pixellab")

@@ -2,6 +2,33 @@
 
 All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 
+## [Unreleased] — Artwork Upgrade (PixelLab): characters shipped (T131)
+
+### Added
+- **Upgraded character spritesheets** (4-direction, 4-frame walk cycles, low top-down /
+  selective outline / detailed shading): **Sally** the player at `pixellab/characters/`
+  (now a cute white **terrier** via PixelLab's quadruped dog template), and tenant NPCs at
+  `pixellab/npc/char{1..4}/` — char1 casual man, char2 businessman, char3 older man, and
+  **char4 a green T-rex** (a bonus tenant on Level 4). Selected under `CT2_ART_SET=pixellab`,
+  per-character fallback to `assets/` otherwise.
+- `scripts/fetch_character.py` — dev tool: downloads a PixelLab character's bulk zip and writes
+  the walk frames into the game's `down/left/right/up` layout (maps south/north/east/west).
+- **char4 (T-rex) wiring** — added to Level 4's `npcs` in `game/levels.py`; `game/assets.py`
+  gains `npc_available()` and `PlayScreen` skips tenants with no art in the active set, so the
+  **original art set is unchanged** (Level 4 still shows char2+char3, no crash) while the
+  pixellab set adds the T-rex.
+- Provenance (character IDs) recorded in `sbom.md §4c`.
+
+### Verified
+- 125 tests pass (original mode); in-engine render of all 4 levels under `CT2_ART_SET=pixellab`
+  shows Sally + tenants walking, Level 4 includes the T-rex
+  (`testscreenshots/pixellab_chars_level{1..4}.png`).
+
+### Beads
+- `art_characters` (`ChocoThunder2-hy3` / T131) **closed**.
+
+---
+
 ## [Unreleased] — Artwork Upgrade (PixelLab): backgrounds shipped (T131)
 
 ### Added

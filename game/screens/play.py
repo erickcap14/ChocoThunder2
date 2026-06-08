@@ -89,6 +89,10 @@ class PlayScreen:
 
         self._npcs = pygame.sprite.Group()
         for char in spec.npcs:
+            # Skip tenants with no art in the active set (e.g. char4 exists only in
+            # the pixellab set) so the original art set stays unchanged and never raises.
+            if not assets.npc_available(char):
+                continue
             self._npcs.add(NPC(char, self._random_pos(), self._play_bounds))
 
         self._poos: pygame.sprite.Group = pygame.sprite.Group()

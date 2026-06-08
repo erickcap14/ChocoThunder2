@@ -100,6 +100,17 @@ L4 backyard `7a2d7116-5e0a-4b20-bb06-1d3cab0837ab`. Decor objects generated via 
 (object IDs recorded per level in `pixellab/_src/level*/manifest.json` git history; PixelLab map
 objects auto-expire after 8h, so the committed PNGs are the durable artifact).
 
+**Generated to date (T131 `art_characters`):** directional walk-cycle spritesheets (low top-down,
+selective outline, detailed shading, 4 dirs × 4 frames) at `pixellab/characters/` (Sally) and
+`pixellab/npc/char{1..4}/`, fetched via `scripts/fetch_character.py` (maps PixelLab
+south/north/east/west → game down/up/right/left). PixelLab character IDs (re-fetchable via
+`get_character`): Sally white terrier `11093d1b-d1c2-4d4d-a84a-61b3179a2cc7` (quadruped/dog);
+char1 casual man `0a5b2a1a-76b4-439d-af85-27fd37cde5d4`; char2 businessman
+`2cba1c7a-90a2-4ad1-927f-b20172652ffc`; char3 older man `c6ba5279-9d1e-4ed8-8d9f-dcb2e9e36f61`;
+char4 T-rex `96ada53a-044d-41dd-a7c1-075e17f0623a`. char4 is a pixellab-only bonus tenant on
+Level 4 — `game/levels.py` lists it but `PlayScreen` skips tenants with no art in the active set
+(`assets.npc_available`), so the original set is unchanged.
+
 ---
 
 ## 5. Documentation & Resources

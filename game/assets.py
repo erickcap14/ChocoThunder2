@@ -100,6 +100,16 @@ def npc_dir(char: str) -> Path:
     return _art("npc", char)
 
 
+def npc_available(char: str) -> bool:
+    """True if the active art set has loadable frames for every direction of an NPC.
+
+    Lets level data list a tenant (e.g. char4, which exists only in the pixellab set)
+    without crashing the original set, where PlayScreen skips unavailable tenants.
+    """
+    base = npc_dir(char)
+    return all(any((base / d).glob("*.png")) for d in _DIRECTIONS)
+
+
 def obstacle_dir(room: str) -> Path:
     return _art("obstacles", room)
 
