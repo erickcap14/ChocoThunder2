@@ -70,6 +70,14 @@ Read and internalize the full project context:
 - Verify environment files exist (e.g., `.env.local`, `.env`)
 - Note if any environment variables appear to be missing based on example files
 
+> **PixelLab MCP (Artwork Upgrade phase, Phase 8):** The hosted PixelLab MCP is wired in the
+> committed `.mcp.json` via `${PIXELLAB_API_KEY}`. To use the `pixellab__*` art-generation tools
+> you must, **before launching Claude Code**: put your token in the git-ignored `.env`
+> (`PIXELLAB_API_KEY=...`), `set -a; source .env; set +a`, then start `claude` and approve the
+> `pixellab` server. Confirm with `claude mcp list` → `pixellab … ✓ Connected`. A new/restarted
+> session is required — the tools are not available until then. **Hard rule (saved via
+> `bd remember`): before generating any art, agree the visual direction with the user first.**
+
 ### 5. Present Options
 After gathering context, ask the user:
 

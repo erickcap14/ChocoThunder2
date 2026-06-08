@@ -2,6 +2,30 @@
 
 All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 
+## [Unreleased] — Artwork Upgrade (PixelLab): resolver foundation + MCP wiring (T130)
+
+### Added
+- **`ART_SET` resolver foundation** (`game/config.py`): `PIXELLAB` path, `ART_SET`
+  (env `CT2_ART_SET`, default `"original"`), and `art_root()`.
+- **Per-asset fallback resolver** (`game/assets.py` `_art()`): routes the 7 image accessors
+  (`player_dir`, `npc_dir`, `obstacle_dir`, `powerups_dir`, `surprises_dir`, `map_image`,
+  `endscreen`) through `art_root()`, falling back to `assets/` when a file is missing or a
+  pixellab dir is empty of PNGs. Fonts/music/sfx stay pinned to `assets/`. `levels.py` data
+  unchanged (comment-only).
+- **`pixellab/` tree** scaffolded (mirrors `assets/` image subdirs, `.gitkeep`) + README
+  (tool→asset map, connect command, confirm-before-generate reminder).
+- **PixelLab MCP wiring**: committed `.mcp.json` connects the hosted HTTP MCP
+  (`https://api.pixellab.ai/mcp`) via `${PIXELLAB_API_KEY}` env expansion; `.env.example` added;
+  `.env` git-ignored (token never committed).
+- **`tests/test_assets_artset.py`**: 6 hermetic tests (original parity, empty/missing fallback,
+  planted-asset resolution, fonts/audio pinned). Suite now **125 passing**.
+
+### Beads
+- `art_pipeline_foundation` (`ChocoThunder2-hvu` / T130) **closed**; unblocks `art_backgrounds`
+  (`ChocoThunder2-bez` / T131).
+
+---
+
 ## [Unreleased] — Artwork Upgrade (PixelLab) phase planned
 
 ### Added (docs + backlog only — no code yet)
