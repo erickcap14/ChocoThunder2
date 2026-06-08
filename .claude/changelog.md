@@ -2,6 +2,29 @@
 
 All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 
+## [Unreleased] — Artwork Upgrade (PixelLab): backgrounds in progress (T131)
+
+### Added
+- `scripts/compose_backgrounds.py` — dev/build tool: tiles a 32px PixelLab Wang floor
+  tileset across the 1184×736 canvas with proper corner autotiling + a centered accent
+  region. Uses pygame headless (no new deps).
+- `pixellab/_src/levelN/` — committed raw generated floor tilesets + metadata + composed
+  previews (provenance / resumable WIP).
+
+### In progress (not yet shipped)
+- **T131 `art_backgrounds`** (`ChocoThunder2-bez`): PixelLab MCP connected (Tier 2). Visual
+  direction agreed (top-down, fresh higher-detail; themes house/gym/japanese/backyard). v1
+  floors came out flat → v2 regenerated with strong texture prompts (clear plank grain, woven
+  tatami, grass+stone). Scope expanded per user to **floor + generated walls + curated ~6–8
+  perimeter decor objects** baked into each background (collidable furniture stays T133).
+- **Outstanding before approval**: tune L1 wood (less candy-orange, vary planks); remove gym
+  mat's orange transition-trim ring; reduce uniform vertical striping. Then generate walls +
+  decor, compose to `pixellab/maps/`, verify in-engine. `ART_SET` stays default `original`;
+  nothing written to `pixellab/maps/` yet, so the game is unchanged. Full state: `bd show
+  ChocoThunder2-bez`.
+
+---
+
 ## [Unreleased] — Artwork Upgrade (PixelLab): resolver foundation + MCP wiring (T130)
 
 ### Added
