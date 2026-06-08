@@ -70,33 +70,54 @@ def load_sound(path: str | Path) -> pygame.mixer.Sound:
     return pygame.mixer.Sound(str(path))
 
 
+# --- Art-set resolver ------------------------------------------------------
+def _has_pngs(d: Path) -> bool:
+    return any(d.rglob("*.png"))
+
+
+def _art(*parts: str) -> Path:
+    """Resolve an art path against the active ART_SET, with per-asset fallback to assets/.
+
+    File paths fall back when the file is missing; directory paths fall back when the dir
+    is missing OR contains no PNGs (so an empty/ungenerated pixellab/ dir uses originals).
+    """
+    candidate = config.art_root().joinpath(*parts)
+    if candidate.suffix:                      # a file (e.g. "level1.png")
+        return candidate if candidate.exists() else config.ASSETS.joinpath(*parts)
+    if candidate.is_dir() and _has_pngs(candidate):   # a non-empty dir
+        return candidate
+    return config.ASSETS.joinpath(*parts)
+
+
 # Convenience asset-path accessors (single source of truth for the layout).
+# Image accessors route through _art() (ART_SET-aware, per-asset fallback);
+# font/music/sfx stay on assets/ since PixelLab is art only.
 def player_dir() -> Path:
-    return config.ASSETS / "characters"
+    return _art("characters")
 
 
 def npc_dir(char: str) -> Path:
-    return config.ASSETS / "npc" / char
+    return _art("npc", char)
 
 
 def obstacle_dir(room: str) -> Path:
-    return config.ASSETS / "obstacles" / room
+    return _art("obstacles", room)
 
 
 def powerups_dir() -> Path:
-    return config.ASSETS / "powerups"
+    return _art("powerups")
 
 
 def surprises_dir(powered: bool) -> Path:
-    return config.ASSETS / "surprises" / ("powered" if powered else "unpowered")
+    return _art("surprises", "powered" if powered else "unpowered")
 
 
 def map_image(name: str) -> Path:
-    return config.ASSETS / "maps" / name
+    return _art("maps", name)
 
 
 def endscreen(name: str) -> Path:
-    return config.ASSETS / "endscreens" / name
+    return _art("endscreens", name)
 
 
 def music_path(name: str) -> Path:

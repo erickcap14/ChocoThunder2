@@ -12,9 +12,9 @@ from typing import List
 @dataclass(frozen=True)
 class LevelSpec:
     name: str
-    map_image: str            # filename under assets/maps/
-    npcs: List[str]           # character dirs under assets/npc/
-    obstacle_room: str        # subdir under assets/obstacles/
+    map_image: str            # filename under the active art root (assets/ or pixellab/) maps/
+    npcs: List[str]           # character dirs under the active art root (assets/ or pixellab/) npc/
+    obstacle_room: str        # subdir under the active art root (assets/ or pixellab/) obstacles/
     music: str                # filename under assets/sounds/music/
     transition_subtitle: str  # punny subtitle for post-level TransitionScreen
     intro_subtitle: str       # teaser shown on pre-level PreLevelScreen

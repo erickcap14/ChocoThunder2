@@ -5,13 +5,27 @@ and on-disk paths. Everything that the original game hard-coded across many
 files lives here so the rest of the codebase stays declarative.
 """
 
+import os
 from pathlib import Path
 
 # --- Paths -----------------------------------------------------------------
 ROOT = Path(__file__).resolve().parent.parent
 ASSETS = ROOT / "assets"
+PIXELLAB = ROOT / "pixellab"               # optional alternate art set
 IMPL = ROOT / ".implementations"           # IPC + logs (gitignored)
 SCREENSHOTS = ROOT / "testscreenshots"     # committed test screenshots
+
+# --- Art set ---------------------------------------------------------------
+# Selects which art tree image accessors resolve against. Originals are the
+# default and are never modified; pixellab/ is optional and per-asset
+# fallback (see game.assets._art) means a partial set transparently uses
+# originals for anything missing.
+ART_SET = os.getenv("CT2_ART_SET", "original")  # "original" | "pixellab"
+
+
+def art_root() -> Path:
+    """Active art root, read at call time so tests can monkeypatch ART_SET."""
+    return PIXELLAB if ART_SET == "pixellab" else ASSETS
 
 # IPC files used by the Game State MCP bridge
 STATE_FILE = IMPL / "game_state.json"

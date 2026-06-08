@@ -22,3 +22,7 @@ scores.txt
 .dolt/
 *.db
 .beads-credential-key
+
+# Secrets (PixelLab MCP token, etc.) — never commit
+.env
+.env.local
