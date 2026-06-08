@@ -41,8 +41,11 @@ CAPTION = "ChocolateThunder2: ElectricBoogaloo"
 # --- Gameplay tuning (ported from the original, now named) -----------------
 LEVEL_SECONDS = 60          # countdown per level
 PLAYER_SPEED = 5            # px/frame toward the click target
-PLAYER_SIZE = (40, 40)      # hitbox
+PLAYER_SIZE = (40, 40)      # Sally's hitbox (collision footprint — kept small/nimble)
+PLAYER_RENDER_SIZE = (96, 96)   # Sally drawn size (a dog ~2/3 of an NPC)
 NPC_SPEED = 2.2
+NPC_SIZE = (60, 60)         # tenant hitbox (catch box) — larger body than Sally
+NPC_RENDER_SIZE = (144, 144)    # tenant drawn size (a person, Sally is 2/3 of this)
 NPC_CHASE_RADIUS = 300      # start chasing within this distance
 NUM_OBSTACLES = 4
 OBSTACLE_SIZE = (100, 150)

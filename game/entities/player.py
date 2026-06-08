@@ -16,7 +16,7 @@ from game.sprites import DirectionalSprite
 
 class Player(DirectionalSprite):
     def __init__(self, pos):
-        frames = assets.load_directional_frames(assets.player_dir(), config.PLAYER_SIZE)
+        frames = assets.load_directional_frames(assets.player_dir(), config.PLAYER_RENDER_SIZE)
         super().__init__(frames, pos, hitbox_size=config.PLAYER_SIZE)
         self._target: pygame.Vector2 = pygame.Vector2(pos)
         self.is_invincible: bool = False

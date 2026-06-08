@@ -24,8 +24,8 @@ _CHASE = "chase"
 
 class NPC(DirectionalSprite):
     def __init__(self, char: str, pos, bounds: pygame.Rect):
-        frames = assets.load_directional_frames(assets.npc_dir(char), config.PLAYER_SIZE)
-        super().__init__(frames, pos, hitbox_size=config.PLAYER_SIZE)
+        frames = assets.load_directional_frames(assets.npc_dir(char), config.NPC_RENDER_SIZE)
+        super().__init__(frames, pos, hitbox_size=config.NPC_SIZE)
         self._bounds = bounds
         self._mode = _PATROL
         self._patrol_target: pygame.Vector2 = self._random_target()
