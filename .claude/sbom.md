@@ -89,6 +89,17 @@ All game assets (sprites, spritesheets, maps, music, SFX) are reused unchanged f
 > the original assets in §4b remain the canonical default. Confirm PixelLab's output-licensing
 > terms before any public distribution of the iOS build.
 
+**Generated to date (T131 `art_backgrounds`):** the 4 level backgrounds at `pixellab/maps/level{1..4}.png`
+(1184×736), each composed by `scripts/compose_level.py` from a 32px top-down Wang floor tileset + a
+procedural themed wall band + per-level perimeter decor objects (all baked-in, non-collidable;
+collidable furniture remains T133). Raw inputs + composition manifests are committed under
+`pixellab/_src/level{1..4}/` for provenance/resumability. v3 floor tileset IDs (re-downloadable via
+`get_topdown_tileset`): L1 house `0eda8992-8985-470d-8ec4-fa61a168cfb6`, L2 gym
+`0caa1ea8-dada-413c-a8e9-44cf955cc5a0`, L3 japanese `5ee48de7-6ca0-4212-8a7d-25c0e27347c0`,
+L4 backyard `7a2d7116-5e0a-4b20-bb06-1d3cab0837ab`. Decor objects generated via `create_map_object`
+(object IDs recorded per level in `pixellab/_src/level*/manifest.json` git history; PixelLab map
+objects auto-expire after 8h, so the committed PNGs are the durable artifact).
+
 ---
 
 ## 5. Documentation & Resources

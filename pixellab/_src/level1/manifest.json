@@ -1,0 +1,18 @@
+{
+  "accent": {"w": 14, "h": 9},
+  "wall": {"color": [205,196,178], "highlight": [228,221,205], "top_height": 88, "side_thickness": 16, "door_gap": {"x": 544, "w": 96}},
+  "decor": [
+    {"image": "decor/wall_sconce.png",    "x": 80,   "y": 16,  "scale": 1.17},
+    {"image": "decor/wall_sconce.png",    "x": 340,  "y": 16,  "scale": 1.17},
+    {"image": "decor/wall_sconce.png",    "x": 770,  "y": 16,  "scale": 1.17},
+    {"image": "decor/wall_sconce.png",    "x": 1040, "y": 16,  "scale": 1.17},
+    {"image": "decor/framed_painting.png","x": 183,  "y": 3,   "scale": 1.72},
+    {"image": "decor/wall_clock.png",     "x": 902,  "y": 12,  "scale": 1.33},
+    {"image": "decor/plant_pot.png",      "x": 16,   "y": 108, "scale": 1.33},
+    {"image": "decor/plant_pot.png",      "x": 1083, "y": 108, "scale": 1.33},
+    {"image": "decor/coat_rack.png",      "x": 12,   "y": 203, "scale": 1.2},
+    {"image": "decor/side_table.png",     "x": 16,   "y": 479, "scale": 1.56},
+    {"image": "decor/side_table.png",     "x": 1069, "y": 479, "scale": 1.56},
+    {"image": "decor/wood_stove.png",     "x": 16,   "y": 598, "scale": 1.25}
+  ]
+}

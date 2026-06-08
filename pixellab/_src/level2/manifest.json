@@ -1,0 +1,16 @@
+{
+  "accent": {"w": 14, "h": 9},
+  "wall": {"color": [150,156,162], "highlight": [182,188,194], "top_height": 88, "side_thickness": 16, "door_gap": {"x": 544, "w": 96}},
+  "decor": [
+    {"image": "decor/wall_mirror.png",             "x": 60,   "y": 6},
+    {"image": "decor/wall_clock.png",              "x": 560,  "y": 12,  "scale": 1.33},
+    {"image": "decor/gym_poster.png",              "x": 840,  "y": 2,   "scale": 1.05},
+    {"image": "decor/gym_poster.png",              "x": 980,  "y": 2,   "scale": 1.05},
+    {"image": "decor/dumbbell_rack.png",           "x": 16,   "y": 200},
+    {"image": "decor/treadmill.png",               "x": 16,   "y": 360, "scale": 1.61},
+    {"image": "decor/water_cooler.png",            "x": 1085, "y": 150, "scale": 1.69},
+    {"image": "decor/kettlebell_medicine_ball.png","x": 1090, "y": 360, "scale": 1.5},
+    {"image": "decor/kettlebell_medicine_ball.png","x": 20,   "y": 646, "scale": 1.5},
+    {"image": "decor/kettlebell_medicine_ball.png","x": 1092, "y": 646, "scale": 1.5}
+  ]
+}

@@ -2,26 +2,32 @@
 
 All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 
-## [Unreleased] — Artwork Upgrade (PixelLab): backgrounds in progress (T131)
+## [Unreleased] — Artwork Upgrade (PixelLab): backgrounds shipped (T131)
 
 ### Added
-- `scripts/compose_backgrounds.py` — dev/build tool: tiles a 32px PixelLab Wang floor
-  tileset across the 1184×736 canvas with proper corner autotiling + a centered accent
-  region. Uses pygame headless (no new deps).
-- `pixellab/_src/levelN/` — committed raw generated floor tilesets + metadata + composed
-  previews (provenance / resumable WIP).
+- **4 upgraded level backgrounds** at `pixellab/maps/level{1..4}.png` (1184×736): themed
+  top-down rooms — L1 house (oak + persian rug), L2 gym (rubber + blue mat), L3 japanese
+  (wood + tatami), L4 backyard (grass + flagstone). Each = a 32px PixelLab Wang floor tileset
+  + a procedural themed wall band + ~7 perimeter decor objects (wall-art on the back wall,
+  floor furniture along the edges), all baked-in and non-collidable. Selected at runtime via
+  `CT2_ART_SET=pixellab`; absent files fall back to `assets/maps/`. Collidable furniture stays
+  T133.
+- `scripts/compose_level.py` — dev/build compositor: floor (corner autotiling) + color-driven
+  wall band (top back wall, side/bottom baseboards, doorway gap) + decor blitted from a per-level
+  `manifest.json`. Headless pygame, no new deps. (Supersedes the floor-only
+  `scripts/compose_backgrounds.py`.)
+- `pixellab/_src/level{1..4}/` — committed raw floor tilesets + metadata + `decor/*.png` +
+  `manifest.json` (placement/scale) for provenance and resumability.
+- Provenance recorded in `sbom.md §4c` (v3 floor tileset IDs + decor approach).
 
-### In progress (not yet shipped)
-- **T131 `art_backgrounds`** (`ChocoThunder2-bez`): PixelLab MCP connected (Tier 2). Visual
-  direction agreed (top-down, fresh higher-detail; themes house/gym/japanese/backyard). v1
-  floors came out flat → v2 regenerated with strong texture prompts (clear plank grain, woven
-  tatami, grass+stone). Scope expanded per user to **floor + generated walls + curated ~6–8
-  perimeter decor objects** baked into each background (collidable furniture stays T133).
-- **Outstanding before approval**: tune L1 wood (less candy-orange, vary planks); remove gym
-  mat's orange transition-trim ring; reduce uniform vertical striping. Then generate walls +
-  decor, compose to `pixellab/maps/`, verify in-engine. `ART_SET` stays default `original`;
-  nothing written to `pixellab/maps/` yet, so the game is unchanged. Full state: `bd show
-  ChocoThunder2-bez`.
+### Verified
+- In-engine render of all 4 levels through the real `PlayScreen` code path with
+  `CT2_ART_SET=pixellab` (screenshots in `testscreenshots/pixellab_level{1..4}_verified.png`).
+  `ART_SET` default stays `original`, so normal play is unchanged.
+
+### Beads
+- `art_backgrounds` (`ChocoThunder2-bez` / T131) **closed**; unblocks the remaining four art
+  stories (characters, obstacles, transitions, start screen).
 
 ---
 

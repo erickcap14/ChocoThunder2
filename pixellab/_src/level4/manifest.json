@@ -1,0 +1,33 @@
+{
+  "accent": {"w": 14, "h": 9},
+  "wall": {"color": [122,90,58], "highlight": [152,118,82], "top_height": 84, "side_thickness": 16, "door_gap": {"x": 544, "w": 96}},
+  "decor": [
+    {"image": "decor/fence_section.png", "x": 16,   "y": 4},
+    {"image": "decor/fence_section.png", "x": 183,  "y": 4},
+    {"image": "decor/fence_section.png", "x": 350,  "y": 4},
+    {"image": "decor/fence_section.png", "x": 517,  "y": 4},
+    {"image": "decor/fence_section.png", "x": 684,  "y": 4},
+    {"image": "decor/fence_section.png", "x": 851,  "y": 4},
+    {"image": "decor/fence_section.png", "x": 1018, "y": 4},
+
+    {"image": "decor/potted_flowers.png","x": 100,  "y": 14},
+    {"image": "decor/potted_flowers.png","x": 357,  "y": 14},
+    {"image": "decor/potted_flowers.png","x": 634,  "y": 14},
+    {"image": "decor/potted_flowers.png","x": 940,  "y": 14},
+
+    {"image": "decor/leafy_tree.png",    "x": 16,   "y": 84},
+    {"image": "decor/leafy_tree.png",    "x": 1018, "y": 84},
+
+    {"image": "decor/hedge_shrub.png",   "x": 16,   "y": 258},
+    {"image": "decor/hedge_shrub.png",   "x": 1054, "y": 258},
+
+    {"image": "decor/flower_bed.png",    "x": 16,   "y": 396},
+    {"image": "decor/flower_bed.png",    "x": 1034, "y": 396},
+
+    {"image": "decor/bird_bath.png",     "x": 16,   "y": 490},
+    {"image": "decor/bird_bath.png",     "x": 1068, "y": 490},
+
+    {"image": "decor/garden_bench.png",  "x": 16,   "y": 644},
+    {"image": "decor/garden_bench.png",  "x": 1018, "y": 644}
+  ]
+}

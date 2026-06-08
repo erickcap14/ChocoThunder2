@@ -1,0 +1,20 @@
+{
+  "accent": {"w": 14, "h": 9},
+  "wall": {"color": [92,70,52], "highlight": [122,98,72], "top_height": 92, "side_thickness": 16, "door_gap": {"x": 544, "w": 96}},
+  "decor": [
+    {"image": "decor/shoji_screen_lg.png",    "x": 16,   "y": 0},
+    {"image": "decor/shoji_screen_lg.png",    "x": 216,  "y": 0},
+    {"image": "decor/shoji_screen_lg.png",    "x": 416,  "y": 0},
+    {"image": "decor/shoji_screen_lg.png",    "x": 616,  "y": 0},
+    {"image": "decor/shoji_screen_lg.png",    "x": 816,  "y": 0},
+    {"image": "decor/shoji_screen_lg.png",    "x": 1016, "y": 0},
+    {"image": "decor/kakemono_scroll_lg.png", "x": 130,  "y": 0},
+    {"image": "decor/kakemono_scroll_lg.png", "x": 530,  "y": 0},
+    {"image": "decor/kakemono_scroll_lg.png", "x": 930,  "y": 0},
+    {"image": "decor/bonsai_tree_lg.png",     "x": 16,   "y": 155},
+    {"image": "decor/stone_lantern_lg.png",   "x": 1078, "y": 155},
+    {"image": "decor/chabudai_table_lg.png",  "x": 200,  "y": 618},
+    {"image": "decor/kadomatsu_lg.png",       "x": 1093, "y": 490},
+    {"image": "decor/tsukubai_basin_lg.png",  "x": 16,   "y": 600}
+  ]
+}
