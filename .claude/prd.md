@@ -7,7 +7,7 @@ Purpose: This file defines what we are building and for whom, focusing on the pr
 > `../ChocolateThunder/`) is treated as **ground truth** for art, audio, and game feel —
 > every sprite, spritesheet, sound, and music track is reused unchanged. We keep what made
 > it fun, fix the bugs, delete the academic scaffolding, make levels easy to add, and wrap
-> it in an automated test harness so it can grow safely toward an iPad release.
+> it in an automated test harness so it can keep growing safely.
 
 ---
 
@@ -18,16 +18,15 @@ Purpose: This file defines what we are building and for whom, focusing on the pr
   house leaving "chocolate surprises" everywhere for points while dodging the tenants who
   will send her to "the farm" if they catch her.
 * **Who is this for?** Fans of light, silly arcade-style score-chasers; the original
-  authors and players who want a cleaner, less buggy, extensible version; and (eventually)
-  iPad players.
+  authors and players who want a cleaner, less buggy, extensible version.
 * **What this app will NOT do:**
   * No online/multiplayer — single-player, local only.
   * No accounts, ads, microtransactions, or network calls.
   * No new art style *by default* — it deliberately reuses the original's sprites and audio.
-    *(Exception: a pre-iOS-ship art-upgrade phase adds an **optional, toggle-selected**
+    *(Exception: an art-upgrade phase adds an **optional, toggle-selected**
     PixelLab-generated art set in `pixellab/`. The originals are never deleted and stay fully
-    available via the toggle; as of the transition-art milestone (Story 16) the `pixellab` set
-    is the runtime default. See Stories 13–17.)*
+    available via the toggle; as of Story 16 the `pixellab` set is the runtime default. See
+    Stories 13–17.)*
   * No level *editor* in-app (levels are added by developers via a data manifest).
 
 ---
@@ -64,11 +63,7 @@ repo, **Scribe owns beads writes** — run `/scribe` to create these.
 * **Story 11 — `headless_tests`:** As a developer, I want **pytest unit tests + MCP-roundtrip
   screenshot tests** for every screen so that changes are verified automatically and saved to
   `testscreenshots/`.
-* **Story 12 — `ios_packaging` (deferred):** As a product owner, I want the game to
-  **eventually ship to iPad** so that it reaches a touch audience. *(See roadmap; the riskiest,
-  most uncertain milestone.)*
-
-### Artwork Upgrade Phase (pre-iOS ship)
+### Artwork Upgrade Phase
 
 > A polished art set generated with the **PixelLab MCP** (https://www.pixellab.ai/mcp), stored
 > in a root-level **`pixellab/`** tree mirroring `assets/`, selected at runtime by an `ART_SET`
@@ -80,18 +75,17 @@ repo, **Scribe owns beads writes** — run `/scribe` to create these.
 
 * **Story 13 — `art_backgrounds`:** As a developer, I want **top-down tileset backgrounds
   generated via the PixelLab MCP into `pixellab/maps/`, selectable by an `ART_SET` config
-  toggle**, so that levels can ship upgraded backgrounds for the iOS build without deleting the
-  ground-truth originals. *(Establishes the `pixellab/` tree + toggle; provenance recorded in
-  `sbom.md`.)*
+  toggle**, so that levels have upgraded backgrounds without deleting the ground-truth originals.
+  *(Establishes the `pixellab/` tree + toggle; provenance recorded in `sbom.md`.)*
 * **Story 14 — `art_characters`:** As a player, I want **Sally and the tenant NPCs to use new
   PixelLab-generated directional spritesheets** (`pixellab/characters/`, `pixellab/npc/`) so
-  that the characters look polished on iOS, with the originals still available via the toggle.
+  that the characters look polished, with the originals still available via the toggle.
 * **Story 15 — `art_obstacles`:** As a player, I want **refreshed furniture/obstacle sprites**
   (`pixellab/obstacles/<room>/`) so that each room matches the upgraded look.
 * **Story 16 — `art_transitions`:** As a player, I want **upgraded transition-screen artwork**
   so that level intros feel premium instead of plain black cards.
 * **Story 17 — `art_startscreen`:** As a player, I want a **polished start/title screen** so
-  that the game's first impression meets iOS-store quality.
+  that the game's first impression feels premium.
 
 ---
 
@@ -150,10 +144,3 @@ repo, **Scribe owns beads writes** — run `/scribe` to create these.
 6. Dead code removed (unused `copy` imports, unused idle moveset, duplicated obstacle block,
    boilerplate dunders).
 
-## Appendix C — Roadmap to iPad (deferred, highest risk)
-
-Pure pygame can't run natively on iOS. The intended path, after the full test suite is green:
-1. Compile the game to WebAssembly with **pygbag** (keeps the Python/pygame code).
-2. Add a **touch-control layer** mapping tap→move and an on-screen button→poop.
-3. Wrap the web build as an iPad app via **PWA / Capacitor**.
-This milestone is exploratory and intentionally gated behind Phase 6 sign-off.
