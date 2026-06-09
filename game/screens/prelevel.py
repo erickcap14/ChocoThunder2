@@ -10,6 +10,7 @@ import pygame
 
 from game import config, fonts
 from game.levels import LEVELS
+from game.screens.transition import draw_backdrop
 from game.state_machine import GameState
 
 _PROMPT = "Press Enter to Begin"
@@ -48,7 +49,7 @@ class PreLevelScreen:
         pass
 
     def draw(self) -> None:
-        self.screen.fill(config.BLACK)
+        draw_backdrop(self.screen, self.level)
 
         idx = max(0, min(self.level - 1, len(LEVELS) - 1))
         spec = LEVELS[idx]

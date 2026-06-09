@@ -16,11 +16,12 @@ IMPL = ROOT / ".implementations"           # IPC + logs (gitignored)
 SCREENSHOTS = ROOT / "testscreenshots"     # committed test screenshots
 
 # --- Art set ---------------------------------------------------------------
-# Selects which art tree image accessors resolve against. Originals are the
-# default and are never modified; pixellab/ is optional and per-asset
-# fallback (see game.assets._art) means a partial set transparently uses
-# originals for anything missing.
-ART_SET = os.getenv("CT2_ART_SET", "original")  # "original" | "pixellab"
+# Selects which art tree image accessors resolve against. The upgraded pixellab/
+# set is the default (iOS-bound look); the ground-truth originals are never
+# modified and stay fully available via CT2_ART_SET=original. Per-asset fallback
+# (see game.assets._art) means anything missing from pixellab/ transparently uses
+# the original.
+ART_SET = os.getenv("CT2_ART_SET", "pixellab")  # "pixellab" | "original"
 
 
 def art_root() -> Path:
@@ -67,10 +68,14 @@ POO_COOLDOWN_SECONDS = 1.0      # min time between surprises
 SCORE_DEFAULT = 1               # points for a normal surprise
 SCORE_BONUS = 5                 # points for a surprise while invincible
 
-# Candidate obstacle placement — central band only, away from the perimeter
-# walls/decor baked into the room backgrounds (decor hugs the edges; centre stays clear).
-OBSTACLE_X = (430, 600, 770)
-OBSTACLE_Y = (250, 400, 550)
+# Candidate obstacle placement — a grid in the play area, inside the perimeter
+# walls/decor baked into the room backgrounds (decor hugs the edges). Obstacles are
+# chosen from these so they (a) clear the player's centre spawn and (b) stay spaced.
+OBSTACLE_X = (340, 470, 600, 730, 860)
+OBSTACLE_Y = (200, 330, 460, 560)
+OBSTACLE_PLAYER_CLEARANCE = 175   # min px from an obstacle centre to the player spawn
+OBSTACLE_MIN_SPACING = 240        # min px between two obstacle centres (manoeuvre room)
+NPC_SPAWN_CLEARANCE = 70          # min px gap from an NPC spawn to obstacles/player/other NPCs
 
 # --- Colours ---------------------------------------------------------------
 WHITE = (255, 255, 255)

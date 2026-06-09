@@ -11,6 +11,7 @@ MOUSEBUTTONDOWN != UI_BUTTON_PRESSED guard is gone.
 
 from __future__ import annotations
 
+import math
 import random
 
 import pygame
@@ -80,13 +81,12 @@ class PlayScreen:
 
         self._obstacles = pygame.sprite.Group()
         obs_folder = assets.obstacle_dir(spec.obstacle_room)
-        obs_images = sorted(obs_folder.glob("*.png"), key=lambda p: p.name)
-        positions = [(x, y) for x in config.OBSTACLE_X for y in config.OBSTACLE_Y]
-        random.shuffle(positions)
-        for i, img_path in enumerate(obs_images[: config.NUM_OBSTACLES]):
+        obs_images = sorted(obs_folder.glob("*.png"), key=lambda p: p.name)[: config.NUM_OBSTACLES]
+        positions = self._pick_obstacle_positions(len(obs_images), self._player.rect.center)
+        for img_path, pos in zip(obs_images, positions):
             box = config.OBSTACLE_RENDER_OVERRIDES.get(img_path.stem, config.OBSTACLE_RENDER_MAX)
             surf = assets.load_image_fit(str(img_path), box)
-            self._obstacles.add(Obstacle(surf, positions[i % len(positions)]))
+            self._obstacles.add(Obstacle(surf, pos))
 
         self._npcs = pygame.sprite.Group()
         for char in spec.npcs:
@@ -94,7 +94,7 @@ class PlayScreen:
             # the pixellab set) so the original art set stays unchanged and never raises.
             if not assets.npc_available(char):
                 continue
-            self._npcs.add(NPC(char, self._random_pos(), self._play_bounds))
+            self._npcs.add(NPC(char, self._npc_spawn_pos(), self._play_bounds))
 
         self._poos: pygame.sprite.Group = pygame.sprite.Group()
         self._powerups: pygame.sprite.Group = pygame.sprite.Group()
@@ -109,6 +109,53 @@ class PlayScreen:
         x = random.randint(self._play_bounds.left + 50, self._play_bounds.right - 50)
         y = random.randint(self._play_bounds.top + 50, self._play_bounds.bottom - 50)
         return (x, y)
+
+    def _pick_obstacle_positions(self, n: int, player_center) -> list[tuple[int, int]]:
+        """Choose ``n`` placement points that clear the player's centre spawn and stay
+        ``OBSTACLE_MIN_SPACING`` apart, so tenants/Sally have room to move. Retries a few
+        shuffles to reliably find a fully-spaced set before any best-effort fallback."""
+        cands = [
+            (x, y)
+            for x in config.OBSTACLE_X
+            for y in config.OBSTACLE_Y
+            if math.dist((x, y), player_center) >= config.OBSTACLE_PLAYER_CLEARANCE
+        ]
+        best: list[tuple[int, int]] = []
+        for _ in range(40):
+            random.shuffle(cands)
+            chosen: list[tuple[int, int]] = []
+            for pos in cands:
+                if all(math.dist(pos, c) >= config.OBSTACLE_MIN_SPACING for c in chosen):
+                    chosen.append(pos)
+                    if len(chosen) >= n:
+                        return chosen
+            if len(chosen) > len(best):
+                best = chosen
+        # Grid can't fit n fully-spaced points — pad the best attempt with leftovers.
+        for pos in cands:
+            if len(best) >= n:
+                break
+            if pos not in best:
+                best.append(pos)
+        return best[:n]
+
+    def _npc_spawn_pos(self) -> tuple[int, int]:
+        """Random spawn that isn't on the player, an obstacle, or another tenant."""
+        gap = config.NPC_SPAWN_CLEARANCE
+        player_center = self._player.rect.center
+        for _ in range(80):
+            pos = self._random_pos()
+            if math.dist(pos, player_center) < config.PLAYER_SIZE[0] + gap:
+                continue
+            rect = pygame.Rect(0, 0, *config.NPC_SIZE)
+            rect.center = pos
+            probe = rect.inflate(gap, gap)
+            if any(probe.colliderect(o.rect) for o in self._obstacles):
+                continue
+            if any(probe.colliderect(npc.rect) for npc in self._npcs):
+                continue
+            return pos
+        return self._random_pos()
 
     # ------------------------------------------------------------------
     # MCP poll handler methods (called by main.poll_mcp_command)

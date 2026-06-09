@@ -2,6 +2,40 @@
 
 All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 
+## [Unreleased] — Transition art (Story 16) + pixellab default + spawn fixes
+
+### Added
+- **Premium per-level transition/intro cards** (`art_transitions`, Story 16): each level's
+  `PreLevelScreen` (intro) and `TransitionScreen` (complete) now show a themed **3/4-view
+  illustrated scene with Sally** (living room / gym / Japanese room / backyard) instead of a
+  plain black card. One standalone Sally sprite is composited into every dog-less scene so she
+  is **identical across all levels**, then dimmed + vignetted with a text scrim so the (unchanged)
+  card font/colours stay readable. Wired via the `ART_SET` toggle — `original` keeps the plain
+  black cards. Art at `pixellab/transitions/level{1..4}.png`; `assets.transition_image()` +
+  `screens.transition.draw_backdrop()` load it with a black fallback.
+- `scripts/compose_transition.py` — compositor: scene + Sally (border flood-fill keys out
+  PixelLab's near-white bg) + vignette + scrims → 1200×720 card. Raw inputs + IDs under
+  `pixellab/_src/transitions/` (`manifest.json`).
+
+### Changed
+- **`CT2_ART_SET` now defaults to `pixellab`** (the iOS-bound look). The ground-truth `original`
+  set is untouched and still selectable via `CT2_ART_SET=original`. (Refines PRD Stories 13–17,
+  which described `original` as the default; see prd.md note.)
+
+### Fixed
+- **Obstacles no longer spawn on the player** and are **spaced apart** for manoeuvre room:
+  `PlayScreen._pick_obstacle_positions` chooses points ≥`OBSTACLE_PLAYER_CLEARANCE` from the
+  centre spawn and ≥`OBSTACLE_MIN_SPACING` apart (retries shuffles for a fully-spaced set).
+- **NPCs no longer spawn inside an obstacle / on the player / on each other**:
+  `PlayScreen._npc_spawn_pos` retries until the spawn is clear by `NPC_SPAWN_CLEARANCE`.
+  Verified: 400 builds (both art sets × 4 levels × 50 seeds) → 0 violations, min obstacle
+  spacing 260px.
+
+### Beads
+- `art_transitions` (`ChocoThunder2-2rm`) **closed**.
+
+---
+
 ## [Unreleased] — Artwork Upgrade (PixelLab): obstacles shipped (T133) + WASM follow-ups
 
 ### Added

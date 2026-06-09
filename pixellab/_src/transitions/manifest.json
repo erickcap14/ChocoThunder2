@@ -1,0 +1,11 @@
+{
+  "_note": "PixelLab provenance for art_transitions (ChocoThunder2-2rm, PRD Story 16). Per-level premium transition/intro cards = one consistent Sally composited into a themed, dog-less 3/4-view scene, then dimmed + vignetted with the card text on top. Built by scripts/compose_transition.py from these raw inputs. Map objects auto-expire after 8h, so the committed PNGs (raw scenes here + composed cards in pixellab/transitions/) are the durable artifact. view=side (3/4 steered via prompt), single color outline, detailed shading, high detail, bold/saturated.",
+  "sally_dog": "661056b6-b9cf-48dd-bd81-f234ff1f4ed1",
+  "_sally_note": "Standalone Sally (200x240) reused in ALL scenes so she is identical everywhere; PixelLab returned her on a near-white bg which compose_transition.py keys out via border flood fill. Earlier per-scene Sally (gym proof b2960da2-...) was dropped because each generation drew a different-looking dog.",
+  "scenes": {
+    "level1_living_room": "dd639c3b-4165-4f62-bf1c-afad13cd05cf",
+    "level2_gym": "8e1ef906-5b3b-4c14-8839-77766c37349e",
+    "level3_japanese": "f12023a5-306d-436e-a635-415fe5b0fbc4",
+    "level4_backyard": "bd508f56-e775-452c-a4d7-90c33237c3ba"
+  }
+}

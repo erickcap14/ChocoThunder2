@@ -25,8 +25,9 @@ Purpose: This file defines what we are building and for whom, focusing on the pr
   * No accounts, ads, microtransactions, or network calls.
   * No new art style *by default* — it deliberately reuses the original's sprites and audio.
     *(Exception: a pre-iOS-ship art-upgrade phase adds an **optional, toggle-selected**
-    PixelLab-generated art set in `pixellab/`. The originals remain the canonical default and
-    are never deleted; see Stories 13–17.)*
+    PixelLab-generated art set in `pixellab/`. The originals are never deleted and stay fully
+    available via the toggle; as of the transition-art milestone (Story 16) the `pixellab` set
+    is the runtime default. See Stories 13–17.)*
   * No level *editor* in-app (levels are added by developers via a data manifest).
 
 ---
@@ -73,7 +74,8 @@ repo, **Scribe owns beads writes** — run `/scribe` to create these.
 > in a root-level **`pixellab/`** tree mirroring `assets/`, selected at runtime by an `ART_SET`
 > toggle in `game/config.py`. PixelLab is a **dev-time generator** — only committed PNGs ship,
 > so the offline-runtime and supply-chain rules in `security.md`/`sbom.md` are preserved. The
-> ground-truth originals stay the default and are never deleted (fully reversible). Stories are
+> ground-truth originals are never deleted and remain fully available via `CT2_ART_SET=original`;
+> as of Story 16 the `pixellab` set is the runtime default (fully reversible). Stories are
 > listed in implementation order.
 
 * **Story 13 — `art_backgrounds`:** As a developer, I want **top-down tileset backgrounds

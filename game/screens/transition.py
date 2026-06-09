@@ -10,11 +10,25 @@ from __future__ import annotations
 
 import pygame
 
-from game import config, fonts
+from game import assets, config, fonts
 from game.levels import LEVELS
 from game.state_machine import GameState
 
 _PROMPT = "Press Enter to Continue"
+
+
+def draw_backdrop(screen: pygame.Surface, level: int) -> None:
+    """Paint the per-level themed transition backdrop (ART_SET=pixellab) behind the
+    card text, falling back to a plain black card when no backdrop art exists."""
+    lvl = max(1, min(level, len(LEVELS)))
+    path = assets.transition_image(f"level{lvl}.png")
+    if path.exists():
+        screen.blit(
+            assets.load_image(str(path), (config.SCREEN_WIDTH, config.SCREEN_HEIGHT)),
+            (0, 0),
+        )
+    else:
+        screen.fill(config.BLACK)
 
 
 class TransitionScreen:
@@ -53,7 +67,7 @@ class TransitionScreen:
         pass
 
     def draw(self) -> None:
-        self.screen.fill(config.BLACK)
+        draw_backdrop(self.screen, self.level)
 
         subtitle = LEVELS[self.level - 1].transition_subtitle if 1 <= self.level <= len(LEVELS) else ""
 

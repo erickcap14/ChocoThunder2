@@ -122,6 +122,14 @@ per-object size overrides. Object IDs are recorded in `pixellab/_src/obstacles/m
 map objects auto-expire after 8h). `garden` is a new room for L4; `assets/obstacles/garden/` mirrors
 `genericroom` so the original set's L4 is unchanged.
 
+**Generated to date (`art_transitions`, Story 16):** per-level transition/intro cards at
+`pixellab/transitions/level{1..N}.png` — one standalone Sally (`create_map_object`, 3/4 view)
+composited by `scripts/compose_transition.py` into 4 themed dog-less scenes (living room / gym /
+Japanese room / backyard), dimmed + vignetted. The same Sally is reused in every scene for
+consistency; her near-white generated bg is keyed out by a border flood fill. Object IDs are in
+`pixellab/_src/transitions/manifest.json`; raw scenes committed there are the durable artifact
+(map objects auto-expire after 8h).
+
 ### 4d. Audio format note (T114)
 
 The 7 original audio assets were transcoded **MP3 → OGG (Vorbis, `ffmpeg -q:a 5`)** so the pygbag/WASM
