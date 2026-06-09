@@ -53,18 +53,24 @@ bd close <id>         # Complete work
 
 ## Build & Test
 
-_Add your build and test commands here_
+This is a **native pygame desktop app** — there is no dev server, no browser, no web build.
 
 ```bash
-# Example:
-# npm install
-# npm test
+# Run all tests (headless pygame, dummy SDL)
+.venv/bin/python -m pytest
+
+# Run the game
+./run.sh
+# or: python main.py
+
+# Verify PixelLab art renders correctly (headless)
+CT2_ART_SET=pixellab PYTHONPATH=. .venv/bin/python scripts/render_levels.py <prefix>
 ```
 
 ## Architecture Overview
 
-_Add a brief overview of your project architecture_
+Top-down 2D arcade game (Python 3.13 + pygame-ce). All runtime code lives in `game/`; levels are data-driven via `LevelSpec` in `game/levels.py`; the MCP test harness sidecar lives in `mcp_server/`. See `.claude/infra.md` for the full directory map.
 
 ## Conventions & Patterns
 
-_Add your project-specific conventions here_
+See `.claude/infra.md` for the full code-style guide (snake_case, constants in `game/config.py`, no tkinter, no `if/elif` level switches).

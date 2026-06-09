@@ -24,11 +24,9 @@ Would you like me to set it up now? (This is a one-time setup that works across 
 ---
 
 ### 1. Environment Setup
-- Check if your dev server is running (customize the port for your project)
-- If not running, start it in background (e.g., `npm run dev`, `python manage.py runserver`, etc.)
-- Confirm the server starts successfully
-
-> **Note:** Customize the dev server command and port for your specific project stack.
+This is a **native pygame desktop app** — there is no dev server. Skip any dev-server checks.
+- Confirm `.venv/` exists (if not, run `pip install -r requirements.txt`)
+- Note that the game is launched with `./run.sh` or `python main.py` on demand, not as a background service
 
 ### 2. Git Status Check
 - Run `git status` to show current branch and any uncommitted changes
