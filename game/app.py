@@ -52,6 +52,7 @@ class App:
         self._test_index: int = 0
         self._test_sequence: list = []
         self._test_labels: list[str] = []
+        self._test_music: list[str] = []
         self._font_test: pygame.font.Font | None = None
 
     # ------------------------------------------------------------------
@@ -126,10 +127,11 @@ class App:
         from game import fonts as _fonts
         self._test_mode = True
         self._mcp_enabled = False  # disable IPC sidecar during walkthrough
-        self._test_sequence, self._test_labels = self._build_test_sequence()
+        self._test_sequence, self._test_labels, self._test_music = self._build_test_sequence()
         self._test_index = 0
         self._font_test = _fonts.load(22)
         self._active_screen = self._test_sequence[0]()
+        self.audio.play_music(self._test_music[0])
 
     def _build_test_sequence(self) -> tuple:
         from game.screens.start import StartScreen
@@ -143,9 +145,14 @@ class App:
         S, sm, au = self.screen, self.sm, self.audio
         seq: list = []
         labels: list[str] = []
+        music: list[str] = []  # track to play per screen so scrolling is never silent
+
+        start_music = "A1-Thunderstruck_01.ogg"
+        last_music = LEVELS[-1].music  # carries onto win/lose/leaderboard, as in-game
 
         seq.append(lambda: StartScreen(S, sm, au))
         labels.append("Start Screen")
+        music.append(start_music)
 
         score = 0
         for i, spec in enumerate(LEVELS):
@@ -154,6 +161,7 @@ class App:
 
             seq.append(lambda l=lvl, s=lvl_score: PreLevelScreen(S, sm, au, level=l, score=s))
             labels.append(f"Level {lvl} — Pre-Level")
+            music.append(spec.music)
 
             def _play(l=lvl, s=lvl_score):
                 ps = PlayScreen(S, sm, au, test_mode=True)
@@ -161,28 +169,35 @@ class App:
                 return ps
             seq.append(_play)
             labels.append(f"Level {lvl} — Play")
+            music.append(spec.music)
 
             score += lvl * 3
             end_score = score
             seq.append(lambda l=lvl, s=end_score: TransitionScreen(S, sm, au, level=l, score=s))
             labels.append(f"Level {lvl} — Transition")
+            music.append(spec.music)
 
         win_score = score
         seq.append(lambda s=win_score: EndScreen(S, sm, au, score=s, win=True))
         labels.append("End Screen — Win")
+        music.append(last_music)
         seq.append(lambda: EndScreen(S, sm, au, score=5, win=False))
         labels.append("End Screen — Lose")
+        music.append(last_music)
         seq.append(lambda s=win_score: ScoreboardScreen(S, sm, au, score=s))
         labels.append("Scoreboard")
+        music.append(last_music)
 
-        return seq, labels
+        return seq, labels, music
 
     def _test_navigate(self, delta: int) -> None:
         new_idx = self._test_index + delta
         if 0 <= new_idx < len(self._test_sequence):
-            self.audio.stop_music()
             self._test_index = new_idx
             self._active_screen = self._test_sequence[new_idx]()
+            # Play this screen's track (idempotent: continues within a level,
+            # switches at level boundaries) so scrolling always has music.
+            self.audio.play_music(self._test_music[new_idx])
 
     def _draw_test_overlay(self) -> None:
         """Draw navigation arrows and label bar at the bottom of the screen."""

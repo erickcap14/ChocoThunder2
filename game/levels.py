@@ -44,7 +44,7 @@ LEVELS: List[LevelSpec] = [
         map_image="level3.png",
         npcs=["char1", "char2", "char3"],
         obstacle_room="japaneseroom",
-        music="",  # TODO: no track yet — plays transition→complete once a file is set
+        music="09 Wheel in the Sky.ogg",
         transition_subtitle="One With Nature, Two On The Matt",
         intro_subtitle="Sem-Poo-Ku",
     ),

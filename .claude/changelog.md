@@ -2,6 +2,32 @@
 
 All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 
+## [Unreleased] — Level 3 music, test-mode audio, top-bar chrome buttons
+
+### Added
+- **Level 3 music — "Wheel in the Sky"** (`09 Wheel in the Sky.ogg`, converted from
+  the supplied MP3 via ffmpeg to match the OGG/WASM convention). Wired into
+  `levels.py`; the existing per-level system plays it from the Level 3 transition
+  card through gameplay to the complete card.
+- **Music in the `--test` walkthrough.** The UI walkthrough now drives a per-screen
+  track (parallel to the screen/label lists) so scrolling is never silent: it
+  continues within a level and switches at level boundaries (Thunderstruck → I
+  Wanna Rock → Wheel in the Sky → Angel), with Angel carrying onto the
+  win/lose/leaderboard screens.
+
+### Changed
+- **Return + VOL buttons moved to the top-right**, in the gap just left of the
+  play-screen timer (was bottom corners). "Return to Start" label shortened to
+  "Return" to fit; the volume panel now drops down below the VOL button. Other
+  screens' titles sit below the y5–45 button row, so no overlaps.
+
+### Verified
+- 157 tests pass. Confirmed the Level 3 OGG resolves + loads in the mixer, the
+  walkthrough maps all 16 screens to the right track, and the repositioned buttons
+  render cleanly on play/start/end via headless renders.
+
+---
+
 ## [Unreleased] — Persistent chrome: volume, return-to-start, difficulty
 
 ### Added
