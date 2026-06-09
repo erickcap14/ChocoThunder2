@@ -35,15 +35,16 @@ _CONTROLS = (
 )
 _PROMPT = "Press Space Bar to Play"
 
-# Chase cast, drawn back-to-front; (folder, drawn height px, x, run fps). Sally is front-right.
+# Chase cast, drawn back-to-front; (folder, visible height px, x, run fps). Heights are
+# roughly proportional: a small terrier, adult tenants, a looming cartoon T-rex.
 _RUNNERS = (
-    ("trex",  150, 210, 9),
-    ("char3", 145, 360, 11),
-    ("char2", 145, 505, 10),
-    ("char1", 145, 650, 11),
-    ("sally", 120, 800, 13),
+    ("trex",  180, 215, 9),
+    ("char3", 150, 380, 11),
+    ("char2", 150, 520, 10),
+    ("char1", 150, 660, 11),
+    ("sally",  74, 800, 13),
 )
-_FEET_Y = config.SCREEN_HEIGHT - 24
+_FEET_Y = config.SCREEN_HEIGHT - 22
 
 
 class _Runner:
@@ -109,30 +110,41 @@ class StartScreen:
         self._bf_x = 0.0
         self._bf_y = 0.0
         self._bf_phase = 0.0
-        # Surprise: pops up in the sky/background for a beat, then hides.
-        self._sp_timer = 3.5
-        self._sp_show = 0.0
-        self._sp_pos = (0, 0)
+        # Surprise: a googly poop sitting on the grass that scrolls past with the
+        # background (so it reads as a real object in the world), then respawns.
+        self._sp_active = False
+        self._sp_timer = 3.0
+        self._sp_x = 0.0
 
     @staticmethod
-    def _load_runner(folder, height: int) -> list[pygame.Surface] | None:
+    def _crop_scale(surf: pygame.Surface, bbox: pygame.Rect, height: int) -> pygame.Surface:
+        cropped = surf.subsurface(bbox).copy()
+        w = max(1, round(bbox.width * height / bbox.height))
+        return pygame.transform.scale(cropped, (w, height))
+
+    @classmethod
+    def _load_runner(cls, folder, height: int) -> list[pygame.Surface] | None:
         try:
             frames = assets.load_frames(folder)
         except FileNotFoundError:
             return None
-        out = []
+        # Scale by *visible* height (transparent padding cropped); a shared union bbox keeps
+        # the feet planted across the run cycle so the character doesn't bob vertically.
+        bbox = None
         for f in frames:
-            w, h = f.get_size()
-            out.append(pygame.transform.scale(f, (max(1, round(w * height / h)), height)))
-        return out
+            r = f.get_bounding_rect()
+            bbox = r if bbox is None else bbox.union(r)
+        if bbox is None or bbox.height == 0:
+            bbox = frames[0].get_rect()
+        return [cls._crop_scale(f, bbox, height) for f in frames]
 
-    @staticmethod
-    def _load_sprite(path, height: int) -> pygame.Surface | None:
+    @classmethod
+    def _load_sprite(cls, path, height: int) -> pygame.Surface | None:
         if not path.exists():
             return None
         img = assets.load_image(str(path))
-        w, h = img.get_size()
-        return pygame.transform.scale(img, (max(1, round(w * height / h)), height))
+        bbox = img.get_bounding_rect() or img.get_rect()
+        return cls._crop_scale(img, bbox, height)
 
     def _setup_fonts(self) -> None:
         self._font_title  = fonts.load(72)
@@ -189,15 +201,16 @@ class StartScreen:
     def _update_surprise(self, dt: float) -> None:
         if self._surprise is None:
             return
-        if self._sp_show > 0:
-            self._sp_show -= dt
+        if self._sp_active:
+            self._sp_x -= _SCROLL_SPEED * dt  # scroll with the background
+            if self._sp_x < -60:
+                self._sp_active = False
+                self._sp_timer = random.uniform(3.5, 7.0)
         else:
             self._sp_timer -= dt
             if self._sp_timer <= 0:
-                self._sp_show = random.uniform(1.6, 2.4)
-                self._sp_timer = random.uniform(4.0, 7.0)
-                self._sp_pos = (random.randint(120, config.SCREEN_WIDTH - 120),
-                                random.randint(95, 210))
+                self._sp_active = True
+                self._sp_x = config.SCREEN_WIDTH + 40
 
     def draw(self) -> None:
         x = int(self._bg_x)
@@ -225,8 +238,11 @@ class StartScreen:
         self._blit_centered(self._font_prompt, _PROMPT, config.GREEN, y=630)
 
     def _draw_scene(self) -> None:
-        if self._surprise is not None and self._sp_show > 0:
-            self.screen.blit(self._surprise, self._surprise.get_rect(center=self._sp_pos))
+        if self._surprise is not None and self._sp_active:
+            self.screen.blit(
+                self._surprise,
+                self._surprise.get_rect(midbottom=(int(self._sp_x), _FEET_Y + 4)),
+            )
         for runner in self._runners:
             runner.draw(self.screen)
         if self._butterfly is not None and self._bf_active:

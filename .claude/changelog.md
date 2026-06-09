@@ -16,10 +16,17 @@ All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
   side-view characters + `running-4-frames` east). Provenance in
   `pixellab/_src/startscreen/manifest.json`.
 
+- Runners are scaled by their *visible* height (transparent padding cropped, shared union
+  bbox for planted feet) at sensible proportions — a small terrier, adult tenants, a looming
+  T-rex. The grass surprise scrolls left with the background so it reads as a world object.
+
 ### Verified
-- 129 tests pass; rendered in-engine (`testscreenshots/pixellab_startscreen.png`).
-- **Status: implemented + rendered, pending the user's visual sign-off** (`ChocoThunder2-ash`
-  stays in_progress until approved).
+- 129 tests pass; rendered + approved in-engine (`testscreenshots/pixellab_startscreen.png`).
+
+### Beads
+- `art_startscreen` (`ChocoThunder2-ash`) **closed** — this **completes the Artwork Upgrade
+  epic `ChocoThunder2-41u`** (backgrounds, characters, obstacles, transitions, win/lose,
+  leaderboard, powered Sally, start screen all shipped).
 
 ---
 
