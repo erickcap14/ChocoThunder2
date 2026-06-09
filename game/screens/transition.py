@@ -48,6 +48,13 @@ class TransitionScreen:
 
         self._setup_fonts()
 
+        # Keep the just-completed level's music going on the complete card.
+        # Idempotent, so it continues seamlessly from gameplay. For the final
+        # level this is the track (Angel) that carries on into the win screen and
+        # the leaderboard, since neither of those touches the music.
+        idx = max(0, min(self.level - 1, len(LEVELS) - 1))
+        self.audio.play_music(LEVELS[idx].music)
+
     # ------------------------------------------------------------------
     def _setup_fonts(self) -> None:
         self._font_title  = fonts.load(72)

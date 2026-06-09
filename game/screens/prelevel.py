@@ -33,6 +33,14 @@ class PreLevelScreen:
 
         self._setup_fonts()
 
+        # This level's music starts here on the transition card and plays through
+        # gameplay and the completion card. play_music is idempotent, so when the
+        # track is already going (e.g. Thunderstruck from the Start screen for
+        # Level 1) it continues seamlessly instead of restarting. An empty track
+        # (a level with no song yet) stops music for a silent level.
+        idx = max(0, min(self.level - 1, len(LEVELS) - 1))
+        self.audio.play_music(LEVELS[idx].music)
+
     # ------------------------------------------------------------------
     def _setup_fonts(self) -> None:
         self._font_title  = fonts.load(72)

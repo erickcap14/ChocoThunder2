@@ -21,6 +21,9 @@ class AudioManager:
         # every method below silently no-ops.
         self._mixer_ok: bool = pygame.mixer.get_init() is not None
         self._sounds: dict[str, pygame.mixer.Sound] = {}
+        # The track currently loaded/looping. Lets play_music continue a track
+        # seamlessly across screen changes instead of restarting it.
+        self._current_track: str | None = None
         if self._mixer_ok:
             self._preload_sfx()
 
@@ -41,19 +44,34 @@ class AudioManager:
 
     # ------------------------------------------------------------------
     def play_music(self, filename: str, loops: int = -1) -> None:
-        """Load and loop a music track. Does nothing if music is off or mixer absent."""
+        """Load and loop a music track, continuing it seamlessly if already playing.
+
+        A track spans multiple screens (e.g. a level's music plays across its
+        transition card, gameplay, and completion card). Re-requesting the track
+        that's already current is a no-op so it keeps playing uninterrupted rather
+        than restarting from the top. An empty filename stops music — used for
+        levels that have no track yet. Does nothing if music is off or mixer absent.
+        """
         if not self._mixer_ok or not self.music_on:
             return
+        if not filename:
+            self.stop_music()
+            return
+        if filename == self._current_track and pygame.mixer.music.get_busy():
+            return  # already playing this track — let it continue
         path = assets.music_path(filename)
         if not path.exists():
+            self.stop_music()
             return
         try:
             pygame.mixer.music.load(str(path))
             pygame.mixer.music.play(loops)
+            self._current_track = filename
         except pygame.error:
             pass
 
     def stop_music(self) -> None:
+        self._current_track = None
         if not self._mixer_ok:
             return
         try:

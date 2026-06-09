@@ -136,6 +136,10 @@ def surprises_dir(powered: bool) -> Path:
     return _art("surprises", "powered" if powered else "unpowered")
 
 
+def splat_dir() -> Path:
+    return _art("surprises", "splat")
+
+
 def map_image(name: str) -> Path:
     return _art("maps", name)
 

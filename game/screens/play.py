@@ -33,12 +33,20 @@ _HELP_LINES = (
 
 
 class PlayScreen:
-    def __init__(self, screen: pygame.Surface, state_machine, audio, test_mode: bool = False):
+    def __init__(
+        self,
+        screen: pygame.Surface,
+        state_machine,
+        audio,
+        test_mode: bool = False,
+        level: int = 1,
+        score: int = 0,
+    ):
         self.screen = screen
         self.sm = state_machine
         self.audio = audio
-        self.score: int = 0
-        self.level: int = 1
+        self.score: int = score
+        self.level: int = max(1, min(level, len(LEVELS)))
         self.test_mode: bool = test_mode
 
         self._font_hud  = fonts.load(40)
@@ -49,11 +57,13 @@ class PlayScreen:
             0, _HUD_H, config.SCREEN_WIDTH, config.SCREEN_HEIGHT - _HUD_H
         )
 
-        # Hover-For-Help: button rect sits in the centre of the HUD bar.
+        # Hover-For-Help: button rect sits left of centre in the HUD bar, in the gap
+        # between the score and the centred INVINCIBLE! text so it never overlaps them.
         # Width 176px comfortably holds "? Hover for Help" at font size 18 (155px).
         help_w, help_h = 176, 34
         self._help_btn = pygame.Rect(
-            (config.SCREEN_WIDTH - help_w) // 2,
+            260,   # centred in the gap between the score (ends ~x241) and the
+                   # centred INVINCIBLE! text (starts x456) so it overlaps neither
             (_HUD_H - help_h) // 2,
             help_w,
             help_h,
@@ -103,6 +113,8 @@ class PlayScreen:
         self._poo_cooldown_remaining: float = 0.0
         self._powerup_spawn_timer: float = config.POWERUP_SPAWN_SECONDS
 
+        # Idempotent: continues the track the transition card already started for
+        # this level; switches tracks only on a direct MCP set_level to a new level.
         self.audio.play_music(spec.music)
 
     def _random_pos(self) -> tuple[int, int]:
@@ -150,7 +162,7 @@ class PlayScreen:
             rect = pygame.Rect(0, 0, *config.NPC_SIZE)
             rect.center = pos
             probe = rect.inflate(gap, gap)
-            if any(probe.colliderect(o.rect) for o in self._obstacles):
+            if any(probe.colliderect(o.bbox) for o in self._obstacles):
                 continue
             if any(probe.colliderect(npc.rect) for npc in self._npcs):
                 continue
@@ -164,14 +176,12 @@ class PlayScreen:
     def set_level(self, n: int) -> None:
         self.level = max(1, min(n, len(LEVELS)))
         self.score = 0
-        self.audio.stop_music()
         self._build_level(self.level)
 
     def resume(self, level: int, score: int) -> None:
         """Advance to a new level carrying accumulated score (level transition)."""
         self.level = max(1, min(level, len(LEVELS)))
         self.score = score
-        self.audio.stop_music()
         self._build_level(self.level)
 
     def spawn_powerup(self) -> None:
@@ -223,7 +233,7 @@ class PlayScreen:
 
         if self._level_time_remaining <= 0.0:
             self._level_time_remaining = 0.0
-            self.audio.stop_music()
+            # Leave the music playing: it carries into the level-complete card.
             self.sm.force_state(GameState.TRANSITION)
             return
 
@@ -231,26 +241,38 @@ class PlayScreen:
         if self._powerup_spawn_timer <= 0.0 and not self._powerups:
             self.spawn_powerup()
 
+        # Move each character, then resolve against the obstacle silhouettes with
+        # move-and-slide so they glide around furniture instead of pinning on it.
+        old_player = self._player.rect.copy()
         self._player.update(dt, self._play_bounds)
+        self._slide_out(self._player.rect, old_player)
+
+        npc_clear: dict = {}
         for npc in self._npcs:
+            old = npc.rect.copy()
             npc.update(dt, self._player.rect)
+            self._slide_out(npc.rect, old)
+            npc_clear[npc] = npc.rect.copy()  # position now known clear of obstacles
+
         for poo in self._poos:
             poo.update(dt)
         for pu in self._powerups:
             pu.update(dt)
 
-        for obs in self._obstacles:
-            obs.push_out(self._player.rect)
-        for npc in self._npcs:
-            for obs in self._obstacles:
-                obs.push_out(npc.rect)
-
-        # Tenants don't pile up: separate any overlapping NPC hitboxes, then keep
-        # them inside the play area and out of furniture (obstacles stay authoritative).
+        # Tenants don't pile up: separate overlapping NPCs, then slide any that got
+        # shoved into furniture back toward their just-cleared position.
         self._separate_npcs()
         for npc in self._npcs:
-            for obs in self._obstacles:
-                obs.push_out(npc.rect)
+            self._slide_out(npc.rect, npc_clear[npc])
+
+        # A powered surprise is a trap: the first tenant to step on the whippy poo
+        # turns it into a splat and gets considerably slowed. Once it is a splat it
+        # no longer affects anyone (it fades on its own).
+        for npc in self._npcs:
+            for poo in self._poos:
+                if poo.powered and not poo.is_splat and npc.rect.colliderect(poo.rect):
+                    poo.splat()
+                    npc.apply_slow()
 
         collected = pygame.sprite.spritecollide(self._player, self._powerups, True)
         if collected:
@@ -259,9 +281,40 @@ class PlayScreen:
 
         if not self._player.is_invincible:
             if pygame.sprite.spritecollide(self._player, self._npcs, False):
+                # Losing keeps its original behaviour: cut the music on game over.
                 self.audio.play_sfx("lose_life")
                 self.audio.stop_music()
                 self.sm.force_state(GameState.END)
+
+    def _blocked(self, rect: pygame.Rect) -> bool:
+        """True if rect overlaps any obstacle's visible shape (exact pixel mask)."""
+        return any(obs.collides_rect(rect) for obs in self._obstacles)
+
+    def _slide_out(self, rect: pygame.Rect, old_rect: pygame.Rect) -> None:
+        """Resolve rect against obstacle silhouettes by moving and sliding from a
+        known-clear ``old_rect`` (in-place). If the full move hits furniture, keep
+        whichever single axis is free so the mover slides along the edge and rounds
+        the obstacle; if both axes are blocked, hold at ``old_rect``. As a safety
+        net (mover already inside the shape, e.g. after separation), eject to the
+        nearest edge."""
+        if not self._blocked(rect):
+            return
+        # Slide on X (revert Y), then on Y (revert X).
+        slid_x = rect.copy()
+        slid_x.y = old_rect.y
+        if not self._blocked(slid_x):
+            rect.y = old_rect.y
+            return
+        slid_y = rect.copy()
+        slid_y.x = old_rect.x
+        if not self._blocked(slid_y):
+            rect.x = old_rect.x
+            return
+        # Both axes blocked: fall back to old position; if that was already inside
+        # the shape, eject to the nearest free edge.
+        rect.topleft = old_rect.topleft
+        for obs in self._obstacles:
+            obs.push_out(rect)
 
     def _separate_npcs(self, passes: int = 4) -> None:
         """Push apart any pair of NPCs whose hitboxes overlap (min-overlap axis),
@@ -293,10 +346,17 @@ class PlayScreen:
     def draw(self) -> None:
         self.screen.blit(self._map, (0, 0))
 
-        self._poos.draw(self.screen)
-        self._obstacles.draw(self.screen)
-        self._powerups.draw(self.screen)
-        self._npcs.draw(self.screen)
+        # Draw each entity centered on its hitbox (the per-sprite draw()), not via
+        # Group.draw which blits at rect.topleft and offsets art whose render size
+        # differs from its hitbox (NPCs, obstacles) down-right of where it collides.
+        for poo in self._poos:
+            poo.draw(self.screen)
+        for obs in self._obstacles:
+            obs.draw(self.screen)
+        for pu in self._powerups:
+            pu.draw(self.screen)
+        for npc in self._npcs:
+            npc.draw(self.screen)
         self._player.draw(self.screen)
 
         hud = pygame.Surface((config.SCREEN_WIDTH, _HUD_H), pygame.SRCALPHA)
@@ -319,7 +379,7 @@ class PlayScreen:
              (_HUD_H - timer_surf.get_height()) // 2),
         )
 
-        # Hover-For-Help button in the HUD centre.
+        # Hover-For-Help button, left of centre in the HUD bar.
         btn_color = (80, 80, 180) if self._help_visible else (50, 50, 120)
         pygame.draw.rect(self.screen, btn_color, self._help_btn, border_radius=6)
         pygame.draw.rect(self.screen, config.WHITE, self._help_btn, width=1, border_radius=6)

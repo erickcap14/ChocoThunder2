@@ -2,6 +2,56 @@
 
 All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 
+## [Unreleased] — Gameplay polish: collision, music, splat surprise, HUD
+
+### Fixed
+- **Obstacle collision now matches the art exactly.** Obstacles previously used a
+  fixed `100×150` rectangular hitbox while their sprite was drawn (via
+  `Group.draw`) at `rect.topleft` — so furniture (and tenants) were drawn ~40–60px
+  down-right of where they actually collided. Obstacles now collide on their
+  **exact image silhouette** (`pygame.mask.from_surface`) and every entity is
+  drawn **centered on its hitbox**, so art and collision finally line up. Verified
+  with mask/bbox overlays on all four levels (incl. the japanese room).
+- **Characters no longer get stuck on furniture.** Collision resolution moved from
+  per-frame push-out to **move-and-slide** (`PlayScreen._slide_out`): a mover that
+  hits an obstacle keeps the free axis and slides around the silhouette; a
+  mask-gated eject recovers anything that starts inside a shape.
+- **Slowed tenants no longer freeze.** NPC movement now integrates in a **float
+  position accumulator** (rounded into `rect` only for draw/collision), so
+  sub-pixel steps (a slowed tenant moves ~0.9px/frame) accumulate instead of
+  truncating to zero. External rect moves (slide/separation/clamp) fold back in.
+
+### Added
+- **Splat surprise mechanic.** When a tenant steps over a *powered* ("whippy
+  steaming") surprise, it visually transforms into a **splat** (the previously
+  unused 18-frame `splat_idle` animation) and **slows the tenant to 40% speed for
+  ~3s**, then it fades from the floor (~3s). One-shot trap; unpowered surprises are
+  inert. New `Poo.splat()`, `NPC.apply_slow()`, `assets.splat_dir()`, and
+  `NPC_SLOW_SECONDS` / `NPC_SLOW_MULTIPLIER` / `SPLAT_FADE_SECONDS` config.
+- **Per-level continuous music.** A level's track now starts on its transition card
+  and plays uninterrupted through gameplay and the complete card (`play_music` is
+  idempotent — re-requesting the current track is a no-op). Thunderstruck carries
+  the Start screen through Level 1's complete card; *I Wanna Rock* covers Level 2;
+  Level 3 is silent (no track yet); *Angel* covers Level 4 and carries through the
+  win screen onto the leaderboard. Losing still cuts the music (unchanged).
+
+### Changed
+- **Transition card copy rewritten** per level: intro ("transition") and complete
+  subtitles now themed to each room (e.g. gym → "Gains Made, Mess Made" /
+  "Number Two: Mission Accomplished"; garden → "The Final Defecation" /
+  "Fertile Ground, Fertile Hound").
+- **Help button repositioned** from screen-center (where it overlapped the
+  INVINCIBLE! text) into the gap between the score and the centered INVINCIBLE!
+  text (left edge x=260, measured to clear both).
+
+### Verified
+- 135 tests pass (added `tests/test_poo_splat.py`, `tests/test_npc_slow.py`, plus
+  splat-integration cases in `tests/test_play.py`). Visually confirmed via headless
+  renders: level-3 collision alignment, HUD with `Score: 300` + INVINCIBLE!, and a
+  powered surprise → splat + tenant slow.
+
+---
+
 ## [Unreleased] — Animated side-scroller start screen (art_startscreen)
 
 ### Added

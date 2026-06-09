@@ -75,16 +75,17 @@ class App:
         if state == GameState.RUNNING:
             from game.screens.play import PlayScreen
             from game.screens.prelevel import PreLevelScreen
-            ps = PlayScreen(self.screen, self.sm, self.audio)
-            try:
-                from game.screens.transition import TransitionScreen
-                if isinstance(prev, PreLevelScreen):
-                    ps.resume(prev.level, prev.score)
-                elif isinstance(prev, TransitionScreen):
-                    ps.resume(prev.level + 1, prev.score)
-            except ImportError:
-                pass
-            return ps
+            from game.screens.transition import TransitionScreen
+            # Resolve the level/score up front and build the PlayScreen once, so the
+            # level's music (started on the transition card) continues seamlessly
+            # instead of being restarted by a second build.
+            if isinstance(prev, PreLevelScreen):
+                level, score = prev.level, prev.score
+            elif isinstance(prev, TransitionScreen):
+                level, score = prev.level + 1, prev.score
+            else:
+                level, score = getattr(prev, "level", 1), getattr(prev, "score", 0)
+            return PlayScreen(self.screen, self.sm, self.audio, level=level, score=score)
 
         if state == GameState.TRANSITION:
             from game.screens.transition import TransitionScreen

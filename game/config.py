@@ -49,7 +49,8 @@ NPC_SIZE = (60, 60)         # tenant hitbox (catch box) — larger body than Sal
 NPC_RENDER_SIZE = (144, 144)    # tenant drawn size (a person, Sally is 4/5 of this)
 NPC_CHASE_RADIUS = 300      # start chasing within this distance
 NUM_OBSTACLES = 4
-OBSTACLE_SIZE = (100, 150)        # obstacle hitbox (collision footprint) — unchanged
+# OBSTACLE_SIZE retired: obstacles now collide on their exact image silhouette
+# (pixel mask), so there is no fixed rectangular hitbox to tune.
 OBSTACLE_RENDER_MAX = (160, 160)  # default drawn box; obstacle fits it, aspect preserved (decoupled from hitbox)
 # Per-object render box overrides (keyed by PNG filename stem) — bigger hero pieces.
 OBSTACLE_RENDER_OVERRIDES = {
@@ -64,6 +65,9 @@ POWERUP_SIZE = (50, 60)
 POWERUP_SPAWN_SECONDS = 5.0     # cake appears this often
 INVINCIBLE_SECONDS = 3.0        # real invincibility window granted by a cake
 POO_COOLDOWN_SECONDS = 1.0      # min time between surprises
+NPC_SLOW_SECONDS    = 3.0   # how long a tenant stays slowed after stepping on a splat
+NPC_SLOW_MULTIPLIER = 0.4   # slowed tenants move at 40% of NPC_SPEED
+SPLAT_FADE_SECONDS  = 3.0   # a splat lingers on the floor this long, then disappears
 
 SCORE_DEFAULT = 1               # points for a normal surprise
 SCORE_BONUS = 5                 # points for a surprise while invincible

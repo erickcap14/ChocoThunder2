@@ -11,7 +11,7 @@ import pygame
 
 from game.screens.play import PlayScreen
 from game.state_machine import GameState, StateMachine
-from game.entities import PowerUp
+from game.entities import PowerUp, Poo
 from game import config
 
 
@@ -130,15 +130,15 @@ def test_drop_poo_mcp_bypasses_cooldown(pygame_env):
 
 @pytest.mark.log_meta(phase="phase_3", subtask="3.7", action="obstacle pushes player out")
 def test_obstacle_pushes_player_out(pygame_env):
-    """After update(), the player rect no longer overlaps an obstacle it was placed inside."""
+    """After update(), the player no longer overlaps the obstacle's exact shape."""
     ps, _, _ = _make_ps(pygame_env)
     obs = next(iter(ps._obstacles))
-    # Place player fully inside the obstacle rect
-    ps._player.rect.center = obs.rect.center
+    # Place player on the obstacle's opaque centre (its visual middle).
+    ps._player.rect.center = obs.bbox.center
     # Pin target so player doesn't walk away (movement is deterministic over 1 frame)
     ps._player.set_target(ps._player.rect.center)
     ps.update(0.016)
-    assert not obs.rect.colliderect(ps._player.rect)
+    assert not obs.collides_rect(ps._player.rect)
 
 
 @pytest.mark.log_meta(phase="phase_3", subtask="3.8", action="npc catches player ends game")
@@ -175,6 +175,35 @@ def test_powerup_collection_sets_invincible(pygame_env):
     ps.update(0.016)
     assert ps._player.is_invincible is True
     assert pu not in ps._powerups
+
+
+@pytest.mark.log_meta(phase="phase_3", subtask="3.13", action="npc on powered poo splats and slows")
+def test_npc_on_powered_poo_splats_and_slows(pygame_env):
+    """A tenant stepping on a powered (whippy) poo turns it into a splat and is slowed."""
+    ps, sm, _ = _make_ps(pygame_env)
+    npc = next(iter(ps._npcs))
+    poo = Poo(npc.rect.center, powered=True)
+    ps._poos.add(poo)
+    # Keep the player far from this NPC so the player-NPC catch doesn't end the game.
+    ps._player.rect.center = (config.SCREEN_WIDTH - 1, config.SCREEN_HEIGHT - 1)
+    ps._player.set_target(ps._player.rect.center)
+    ps.update(0.016)
+    assert poo.is_splat is True
+    assert npc._slow_remaining > 0
+
+
+@pytest.mark.log_meta(phase="phase_3", subtask="3.14", action="npc on unpowered poo unaffected")
+def test_npc_on_unpowered_poo_not_splatted_or_slowed(pygame_env):
+    """An unpowered poo under a tenant is harmless: it does not splat and the NPC isn't slowed."""
+    ps, sm, _ = _make_ps(pygame_env)
+    npc = next(iter(ps._npcs))
+    poo = Poo(npc.rect.center, powered=False)
+    ps._poos.add(poo)
+    ps._player.rect.center = (config.SCREEN_WIDTH - 1, config.SCREEN_HEIGHT - 1)
+    ps._player.set_target(ps._player.rect.center)
+    ps.update(0.016)
+    assert poo.is_splat is False
+    assert npc._slow_remaining == 0
 
 
 @pytest.mark.log_meta(phase="phase_3", subtask="3.10", action="level timer expiry transitions")

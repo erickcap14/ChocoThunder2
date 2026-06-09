@@ -81,8 +81,12 @@ def test_levels_manifest_has_exactly_four():
 
 @pytest.mark.log_meta(phase="phase_5", subtask="5.3", action="all string fields non-empty")
 def test_all_string_fields_are_non_empty():
-    """Every string field on every LevelSpec is a non-empty string."""
-    string_fields = ("name", "map_image", "obstacle_room", "music", "transition_subtitle", "intro_subtitle")
+    """Every required string field on every LevelSpec is a non-empty string.
+
+    ``music`` is intentionally excluded: a level may have no track yet (empty
+    string), in which case it plays silently from transition to complete.
+    """
+    string_fields = ("name", "map_image", "obstacle_room", "transition_subtitle", "intro_subtitle")
     for spec in LEVELS:
         for field in string_fields:
             value = getattr(spec, field)
@@ -92,6 +96,10 @@ def test_all_string_fields_are_non_empty():
             assert value.strip(), (
                 f"{spec.name}.{field} is an empty string"
             )
+        # music is optional but must still be a string (possibly empty).
+        assert isinstance(spec.music, str), (
+            f"{spec.name}.music is not a str: {spec.music!r}"
+        )
 
 
 @pytest.mark.log_meta(phase="phase_5", subtask="5.4", action="all npcs lists non-empty")

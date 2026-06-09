@@ -54,7 +54,9 @@ def test_space_transitions_to_prelevel(pygame_env):
     screen.handle_event(event)
 
     assert sm.state is GameState.PRELEVEL
-    assert audio.music_stopped is True
+    # Thunderstruck must keep playing into Level 1 (it is Level 1's track), so the
+    # Start screen no longer stops music on the way out.
+    assert audio.music_stopped is False
 
 
 def test_other_keys_do_not_transition(pygame_env):
