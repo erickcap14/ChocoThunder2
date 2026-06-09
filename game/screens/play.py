@@ -16,7 +16,7 @@ import random
 import pygame
 
 from game import assets, config, fonts
-from game.entities import NPC, Obstacle, Player, Poo, PowerUp
+from game.entities import NPC, Obstacle, Player, Poo, PowerUp, clamp_rect
 from game.levels import LEVELS
 from game.state_machine import GameState
 
@@ -84,7 +84,8 @@ class PlayScreen:
         positions = [(x, y) for x in config.OBSTACLE_X for y in config.OBSTACLE_Y]
         random.shuffle(positions)
         for i, img_path in enumerate(obs_images[: config.NUM_OBSTACLES]):
-            surf = assets.load_image(str(img_path), config.OBSTACLE_SIZE)
+            box = config.OBSTACLE_RENDER_OVERRIDES.get(img_path.stem, config.OBSTACLE_RENDER_MAX)
+            surf = assets.load_image_fit(str(img_path), box)
             self._obstacles.add(Obstacle(surf, positions[i % len(positions)]))
 
         self._npcs = pygame.sprite.Group()
@@ -197,6 +198,13 @@ class PlayScreen:
             for obs in self._obstacles:
                 obs.push_out(npc.rect)
 
+        # Tenants don't pile up: separate any overlapping NPC hitboxes, then keep
+        # them inside the play area and out of furniture (obstacles stay authoritative).
+        self._separate_npcs()
+        for npc in self._npcs:
+            for obs in self._obstacles:
+                obs.push_out(npc.rect)
+
         collected = pygame.sprite.spritecollide(self._player, self._powerups, True)
         if collected:
             self._player.set_invincible(True)
@@ -207,6 +215,33 @@ class PlayScreen:
                 self.audio.play_sfx("lose_life")
                 self.audio.stop_music()
                 self.sm.force_state(GameState.END)
+
+    def _separate_npcs(self, passes: int = 4) -> None:
+        """Push apart any pair of NPCs whose hitboxes overlap (min-overlap axis),
+        moving each half the overlap. Relaxed over a few passes so tight clusters
+        (e.g. several tenants chasing the same spot) spread instead of stacking,
+        then clamp everyone back inside the play bounds."""
+        npcs = list(self._npcs)
+        for _ in range(passes):
+            moved = False
+            for i in range(len(npcs)):
+                for j in range(i + 1, len(npcs)):
+                    a, b = npcs[i].rect, npcs[j].rect
+                    if not a.colliderect(b):
+                        continue
+                    moved = True
+                    ox = min(a.right - b.left, b.right - a.left)
+                    oy = min(a.bottom - b.top, b.bottom - a.top)
+                    if ox <= oy:
+                        shift = ox // 2 + 1
+                        a.x, b.x = (a.x - shift, b.x + shift) if a.centerx <= b.centerx else (a.x + shift, b.x - shift)
+                    else:
+                        shift = oy // 2 + 1
+                        a.y, b.y = (a.y - shift, b.y + shift) if a.centery <= b.centery else (a.y + shift, b.y - shift)
+            if not moved:
+                break
+        for npc in npcs:
+            clamp_rect(npc.rect, self._play_bounds)
 
     def draw(self) -> None:
         self.screen.blit(self._map, (0, 0))

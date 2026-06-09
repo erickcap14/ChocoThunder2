@@ -113,6 +113,22 @@ char4 T-rex `96ada53a-044d-41dd-a7c1-075e17f0623a`. char4 is a pixellab-only bon
 Level 4 — `game/levels.py` lists it but `PlayScreen` skips tenants with no art in the active set
 (`assets.npc_available`), so the original set is unchanged.
 
+**Generated to date (T133 `art_obstacles`):** 16 furniture/obstacle sprites via `create_map_object`
+(low top-down, single-color outline, detailed shading, bold/saturated, transparent bg) at
+`pixellab/obstacles/{genericroom,gym,japaneseroom,garden}/` — 4 pieces per room. Rendered fit to
+`config.OBSTACLE_RENDER_MAX` preserving aspect (decoupled from the `OBSTACLE_SIZE` hitbox), with
+per-object size overrides. Object IDs are recorded in `pixellab/_src/obstacles/manifest.json`
+(bookshelf went v1→v3 to read correctly; the committed PNGs are the durable artifact since PixelLab
+map objects auto-expire after 8h). `garden` is a new room for L4; `assets/obstacles/garden/` mirrors
+`genericroom` so the original set's L4 is unchanged.
+
+### 4d. Audio format note (T114)
+
+The 7 original audio assets were transcoded **MP3 → OGG (Vorbis, `ffmpeg -q:a 5`)** so the pygbag/WASM
+build (whose SDL_mixer lacks MP3) can decode them; pygame-ce plays OGG on desktop too, so a single OGG
+path serves both targets. The MP3 originals were removed (no code references remain). No new runtime or
+build dependency is introduced (ffmpeg is a one-time dev-time transcode tool, not shipped).
+
 ---
 
 ## 5. Documentation & Resources

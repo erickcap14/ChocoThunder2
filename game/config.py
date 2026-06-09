@@ -48,7 +48,15 @@ NPC_SIZE = (60, 60)         # tenant hitbox (catch box) — larger body than Sal
 NPC_RENDER_SIZE = (144, 144)    # tenant drawn size (a person, Sally is 4/5 of this)
 NPC_CHASE_RADIUS = 300      # start chasing within this distance
 NUM_OBSTACLES = 4
-OBSTACLE_SIZE = (100, 150)
+OBSTACLE_SIZE = (100, 150)        # obstacle hitbox (collision footprint) — unchanged
+OBSTACLE_RENDER_MAX = (160, 160)  # default drawn box; obstacle fits it, aspect preserved (decoupled from hitbox)
+# Per-object render box overrides (keyed by PNG filename stem) — bigger hero pieces.
+OBSTACLE_RENDER_OVERRIDES = {
+    "dining_table": (260, 200),
+    "tv_stand": (210, 160),
+    "sofa": (220, 220),
+    "bbq_grill": (110, 110),
+}
 POO_SIZE = (50, 60)
 POWERUP_SIZE = (50, 60)
 
@@ -59,9 +67,10 @@ POO_COOLDOWN_SECONDS = 1.0      # min time between surprises
 SCORE_DEFAULT = 1               # points for a normal surprise
 SCORE_BONUS = 5                 # points for a surprise while invincible
 
-# Candidate obstacle placement (kept from original feel)
-OBSTACLE_X = (200, 300, 400, 800, 900, 1000)
-OBSTACLE_Y = (100, 200, 300, 500, 600)
+# Candidate obstacle placement — central band only, away from the perimeter
+# walls/decor baked into the room backgrounds (decor hugs the edges; centre stays clear).
+OBSTACLE_X = (430, 600, 770)
+OBSTACLE_Y = (250, 400, 550)
 
 # --- Colours ---------------------------------------------------------------
 WHITE = (255, 255, 255)

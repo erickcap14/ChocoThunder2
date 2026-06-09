@@ -44,6 +44,20 @@ def load_image(path: str, size: tuple[int, int] | None = None) -> pygame.Surface
     return surf
 
 
+def load_image_fit(path: str, max_box: tuple[int, int]) -> pygame.Surface:
+    """Load an image scaled to fit within ``max_box``, preserving aspect ratio.
+
+    Unlike ``load_image(path, size)`` (which stretches to an exact size), this keeps
+    the source proportions — a long table stays long, a tall vase stays tall — so the
+    drawn obstacle can be decoupled from its (fixed) collision hitbox.
+    """
+    native = load_image(path)
+    nw, nh = native.get_size()
+    scale = min(max_box[0] / nw, max_box[1] / nh)
+    fit = (max(1, round(nw * scale)), max(1, round(nh * scale)))
+    return load_image(path, fit)
+
+
 def load_frames(folder: str | Path, size: tuple[int, int] | None = None) -> list[pygame.Surface]:
     """Load all PNG frames in a folder, sorted naturally, optionally scaled."""
     folder = Path(folder)

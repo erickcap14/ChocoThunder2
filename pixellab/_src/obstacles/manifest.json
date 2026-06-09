@@ -1,0 +1,35 @@
+{
+  "_note": "PixelLab map-object provenance for art_obstacles (T133 / ChocoThunder2-cgo, PRD Story 15). create_map_object, view='low top-down', outline='single color outline', shading='detailed shading', detail='high detail', transparent bg, bold/saturated per-room palette. Objects auto-delete after 8h; the committed PNGs in pixellab/obstacles/<room>/ are the durable artifact. Engine renders each fit to config.OBSTACLE_RENDER_MAX preserving aspect (decoupled from the OBSTACLE_SIZE hitbox).",
+  "rooms": {
+    "genericroom": {
+      "_used_by": ["Level 1"],
+      "sofa": "512ae2d8-0bfb-4f68-bc6f-38f770b01480",
+      "tv_stand": "a54ff1d5-75c0-4c25-859c-53a70da86b65",
+      "bookshelf": "28c70dc4-3c00-4e35-abed-bfcde66b4749",
+      "_bookshelf_superseded": "v1 adfe718d (front-view, too tall) -> v2 0e80f334 (flat high-top-down, unreadable) -> v3 28c70dc4 (low top-down, reads as bookcase) per user",
+      "dining_table": "e61bfd06-bb1d-4816-912c-1873ca2721cd"
+    },
+    "gym": {
+      "_used_by": ["Level 2"],
+      "stationary_bike": "64660033-f51c-4afe-add9-9e04f038e6db",
+      "weight_bench": "d5d83876-9633-4d24-9a74-e50d4ab62f86",
+      "single_dumbbells": "9c240c8f-c578-4611-834a-1677633d9f66",
+      "squat_rack": "1fdf27b8-a02d-4576-b210-c9d94ba60fed"
+    },
+    "japaneseroom": {
+      "_used_by": ["Level 3"],
+      "chabudai": "51040d01-aa1e-43ad-bfe7-696183be3b4b",
+      "byobu": "c70284e1-fd99-4766-9e9d-a0d77de87b61",
+      "tansu": "5758360b-8d52-4d9a-ab3d-7c3957199e2b",
+      "vase": "25d123e5-ca23-47bf-8f9e-b12a291eb4da"
+    },
+    "garden": {
+      "_used_by": ["Level 4"],
+      "_note": "NEW room for L4's backyard background (L4 obstacle_room repointed genericroom->garden in game/levels.py). assets/obstacles/garden mirrors genericroom so the ORIGINAL art set's L4 furniture is unchanged.",
+      "bench": "c48672bc-58be-4093-bc73-3f68f1048ac3",
+      "bbq_grill": "1d5f1e9d-a399-4295-bb0b-2d56928c95ad",
+      "fountain": "d44677c1-e410-4e72-a9ea-49d00c5ad1c0",
+      "shrub": "f0835462-8f7b-4274-94ef-fa1d79690495"
+    }
+  }
+}

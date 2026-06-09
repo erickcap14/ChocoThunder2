@@ -51,8 +51,8 @@ LEVELS: List[LevelSpec] = [
     LevelSpec(
         name="Level 4",
         map_image="level4.png",
-        npcs=["char2", "char3", "char4"],
-        obstacle_room="genericroom",
+        npcs=["char1", "char2", "char3", "char4"],
+        obstacle_room="garden",
         music="A1-Thunderstruck_01.ogg",
         transition_subtitle="Double Down Dirty Dog",
         intro_subtitle="The Grand Finale. Make It Count.",

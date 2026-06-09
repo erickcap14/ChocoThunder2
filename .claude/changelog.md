@@ -2,6 +2,49 @@
 
 All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 
+## [Unreleased] — Artwork Upgrade (PixelLab): obstacles shipped (T133) + WASM follow-ups
+
+### Added
+- **16 upgraded obstacle/furniture sprites** (PixelLab `create_map_object`, bold/saturated,
+  low top-down, transparent) at `pixellab/obstacles/<room>/`, selected under `CT2_ART_SET=pixellab`:
+  - `genericroom` (L1): sofa, tv_stand, **bookshelf**, dining_table
+  - `gym` (L2): stationary_bike, weight_bench, single_dumbbells, squat_rack
+  - `japaneseroom` (L3): chabudai, byobu, tansu, vase
+  - `garden` (L4, **new room**): bench, bbq_grill, fountain, shrub
+- **New `garden` obstacle room for Level 4** — `game/levels.py` repoints L4 `obstacle_room`
+  `genericroom`→`garden` (its background is a backyard). `assets/obstacles/garden/` mirrors
+  `genericroom` so the **original art set's L4 is unchanged**.
+- **Proportional obstacle rendering** — drawn size decoupled from the collision hitbox:
+  `assets.load_image_fit()` scales each sprite to fit `config.OBSTACLE_RENDER_MAX` (160²)
+  preserving aspect (so a dining table reads long, a vase tall), while the hitbox stays
+  `OBSTACLE_SIZE` (100×150). Per-object overrides (`OBSTACLE_RENDER_OVERRIDES`) make hero
+  pieces bigger/smaller: dining_table, tv_stand, sofa up; bbq_grill down. Affects both art
+  sets' *rendering* (originals were previously squished to a fixed box); collisions unchanged.
+- **Central obstacle placement** — `OBSTACLE_X/Y` pulled into a central band (430–770 × 250–550)
+  so furniture no longer clashes with the perimeter wall/decor baked into the room backgrounds.
+- **NPC separation rule** — overlapping tenant hitboxes now push apart (`PlayScreen._separate_npcs`,
+  min-overlap axis, 4 relaxation passes) so tenants don't stack, then clamp inside the play bounds.
+- **4th tenant on Level 4** — added `char1` to L4 `npcs` → 4 tenants under the pixellab set
+  (char1–4, incl. the T-rex); the original set shows 3 (char4 has no original art and is skipped).
+- **WASM follow-ups merged**: **T114** converted all audio MP3→OGG (Vorbis) and re-enabled
+  `AudioManager` under Emscripten (single OGG path desktop+web; MP3s removed); **T115** persists
+  high scores via browser `localStorage` under WASM (`platform.window.localStorage`), desktop
+  file path unchanged.
+- `scripts/render_levels.py` — dev tool: headless-renders every level through the real
+  `PlayScreen` to `testscreenshots/<prefix>_level{1..N}.png` for the active art set.
+- Provenance (16 object IDs + bookshelf v1→v3 history) in `pixellab/_src/obstacles/manifest.json`
+  and `sbom.md §4c`.
+
+### Verified
+- 129 tests pass. In-engine render of all 4 levels under `CT2_ART_SET=pixellab`
+  (`testscreenshots/pixellab_obstacles_level{1..4}.png`): centered proportional furniture,
+  L4 garden + 4 tenants. NPC separation stress test: 6 overlapping pairs → 0 after updates.
+
+### Beads
+- `art_obstacles` (`ChocoThunder2-cgo` / T133) **closed**; `T114` (`-ewp`) and `T115` (`-ag6`) **closed**.
+
+---
+
 ## [Unreleased] — Artwork Upgrade (PixelLab): characters shipped (T131)
 
 ### Added
