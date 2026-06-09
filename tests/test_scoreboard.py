@@ -90,6 +90,75 @@ def test_tolerates_malformed_lines(tmp_scores):
     assert len(result) == 2
 
 
+# --- WASM localStorage backend (T115) ----------------------------------------
+
+class _FakeLocalStorage:
+    """Minimal stand-in for the browser ``window.localStorage`` object."""
+
+    def __init__(self):
+        self._store: dict[str, str] = {}
+
+    def getItem(self, key):
+        return self._store.get(key)  # returns None when unset, like JS null
+
+    def setItem(self, key, value):
+        self._store[key] = value
+
+
+@pytest.fixture
+def fake_localstorage(monkeypatch):
+    """Pretend we're running under pygbag/Emscripten with a fake localStorage.
+
+    Patches ``sys.platform`` and injects a fake ``platform`` module exposing
+    ``platform.window.localStorage`` so scores.py exercises the browser path.
+    """
+    import sys
+    import types
+
+    storage = _FakeLocalStorage()
+    fake_platform = types.ModuleType("platform")
+    fake_platform.window = types.SimpleNamespace(localStorage=storage)
+    monkeypatch.setitem(sys.modules, "platform", fake_platform)
+    monkeypatch.setattr(scores.sys, "platform", "emscripten")
+    return storage
+
+
+@pytest.mark.log_meta(phase="phase_4", subtask="4.1", action="wasm localStorage roundtrip")
+def test_wasm_add_and_load_roundtrip(fake_localstorage):
+    """Under Emscripten, scores persist through fake localStorage."""
+    scores.add_score("Wasm", 42)
+    assert scores.load_scores() == [("Wasm", 42)]
+    # Verify the blob actually lives in localStorage, not on disk.
+    assert fake_localstorage.getItem(scores.SCORES_KEY) == "Wasm,42"
+
+
+def test_wasm_load_empty_when_unset(fake_localstorage):
+    """Missing localStorage key (getItem → None) yields an empty list."""
+    assert scores.load_scores() == []
+
+
+def test_wasm_degrades_when_localstorage_raises(monkeypatch):
+    """If localStorage access raises, scores degrade to empty without crashing."""
+    import sys
+    import types
+
+    class _Boom:
+        def getItem(self, key):
+            raise RuntimeError("blocked")
+
+        def setItem(self, key, value):
+            raise RuntimeError("blocked")
+
+    fake_platform = types.ModuleType("platform")
+    fake_platform.window = types.SimpleNamespace(localStorage=_Boom())
+    monkeypatch.setitem(sys.modules, "platform", fake_platform)
+    monkeypatch.setattr(scores.sys, "platform", "emscripten")
+
+    # Neither call raises despite the backend throwing.
+    scores.save_scores([("X", 1)])
+    assert scores.load_scores() == []
+
+
 # --- ScoreboardScreen tests --------------------------------------------------
 
 @pytest.mark.log_meta(phase="phase_4", subtask="4.2", action="scoreboard init")
