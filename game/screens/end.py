@@ -42,6 +42,9 @@ class EndScreen:
     def _setup_bg(self) -> None:
         image_name = "win.jpg" if self.win else "lose.jpg"
         path = assets.endscreen(image_name)
+        # Pixellab endscreen cards are pre-dimmed/scrimmed by the compositor; the plain
+        # original photos need the heavy darkening overlay for text contrast.
+        self._pre_dimmed = config.PIXELLAB in path.parents
         self._bg = assets.load_image(
             str(path), (config.SCREEN_WIDTH, config.SCREEN_HEIGHT)
         )
@@ -55,7 +58,7 @@ class EndScreen:
     def _setup_overlay(self) -> None:
         w, h = config.SCREEN_WIDTH, config.SCREEN_HEIGHT
         self._overlay = pygame.Surface((w, h), pygame.SRCALPHA)
-        self._overlay.fill((20, 20, 20, 200))
+        self._overlay.fill((20, 20, 20, 60 if self._pre_dimmed else 200))
 
     # ------------------------------------------------------------------
     def handle_event(self, event: pygame.event.Event) -> None:

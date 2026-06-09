@@ -16,11 +16,35 @@ from game.sprites import DirectionalSprite
 
 class Player(DirectionalSprite):
     def __init__(self, pos):
-        frames = assets.load_directional_frames(assets.player_dir(), config.PLAYER_RENDER_SIZE)
-        super().__init__(frames, pos, hitbox_size=config.PLAYER_SIZE)
+        self._frames_normal = assets.load_directional_frames(
+            assets.player_dir(), config.PLAYER_RENDER_SIZE
+        )
+        # Optional distinct "powered" spritesheet shown during invincibility; falls back
+        # to the normal frames when the active art set has no powered art (e.g. original).
+        self._frames_powered = self._load_powered_frames()
+        super().__init__(self._frames_normal, pos, hitbox_size=config.PLAYER_SIZE)
         self._target: pygame.Vector2 = pygame.Vector2(pos)
         self.is_invincible: bool = False
         self._invincible_remaining: float = 0.0
+
+    @staticmethod
+    def _load_powered_frames():
+        try:
+            return assets.load_directional_frames(
+                assets.player_powered_dir(), config.PLAYER_RENDER_SIZE
+            )
+        except FileNotFoundError:
+            return None
+
+    def _apply_powered_skin(self) -> None:
+        """Swap the active spritesheet to match invincibility state (no-op without art)."""
+        if self._frames_powered is None:
+            return
+        want = self._frames_powered if self.is_invincible else self._frames_normal
+        if want is not self.frames:
+            self.frames = want
+            frames = want[self.status]
+            self.image = frames[int(self.frame_index) % len(frames)]
 
     def set_target(self, pos) -> None:
         self._target = pygame.Vector2(pos)
@@ -31,6 +55,7 @@ class Player(DirectionalSprite):
         self._invincible_remaining = config.INVINCIBLE_SECONDS if state else 0.0
 
     def update(self, dt: float, bounds: pygame.Rect) -> None:
+        self._apply_powered_skin()
         current = pygame.Vector2(self.rect.center)
         diff = self._target - current
         if diff.length() > config.PLAYER_SPEED:

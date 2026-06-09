@@ -130,6 +130,15 @@ consistency; her near-white generated bg is keyed out by a border flood fill. Ob
 `pixellab/_src/transitions/manifest.json`; raw scenes committed there are the durable artifact
 (map objects auto-expire after 8h).
 
+**Generated to date (win/lose/leaderboard + powered Sally):** themed PixelLab cards composited by
+`scripts/compose_screens.py` → `pixellab/endscreens/{win,lose}.jpg` (win = Sally on a trophy
+podium; lose = red barn farm) and `pixellab/ui/scoreboard.jpg` (trophy hall-of-fame). The shared
+standalone Sally is reused on the win/leaderboard cards. A distinct **powered-up Sally** walk
+spritesheet at `pixellab/characters_powered/` (`create_character` quadruped/dog + `animate_character`
+`walk-4-frames`, character `fd72c2c0-...`) is shown during the cake invincibility window. Object IDs
+in `pixellab/_src/screens/manifest.json`; committed PNGs are the durable artifact (map objects
+auto-expire after 8h).
+
 ### 4d. Audio format note (T114)
 
 The 7 original audio assets were transcoded **MP3 → OGG (Vorbis, `ffmpeg -q:a 5`)** so the pygbag/WASM

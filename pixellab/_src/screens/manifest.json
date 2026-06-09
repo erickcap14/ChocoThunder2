@@ -1,0 +1,13 @@
+{
+  "_note": "PixelLab provenance for the win/lose/leaderboard cards + powered Sally (Artwork Upgrade). Cards = themed 3/4 PixelLab scenes composited by scripts/compose_screens.py (dim + vignette + per-screen text scrims), with the shared standalone Sally (pixellab/_src/transitions/sally_dog.png) on the win + leaderboard cards. Outputs: pixellab/endscreens/{win,lose}.jpg (PNG bytes, .jpg name so assets.endscreen() finds them) and pixellab/ui/scoreboard.jpg. Map objects auto-expire after 8h, so the committed raw scenes here + composed cards are the durable artifact.",
+  "scenes": {
+    "win_podium": "c9ba9697-2706-4320-b7f9-a7a9188a7744",
+    "lose_red_barn": "9a6719f5-f9c2-46ad-9d4b-1df6ba103745",
+    "leaderboard_hall_of_fame": "cd806772-e9d4-4f90-938c-80a5be62ddd3"
+  },
+  "powered_sally": {
+    "_note": "Distinct powered-up Sally spritesheet shown during the cake invincibility window (Player swaps to pixellab/characters_powered/ when is_invincible; falls back to normal Sally if absent). create_character (quadruped/dog template, low top-down, 4 dir) + animate_character template 'walk-4-frames'; frames fetched via curl into {down,up,right,left} (south->down,north->up,east->right,west->left).",
+    "character_id": "fd72c2c0-714f-4d11-a6ff-5b11fd142339",
+    "look": "white terrier with red superhero cape + golden glow aura"
+  }
+}

@@ -8,7 +8,7 @@ Two phases:
 from __future__ import annotations
 
 import pygame
-from game import config, fonts, scores
+from game import assets, config, fonts, scores
 from game.state_machine import GameState
 
 
@@ -24,6 +24,14 @@ class ScoreboardScreen:
         self._submitted: bool = False
         self._entries: list[tuple[str, int]] = scores.load_scores()
         self._setup_fonts()
+
+        # Optional themed backdrop (ART_SET=pixellab); falls back to the solid fill.
+        bg_path = assets.ui_image("scoreboard.jpg")
+        self._bg = (
+            assets.load_image(str(bg_path), (config.SCREEN_WIDTH, config.SCREEN_HEIGHT))
+            if bg_path.exists()
+            else None
+        )
 
     # ------------------------------------------------------------------
     def _setup_fonts(self) -> None:
@@ -52,7 +60,10 @@ class ScoreboardScreen:
         pass
 
     def draw(self) -> None:
-        self.screen.fill(config.DARK_GREY)
+        if self._bg is not None:
+            self.screen.blit(self._bg, (0, 0))
+        else:
+            self.screen.fill(config.DARK_GREY)
         if self._submitted:
             self._draw_view()
         else:

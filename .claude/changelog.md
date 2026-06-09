@@ -2,6 +2,36 @@
 
 All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 
+## [Unreleased] — Win/Lose/Leaderboard art + powered Sally
+
+### Added
+- **Illustrated win & lose screens** (`art_winscreen`, `art_losescreen`): `EndScreen` now shows
+  themed PixelLab cards at `pixellab/endscreens/{win,lose}.jpg` — win = Sally celebrating on a
+  trophy podium; lose = a red barn farm (matching the original "sent to the farm" gag). The
+  overlay auto-lightens for the pre-dimmed pixellab cards (heavy overlay kept for the original
+  photos). ART_SET-aware with fallback to the originals.
+- **Leaderboard backdrop** (`art_leaderboard`): `ScoreboardScreen` now paints a dimmed
+  trophy hall-of-fame behind the top-10 table (`pixellab/ui/scoreboard.jpg`, via
+  `assets.ui_image()`), with Sally peeking in the corner; falls back to the solid `DARK_GREY`.
+- **Powered-up Sally spritesheet** (`art_powered_sally`): a distinct caped, gold-glowing
+  "Super Sally" 4-direction walk at `pixellab/characters_powered/`. `Player` loads it alongside
+  the normal sheet and swaps to it while `is_invincible` (the cake window), falling back to the
+  normal sprite when the active art set has no powered art (original set unaffected).
+- `scripts/compose_screens.py` — compositor for the three cards (scene + shared Sally + vignette
+  + per-screen text scrims). Provenance + object/character IDs in
+  `pixellab/_src/screens/manifest.json`.
+
+### Verified
+- 129 tests pass. Rendered in-engine under `CT2_ART_SET=pixellab`: win/lose/leaderboard cards
+  (`testscreenshots/pixellab_{win,lose,scoreboard}.png`) and the powered-Sally swap during
+  invincibility (`testscreenshots/pixellab_player_powered.png`).
+
+### Beads
+- `art_winscreen` (`-h1x`), `art_losescreen` (`-suw`), `art_leaderboard` (`-6no`),
+  `art_powered_sally` (`-q1u`) **closed**.
+
+---
+
 ## [Unreleased] — Transition art (Story 16) + pixellab default + spawn fixes
 
 ### Added

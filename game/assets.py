@@ -148,6 +148,14 @@ def transition_image(name: str) -> Path:
     return _art("transitions", name)
 
 
+def player_powered_dir() -> Path:
+    return _art("characters_powered")
+
+
+def ui_image(name: str) -> Path:
+    return _art("ui", name)
+
+
 def music_path(name: str) -> Path:
     return config.ASSETS / "sounds" / "music" / name
 
