@@ -29,7 +29,7 @@ _BLURB = (
 )
 _CONTROLS = (
     "Controls:",
-    "  Click anywhere  —  move Sally",
+    "  Click / drag or Arrow keys  —  move Sally",
     "  Space Bar        —  leave a chocolate surprise",
     "  Eat a cake       —  become invincible (bonus points!)",
 )

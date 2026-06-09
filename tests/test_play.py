@@ -79,6 +79,41 @@ def test_mouse_click_sets_player_target(pygame_env):
     assert ps._player._target == pygame.Vector2(100, 200)
 
 
+def test_mouse_drag_follows_cursor_until_release(pygame_env):
+    """Holding the button and moving retargets Sally to the latest cursor position;
+    after release, further motion no longer moves the target."""
+    ps, _, _ = _make_ps(pygame_env)
+    ps.handle_event(pygame.event.Event(pygame.MOUSEBUTTONDOWN, pos=(100, 200), button=1))
+    # Drag: motion while held updates the target.
+    ps.handle_event(pygame.event.Event(pygame.MOUSEMOTION, pos=(300, 400), rel=(200, 200), buttons=(1, 0, 0)))
+    assert ps._player._target == pygame.Vector2(300, 400)
+    # Release, then move again — target must stay put.
+    ps.handle_event(pygame.event.Event(pygame.MOUSEBUTTONUP, pos=(300, 400), button=1))
+    ps.handle_event(pygame.event.Event(pygame.MOUSEMOTION, pos=(500, 500), rel=(200, 100), buttons=(0, 0, 0)))
+    assert ps._player._target == pygame.Vector2(300, 400)
+
+
+def test_arrow_key_moves_player(pygame_env):
+    """Holding an arrow key steers Sally directly that frame (overriding the target)."""
+    ps, _, _ = _make_ps(pygame_env)
+    start_x = ps._player.rect.centerx
+    ps.handle_event(pygame.event.Event(pygame.KEYDOWN, key=pygame.K_RIGHT, mod=0, unicode=""))
+    ps.update(0.016)
+    assert ps._player.rect.centerx == start_x + config.PLAYER_SPEED
+    assert ps._player.status == "right"
+
+
+def test_arrow_key_release_stops_player(pygame_env):
+    """Releasing the arrow key halts Sally where she is (no snap to a stale target)."""
+    ps, _, _ = _make_ps(pygame_env)
+    ps.handle_event(pygame.event.Event(pygame.KEYDOWN, key=pygame.K_RIGHT, mod=0, unicode=""))
+    ps.update(0.016)
+    rested_x = ps._player.rect.centerx
+    ps.handle_event(pygame.event.Event(pygame.KEYUP, key=pygame.K_RIGHT, mod=0, unicode=""))
+    ps.update(0.016)
+    assert ps._player.rect.centerx == rested_x
+
+
 @pytest.mark.log_meta(phase="phase_3", subtask="3.3", action="space drops poo scores 1")
 def test_space_drops_poo_and_scores(pygame_env):
     """KEYDOWN K_SPACE spawns one poo and awards SCORE_DEFAULT points."""

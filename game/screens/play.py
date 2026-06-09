@@ -23,9 +23,12 @@ from game.state_machine import GameState
 
 _HUD_H = 50  # px reserved at the top for score + timer
 
+_ARROW_KEYS = (pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN)
+
 _HELP_LINES = (
     "Controls",
-    "Click anywhere  —  move Sally",
+    "Click or drag  —  send Sally to the cursor",
+    "Arrow keys  —  steer Sally directly",
     "Space Bar  —  drop a chocolate surprise",
     "Eat a cake  —  become invincible (bonus points!)",
     "Dodge the tenants  —  caught = game over",
@@ -69,6 +72,11 @@ class PlayScreen:
             help_h,
         )
         self._help_visible: bool = False
+
+        # Control state: True while dragging Sally with the mouse held down, and the
+        # set of arrow keys currently held for direct steering.
+        self._mouse_held: bool = False
+        self._held_dirs: set[int] = set()
 
         self._build_level(self.level)
 
@@ -205,13 +213,25 @@ class PlayScreen:
 
     def handle_event(self, event: pygame.event.Event) -> None:
         if event.type == pygame.MOUSEMOTION:
-            self._help_visible = self._help_btn.collidepoint(event.pos)
+            if self._mouse_held:
+                # Click-drag: keep retargeting Sally to the latest cursor position.
+                self._player.set_target(event.pos)
+            else:
+                self._help_visible = self._help_btn.collidepoint(event.pos)
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if not self._help_visible:
+                self._mouse_held = True
                 self._player.set_target(event.pos)
-        elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-            if not self._help_visible and self._poo_cooldown_remaining <= 0.0:
-                self._place_poo()
+        elif event.type == pygame.MOUSEBUTTONUP:
+            self._mouse_held = False
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                if not self._help_visible and self._poo_cooldown_remaining <= 0.0:
+                    self._place_poo()
+            elif event.key in _ARROW_KEYS:
+                self._held_dirs.add(event.key)
+        elif event.type == pygame.KEYUP:
+            self._held_dirs.discard(event.key)
 
     def _place_poo(self) -> None:
         powered = self._player.is_invincible
@@ -240,6 +260,11 @@ class PlayScreen:
         self._powerup_spawn_timer -= dt
         if self._powerup_spawn_timer <= 0.0 and not self._powerups:
             self.spawn_powerup()
+
+        # Translate held arrow keys into a steering direction (overrides click/drag).
+        dx = (pygame.K_RIGHT in self._held_dirs) - (pygame.K_LEFT in self._held_dirs)
+        dy = (pygame.K_DOWN in self._held_dirs) - (pygame.K_UP in self._held_dirs)
+        self._player.set_move_dir(dx, dy)
 
         # Move each character, then resolve against the obstacle silhouettes with
         # move-and-slide so they glide around furniture instead of pinning on it.
