@@ -159,11 +159,11 @@
 | ID | Task | Status | Blocks | Blocked By | Notes |
 |----|------|--------|--------|------------|-------|
 | T130 | `art_pipeline_foundation` — `config.ART_SET`/`art_root()` + `pixellab/` tree + `assets.py` `_art()` resolver with per-asset fallback to `assets/`; `tests/test_assets_artset.py` (original-parity + fallback). No image gen. | [x] | T131 | T104 | beads `ChocoThunder2-hvu`; `levels.py` unchanged; lru_cache fixed at startup. Also added `.mcp.json` (PixelLab HTTP MCP via `${PIXELLAB_API_KEY}`) + `.env.example`. 125 tests pass |
-| T131 | `art_backgrounds` — **confirm visual direction → generate** top-down tilesets via PixelLab into `pixellab/maps/` (4 levels). Scope expanded: floor + generated walls + curated perimeter decor baked into the bg | [~] | T132,T133,T134,T135 | T130 | beads `ChocoThunder2-bez`; Story 13. v2 floors generated (texture retune) in `pixellab/_src/`; outstanding tuning + walls/decor next — see `bd show ChocoThunder2-bez` |
-| T132 | `art_characters` — **confirm → generate** Sally + tenant NPC spritesheets (`pixellab/characters/`, `pixellab/npc/`) | [ ] | T136 | T131 | beads `ChocoThunder2-hy3`; Story 14 |
-| T133 | `art_obstacles` — **confirm → generate** furniture/obstacle sprites (`pixellab/obstacles/<room>/`) | [ ] | T136 | T131 | beads `ChocoThunder2-cgo`; Story 15; collision sizes unchanged |
-| T134 | `art_transitions` — **confirm → generate** upgraded transition-screen artwork | [ ] | T136 | T131 | beads `ChocoThunder2-2rm`; Story 16 |
-| T135 | `art_startscreen` — **confirm → generate** polished start/title artwork | [ ] | T136 | T131 | beads `ChocoThunder2-ash`; Story 17 |
+| T131 | `art_backgrounds` — **confirm visual direction → generate** top-down tilesets via PixelLab into `pixellab/maps/` (4 levels). Scope expanded: floor + generated walls + curated perimeter decor baked into the bg | [x] | T132,T133,T134,T135 | T130 | beads `ChocoThunder2-bez`; Story 13. All 4 level backgrounds complete (grass/patio L4, tatami L3, rubber gym L2, dark wood L1); verified in-engine under CT2_ART_SET=pixellab |
+| T132 | `art_characters` — **confirm → generate** Sally + tenant NPC spritesheets (`pixellab/characters/`, `pixellab/npc/`) | [x] | T136 | T131 | beads `ChocoThunder2-hy3`; Story 14 |
+| T133 | `art_obstacles` — **confirm → generate** furniture/obstacle sprites (`pixellab/obstacles/<room>/`) | [x] | T136 | T131 | beads `ChocoThunder2-cgo`; Story 15; collision sizes unchanged |
+| T134 | `art_transitions` — **confirm → generate** upgraded transition-screen artwork | [x] | T136 | T131 | beads `ChocoThunder2-2rm`; Story 16 |
+| T135 | `art_startscreen` — **confirm → generate** polished start/title artwork | [x] | T136 | T131 | beads `ChocoThunder2-ash`; Story 17 |
 | T136 | Phase 8 verification: pytest green incl. `ART_SET` fallback; review screenshots for both art sets; confirm no runtime PixelLab calls (offline preserved) | [ ] | — | T131,T132,T133,T134,T135 | Art-phase sign-off; feeds Phase 7 iOS build |
 
 ---
@@ -290,7 +290,7 @@ T135 → T136
 | Metric | Count |
 |--------|-------|
 | Total | 77 |
-| Done | 65 |
-| In Progress | 1 |
-| Remaining | 12 |
-| Blocked | 5 |
+| Done | 70 |
+| In Progress | 0 |
+| Remaining | 6 |
+| Blocked | 1 |
