@@ -16,12 +16,12 @@ IMPL = ROOT / ".implementations"           # IPC + logs (gitignored)
 SCREENSHOTS = ROOT / "testscreenshots"     # committed test screenshots
 
 # --- Art set ---------------------------------------------------------------
-# Selects which art tree image accessors resolve against. The upgraded pixellab/
-# set is the default (iOS-bound look); the ground-truth originals are never
-# modified and stay fully available via CT2_ART_SET=original. Per-asset fallback
-# (see game.assets._art) means anything missing from pixellab/ transparently uses
-# the original.
-ART_SET = os.getenv("CT2_ART_SET", "pixellab")  # "pixellab" | "original"
+# pixellab/ is now the sole art set; the original ground-truth art (characters,
+# npc, obstacles, maps, endscreens) has been retired. assets/ keeps only what
+# PixelLab doesn't provide — fonts, sounds, and the not-yet-ported powerups &
+# surprises. The per-asset fallback in game.assets._art still sources those from
+# assets/ when pixellab/ has no PNGs for them, so the resolver stays in place.
+ART_SET = os.getenv("CT2_ART_SET", "pixellab")  # only "pixellab" is fully stocked now
 
 
 def art_root() -> Path:

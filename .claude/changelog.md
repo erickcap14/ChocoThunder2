@@ -2,6 +2,37 @@
 
 All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 
+## [Unreleased] — Sally controls + asset cleanup
+
+### Added
+- **Two new movement modes for Sally** (alongside click-to-move):
+  - **Arrow keys** steer her directly; held keys become a per-frame direction
+    vector that overrides the click target. Releasing pins the seek target to her
+    current spot so she stops instead of darting back to a stale click point.
+  - **Click-drag** retargets her to the latest cursor position every frame while
+    the button is held (`PlayScreen._mouse_held`, `_held_dirs`;
+    `Player.set_move_dir`). Both modes still flow through obstacle move-and-slide
+    (verified they can't tunnel into furniture). Help/start controls text updated.
+
+### Changed
+- **Retired the original art set.** PixelLab is now the sole art set, so the
+  redundant originals were deleted: `assets/{characters,npc,obstacles,maps,
+  endscreens}` (124 files; `maps` included the now-unused `introscreen.png`, since
+  the start screen uses `pixellab/startscreen/backyard.png`). Removed the empty
+  `pixellab/{powerups,surprises/*}` `.gitkeep` stub dirs.
+- `assets/` now keeps only what PixelLab doesn't provide — **fonts, sounds,
+  powerups, surprises** — which the per-asset fallback in `game.assets._art` still
+  sources when pixellab/ has no PNGs. The resolver and `CT2_ART_SET` stay in place
+  (the fallback is load-bearing for powerups/surprises); `config.py` comment
+  updated to note "original" is no longer a full art set.
+
+### Verified
+- 138 tests pass (added drag-follow, arrow-move, arrow-release-stop control
+  cases). Headless smoke built all 4 levels + every screen and loaded
+  powerups/surprises/splat from `assets/` — no missing-asset crashes.
+
+---
+
 ## [Unreleased] — Gameplay polish: collision, music, splat surprise, HUD
 
 ### Fixed
