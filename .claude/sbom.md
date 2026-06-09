@@ -139,6 +139,13 @@ spritesheet at `pixellab/characters_powered/` (`create_character` quadruped/dog 
 in `pixellab/_src/screens/manifest.json`; committed PNGs are the durable artifact (map objects
 auto-expire after 8h).
 
+**Generated to date (`art_startscreen`):** an animated side-scroller title scene at
+`pixellab/startscreen/` — a backyard backdrop, a butterfly and a googly-eyed "surprise"
+(`create_map_object`), and right-facing run cycles for Sally + the 4 tenants (`create_character`
+side view + `animate_character` `running-4-frames` east). The game falls back to the original
+introscreen when this art is absent. Object/character IDs in
+`pixellab/_src/startscreen/manifest.json`; committed PNGs are the durable artifact.
+
 ### 4d. Audio format note (T114)
 
 The 7 original audio assets were transcoded **MP3 → OGG (Vorbis, `ffmpeg -q:a 5`)** so the pygbag/WASM

@@ -2,6 +2,27 @@
 
 All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 
+## [Unreleased] — Animated side-scroller start screen (art_startscreen)
+
+### Added
+- **Animated title scene** (`art_startscreen`): `StartScreen` now plays a side-scroller
+  backyard where **Sally runs in place fleeing right while all four tenants (char1/2/3 + the
+  T-rex) chase her**, a butterfly flits past every few seconds, and a googly-eyed "surprise"
+  pops up in the background. The title + blurb + controls panel and "Press Space" prompt sit
+  on top. Activates when `pixellab/startscreen/backyard.png` exists; otherwise falls back to
+  the original scrolling introscreen (original art set unaffected).
+- Art at `pixellab/startscreen/` — `backyard.png`, `butterfly.png`, `surprise.png`, and
+  per-runner right-facing run cycles `{sally,char1,char2,char3,trex}/{0..3}.png` (PixelLab
+  side-view characters + `running-4-frames` east). Provenance in
+  `pixellab/_src/startscreen/manifest.json`.
+
+### Verified
+- 129 tests pass; rendered in-engine (`testscreenshots/pixellab_startscreen.png`).
+- **Status: implemented + rendered, pending the user's visual sign-off** (`ChocoThunder2-ash`
+  stays in_progress until approved).
+
+---
+
 ## [Unreleased] — Win/Lose/Leaderboard art + powered Sally
 
 ### Added

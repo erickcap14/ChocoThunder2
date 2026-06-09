@@ -1,0 +1,16 @@
+{
+  "_note": "PixelLab provenance for the animated side-scroller start screen (art_startscreen, ChocoThunder2-ash). Scrolling backyard backdrop + Sally running in place fleeing right with the 4 tenants (char1/2/3 + T-rex) chasing, a butterfly that flits past, and a googly-eyed 'surprise' that pops up in the background. Live art in pixellab/startscreen/; the game StartScreen activates the scene when pixellab/startscreen/backyard.png exists, else falls back to the original introscreen. Map objects auto-expire after 8h; committed PNGs are the durable artifact.",
+  "scene_objects": {
+    "backyard": "03473d02-c948-46ff-bfb2-18a029f43329",
+    "butterfly": "ccaa24cc-3e99-44b4-beea-7ff69d03fa30",
+    "surprise_with_face": "8ef0948d-edfc-4186-a5c9-cb138901dded"
+  },
+  "runners": {
+    "_note": "create_character (view=side, 4 dir) + animate_character template 'running-4-frames' direction east (right-facing). East run frames fetched via curl+unzip (animations/running/east/frame_00N.png) into pixellab/startscreen/<name>/{0..3}.png.",
+    "sally": "58560e33-d551-4a84-af61-92b6d4124c55",
+    "char1_casual_man": "e0ae9973-178b-4bd7-9fbd-3e05a7a87958",
+    "char2_businessman": "230cce7a-1b3a-436c-a240-7d83a93a1f82",
+    "char3_older_man": "ef8d9fe5-1b45-4719-b578-dba8c031372c",
+    "char4_trex": "37e1dfd5-814e-40cc-8c3b-3689939df840"
+  }
+}
