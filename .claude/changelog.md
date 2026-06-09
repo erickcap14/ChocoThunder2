@@ -2,6 +2,31 @@
 
 All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 
+## [Unreleased] — pygbag.ini exclusions, T113 UME-gate investigation
+
+### Added
+- **`pygbag.ini`** — proper build exclusions (`/.venv`, `/.git`, `/build`, `/testscreenshots`,
+  `/tests`, `/.claude`, `/pixellab`, etc.) so the WASM archive only packs runtime game files.
+  Uses `/`-prefixed paths matching pygbag 0.9.3's internal relative-path scheme.
+- **WASM browser screenshots** (`testscreenshots/wasm_browser_initial.png`,
+  `wasm_browser_loading.png`, `wasm_after_click.png`, `wasm_after_resume.png`) — artefacts
+  from T113 Playwright verification run.
+
+### Discovered / In Progress
+- **T113 UME gate** — Playwright MCP browser successfully reaches the gray "Ready to start"
+  overlay (CPython WASM boots, game archive loads, `ume_block=1` state confirmed). A plain
+  `body` click satisfies the gate; however, a subsequent JS `Module.resumeMainLoop()` call
+  triggered a Python crash → `beforeunload` → page auto-restart. Fix: click only (no JS
+  resumeMainLoop call) and wait for the start-screen canvas render before screenshotting.
+- **T114 & T115** — confirmed already done as part of T110: all music assets are OGG
+  (no MP3s remain); `scores.py` already has the full `localStorage` backend for
+  `sys.platform == "emscripten"`. Both tasks closed.
+
+### Verified
+- 157 tests still pass.
+
+---
+
 ## [Unreleased] — Level 3 music, test-mode audio, top-bar chrome buttons
 
 ### Added
