@@ -29,10 +29,11 @@ import pygame
 from game import config, fonts
 from game.state_machine import GameState
 
-_PAD = 16
+_TOP = 5                     # y of the top button row (centered in the 50px HUD bar)
 _BTN_H = 40
 _GEAR_W = 64                 # "VOL" button
-_RETURN_W = 190             # "Return to Start" button
+_RETURN_W = 112             # "Return" button (compact to fit left of the timer)
+_TIMER_RESERVE = 258         # px kept clear at the right edge for the play-screen timer
 _PANEL_W, _PANEL_H = 280, 132
 _TRACK_W = 150
 _KNOB_R = 9
@@ -55,14 +56,14 @@ class Chrome:
 
         W, H = config.SCREEN_WIDTH, config.SCREEN_HEIGHT
 
-        # Bottom-right VOL button.
-        self._gear = pygame.Rect(W - _PAD - _GEAR_W, H - _PAD - _BTN_H, _GEAR_W, _BTN_H)
-        # Bottom-left Return button.
-        self._return = pygame.Rect(_PAD, H - _PAD - _BTN_H, _RETURN_W, _BTN_H)
+        # Top-right, just left of the (play-screen) timer:  [ Return ] [ VOL ]
+        gear_right = W - _TIMER_RESERVE
+        self._gear = pygame.Rect(gear_right - _GEAR_W, _TOP, _GEAR_W, _BTN_H)
+        self._return = pygame.Rect(self._gear.left - 10 - _RETURN_W, _TOP, _RETURN_W, _BTN_H)
 
-        # Volume panel sits just above the VOL button, right-aligned to it.
+        # Volume panel drops down from below the VOL button, right-aligned to it.
         self._panel = pygame.Rect(
-            self._gear.right - _PANEL_W, self._gear.top - 10 - _PANEL_H, _PANEL_W, _PANEL_H
+            self._gear.right - _PANEL_W, self._gear.bottom + 10, _PANEL_W, _PANEL_H
         )
         track_x = self._panel.left + 92
         self._music_track = pygame.Rect(track_x, self._panel.top + 52, _TRACK_W, 6)
@@ -146,7 +147,7 @@ class Chrome:
     def draw(self) -> None:
         self._draw_button(self._gear, "VOL")
         if self.show_return:
-            self._draw_button(self._return, "Return to Start")
+            self._draw_button(self._return, "Return")
         if self._panel_open:
             self._draw_panel()
         if self._confirm_open:
