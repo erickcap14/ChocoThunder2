@@ -43,7 +43,7 @@ class StartScreen:
         self._setup_fonts()
         self._setup_overlay()
 
-        self.audio.play_music("A1-Thunderstruck_01.mp3")
+        self.audio.play_music("A1-Thunderstruck_01.ogg")
 
     # ------------------------------------------------------------------
     def _setup_bg(self) -> None:

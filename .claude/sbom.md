@@ -74,6 +74,8 @@ The OFL-1.1 permits use, embedding, and redistribution in applications without f
 
 All game assets (sprites, spritesheets, maps, music, SFX) are reused unchanged from the original Chocolate Thunder CS3021 class project. They are stored in `assets/` (normalized lowercase tree). The original folder (`../ChocolateThunder/`) is never modified.
 
+> **Audio format note (T114):** The music and SFX assets were transcoded from their original MP3 form to **OGG (Vorbis, `-q:a 5`)** via `ffmpeg`. The pygbag/WASM build ships an SDL_mixer without MP3 support, so MP3 decoding aborts the browser runtime; OGG decodes on both desktop pygame-ce and in-browser. The MP3 originals were removed from the repo after conversion. No new third-party dependency is introduced — the transcode is a one-time, dev-time step.
+
 > Licensing of these assets follows the original course project's terms. They are not redistributed publicly and are used solely for this private rebuild.
 
 ### 4c. PixelLab-generated assets (Artwork Upgrade phase — pre-iOS ship)

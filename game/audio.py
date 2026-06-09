@@ -6,8 +6,6 @@ every public method silently no-ops if ``_mixer_ok`` is False.
 
 from __future__ import annotations
 
-import sys
-
 import pygame
 
 from game import assets
@@ -17,13 +15,11 @@ class AudioManager:
     def __init__(self):
         self.music_on: bool = True
         self.sfx_on: bool = True
-        # Audio is disabled under WASM/Emscripten: pygbag's SDL_mixer ships
-        # without MP3 support and decoding the (MP3) assets can abort the runtime.
-        # Treat the browser build like the headless case — every method no-ops.
-        # (Re-enable once assets are converted to OGG; see Phase 7 follow-up.)
-        self._mixer_ok: bool = (
-            pygame.mixer.get_init() is not None and sys.platform != "emscripten"
-        )
+        # Audio assets are OGG (Vorbis), which both desktop pygame-ce and
+        # pygbag's SDL_mixer can decode — so audio runs in the browser too.
+        # Mixer is only unavailable in the headless/dummy-driver case, where
+        # every method below silently no-ops.
+        self._mixer_ok: bool = pygame.mixer.get_init() is not None
         self._sounds: dict[str, pygame.mixer.Sound] = {}
         if self._mixer_ok:
             self._preload_sfx()
@@ -31,10 +27,10 @@ class AudioManager:
     # ------------------------------------------------------------------
     def _preload_sfx(self) -> None:
         for name, filename in [
-            ("shotgun",        "12-Gauge-Pump-Action-Shotgun.mp3"),
-            ("lose_life",      "MarioLoseLife.mp3"),
-            ("powerup_fart",   "powerupFart.mp3"),
-            ("unpowered_fart", "unpoweredFart.mp3"),
+            ("shotgun",        "12-Gauge-Pump-Action-Shotgun.ogg"),
+            ("lose_life",      "MarioLoseLife.ogg"),
+            ("powerup_fart",   "powerupFart.ogg"),
+            ("unpowered_fart", "unpoweredFart.ogg"),
         ]:
             path = assets.sfx_path(filename)
             if path.exists():
