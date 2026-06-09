@@ -13,6 +13,7 @@ from game.screens.play import PlayScreen
 from game.state_machine import GameState, StateMachine
 from game.entities import PowerUp, Poo
 from game import config
+from game.settings import settings
 
 
 # ---------------------------------------------------------------------------
@@ -177,8 +178,9 @@ def test_obstacle_pushes_player_out(pygame_env):
 
 
 @pytest.mark.log_meta(phase="phase_3", subtask="3.8", action="npc catches player ends game")
-def test_npc_catches_player_ends_game(pygame_env):
-    """When player and NPC rects overlap and player is not invincible, state → END."""
+def test_npc_catches_player_ends_game(pygame_env, monkeypatch):
+    """In hard mode, player and NPC rects overlapping while not invincible → END."""
+    monkeypatch.setattr(settings, "hard_mode", True)
     ps, sm, _ = _make_ps(pygame_env)
     ps._player.is_invincible = False
     npc = next(iter(ps._npcs))
@@ -188,10 +190,24 @@ def test_npc_catches_player_ends_game(pygame_env):
     assert sm.state is GameState.END
 
 
-def test_invincible_player_not_caught(pygame_env):
-    """When the player is invincible, NPC collision does NOT end the game."""
+def test_invincible_player_not_caught(pygame_env, monkeypatch):
+    """In hard mode, an invincible player's NPC collision does NOT end the game."""
+    monkeypatch.setattr(settings, "hard_mode", True)
     ps, sm, _ = _make_ps(pygame_env)
     ps._player.set_invincible(True)
+    npc = next(iter(ps._npcs))
+    ps._player.rect.center = npc.rect.center
+    ps._player.set_target(ps._player.rect.center)
+    ps.update(0.016)
+    assert sm.state is GameState.RUNNING
+
+
+def test_easy_mode_npc_does_not_end_game(pygame_env, monkeypatch):
+    """In easy mode (default), a non-invincible player overlapping an NPC never
+    ends the game — the state stays RUNNING."""
+    monkeypatch.setattr(settings, "hard_mode", False)
+    ps, sm, _ = _make_ps(pygame_env)
+    ps._player.is_invincible = False
     npc = next(iter(ps._npcs))
     ps._player.rect.center = npc.rect.center
     ps._player.set_target(ps._player.rect.center)

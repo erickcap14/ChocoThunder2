@@ -2,6 +2,42 @@
 
 All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 
+## [Unreleased] — Persistent chrome: volume, return-to-start, difficulty
+
+### Added
+- **Shared `Chrome` widget** (`game/screens/chrome.py`) composed by every screen —
+  one reusable control bar with consistent behavior and an event-consumption
+  contract (`handle_event -> bool`, `is_blocking()`, `draw()`).
+- **Volume control on all screens** — a **VOL** button (bottom-right) opens a panel
+  with draggable **Music** and **SFX** sliders (+% readouts). Levels live on the
+  shared `AudioManager` (`set_music_volume`/`set_sfx_volume`, applied live to
+  `pygame.mixer.music` and every loaded SFX), so a change persists across screens.
+  Defaults `DEFAULT_MUSIC_VOLUME`/`DEFAULT_SFX_VOLUME` (0.7) in config.
+- **Return to Start** button (bottom-left) on Play → PreLevel → Transition → End →
+  Scoreboard (everything from gameplay up to the leaderboard, not the Start
+  screen). Opens a **"Return to Start? Yes/No"** confirm; Yes abandons the run and
+  jumps to Start.
+- **Easy/Hard difficulty** — EASY/HARD buttons on the start screen (default
+  **Easy**, highlighted) backed by a `settings` singleton (`game/settings.py`).
+  Easy: tenants can't end the game; Hard: caught = game over. Wired into
+  PlayScreen's catch logic (`if settings.hard_mode and not invincible`).
+
+### Changed
+- **Start-screen control instructions** rewritten to list all three movement
+  methods (mouse click, click+drag, arrow keys) plus space/cake, with the overlay
+  panel sized dynamically to fit the text + difficulty buttons + caption.
+- Each screen freezes/ignores its own input while a chrome modal (volume panel or
+  quit confirm) is open (`is_blocking()` guard); PlayScreen also pauses the game.
+
+### Verified
+- 157 tests pass (new `test_chrome.py`, `test_audio_volume.py`, plus per-screen
+  chrome tests; play catch tests updated to set `settings.hard_mode` via
+  monkeypatch so the global singleton never leaks across tests). Visually
+  confirmed start (difficulty + instructions + VOL), play (both buttons + open
+  volume panel over the HUD), and end screens via headless renders.
+
+---
+
 ## [Unreleased] — Sally controls + asset cleanup
 
 ### Added

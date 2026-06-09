@@ -108,3 +108,11 @@ def test_draw_does_not_raise(pygame_env):
     sm = StateMachine(GameState.TRANSITION)
     screen = TransitionScreen(pygame_env, sm, _FakeAudio(), level=1, score=10)
     screen.draw()
+
+
+def test_chrome_present_and_draws(pygame_env):
+    """The screen owns a Chrome widget and draws with it without error."""
+    sm = StateMachine(GameState.TRANSITION)
+    screen = TransitionScreen(pygame_env, sm, _FakeAudio(), level=1, score=10)
+    assert screen._chrome is not None
+    screen.draw()

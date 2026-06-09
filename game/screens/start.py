@@ -17,6 +17,8 @@ import random
 import pygame
 
 from game import assets, config, fonts
+from game.screens.chrome import Chrome
+from game.settings import settings
 from game.state_machine import GameState
 
 _SCROLL_SPEED = 80  # px/sec; background scrolls left
@@ -29,10 +31,13 @@ _BLURB = (
 )
 _CONTROLS = (
     "Controls:",
-    "  Click / drag or Arrow keys  —  move Sally",
+    "  Mouse click      —  send Sally to that spot",
+    "  Click + drag     —  Sally follows the cursor",
+    "  Arrow keys       —  steer Sally directly",
     "  Space Bar        —  leave a chocolate surprise",
-    "  Eat a cake       —  become invincible (bonus points!)",
+    "  Eat a cake       —  become invincible (bonus!)",
 )
+_DIFFICULTY_CAPTION = "Easy: tenants can't catch you    Hard: caught = game over"
 _PROMPT = "Press Space Bar to Play"
 
 # Chase cast, drawn back-to-front; (folder, visible height px, x, run fps). Heights are
@@ -75,6 +80,8 @@ class StartScreen:
         self._setup_bg()
         self._setup_fonts()
         self._setup_overlay()
+
+        self._chrome = Chrome(self.screen, self.audio, self.sm, show_return=False)
 
         self.audio.play_music("A1-Thunderstruck_01.ogg")
 
@@ -153,18 +160,56 @@ class StartScreen:
         self._font_prompt = fonts.load(40)
 
     def _setup_overlay(self) -> None:
-        w, h = 960, 300
+        w = 960
+        self._body_line_h = self._font_body.get_linesize()
+        self._caption_font = self._font_body
+        pad = 18          # top/bottom inner padding
+        gap = 10          # blurb -> controls gap
+        btn_gap = 16      # controls -> difficulty buttons gap
+        cap_gap = 10      # buttons -> caption gap
+        self._btn_h = 44
+
+        text_block = self._body_line_h * (len(_BLURB) + len(_CONTROLS)) + gap
+        cap_h = self._caption_font.get_linesize()
+        h = pad + text_block + btn_gap + self._btn_h + cap_gap + cap_h + pad
+
         self._overlay = pygame.Surface((w, h), pygame.SRCALPHA)
         self._overlay.fill((20, 20, 20, 190))
-        self._overlay_rect = self._overlay.get_rect(
-            center=(config.SCREEN_WIDTH // 2, config.SCREEN_HEIGHT // 2)
+        # Anchor below the titles so the panel never overlaps the subtitle, and so
+        # the "Press Space" prompt below it still clears the bottom of the screen.
+        self._overlay_rect = self._overlay.get_rect(midtop=(config.SCREEN_WIDTH // 2, 206))
+
+        self._text_top = self._overlay_rect.top + pad
+        controls_bottom = (
+            self._text_top + self._body_line_h * len(_BLURB) + gap
+            + self._body_line_h * len(_CONTROLS)
         )
-        self._body_line_h = self._font_body.get_linesize()
-        block_h = self._body_line_h * (len(_BLURB) + len(_CONTROLS)) + 10
-        self._text_top = self._overlay_rect.top + (h - block_h) // 2
+
+        # Easy / Hard buttons, centred side by side below the controls text.
+        btn_w, btn_y = 200, controls_bottom + btn_gap
+        cx = self._overlay_rect.centerx
+        self._easy_btn = pygame.Rect(cx - btn_w - 14, btn_y, btn_w, self._btn_h)
+        self._hard_btn = pygame.Rect(cx + 14, btn_y, btn_w, self._btn_h)
+        self._caption_y = btn_y + self._btn_h + cap_gap
+
+        # Prompt sits just below the overlay panel.
+        self._prompt_y = self._overlay_rect.bottom + 26
 
     # ------------------------------------------------------------------
     def handle_event(self, event: pygame.event.Event) -> None:
+        if self._chrome.handle_event(event):
+            return
+        if self._chrome.is_blocking():
+            return
+
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            if self._easy_btn.collidepoint(event.pos):
+                settings.hard_mode = False
+                return
+            if self._hard_btn.collidepoint(event.pos):
+                settings.hard_mode = True
+                return
+
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
             # Leave Thunderstruck playing: it's Level 1's track too, so it carries
             # seamlessly from here through Level 1's transition, play, and complete.
@@ -230,13 +275,37 @@ class StartScreen:
         for line in _BLURB:
             self._blit_centered(self._font_body, line, config.WHITE, y=y)
             y += self._body_line_h
-        y += 10
+        y += 14
         for line in _CONTROLS:
             color = config.WHITE if not line.startswith("  ") else (200, 200, 200)
             self._blit_centered(self._font_body, line, color, y=y)
             y += self._body_line_h
 
-        self._blit_centered(self._font_prompt, _PROMPT, config.GREEN, y=630)
+        self._draw_difficulty()
+
+        self._blit_centered(self._font_prompt, _PROMPT, config.GREEN, y=self._prompt_y)
+
+        self._chrome.draw()
+
+    def _draw_difficulty(self) -> None:
+        self._draw_diff_btn(self._easy_btn, "EASY", selected=not settings.hard_mode)
+        self._draw_diff_btn(self._hard_btn, "HARD", selected=settings.hard_mode)
+        cap = self._caption_font.render(_DIFFICULTY_CAPTION, True, (190, 190, 190))
+        self.screen.blit(
+            cap, cap.get_rect(centerx=config.SCREEN_WIDTH // 2, top=self._caption_y)
+        )
+
+    def _draw_diff_btn(self, rect: pygame.Rect, label: str, *, selected: bool) -> None:
+        if selected:
+            fill, border, text = (40, 130, 60), config.WHITE, config.WHITE
+            border_w = 3
+        else:
+            fill, border, text = (40, 40, 50), (110, 110, 120), (170, 170, 175)
+            border_w = 1
+        pygame.draw.rect(self.screen, fill, rect, border_radius=8)
+        pygame.draw.rect(self.screen, border, rect, width=border_w, border_radius=8)
+        surf = self._font_prompt.render(label, True, text)
+        self.screen.blit(surf, surf.get_rect(center=rect.center))
 
     def _draw_scene(self) -> None:
         if self._surprise is not None and self._sp_active:

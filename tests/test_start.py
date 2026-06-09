@@ -10,6 +10,7 @@ import pytest
 import pygame
 
 from game.screens.start import StartScreen
+from game.settings import settings
 from game.state_machine import GameState, StateMachine  # noqa: F401 (PRELEVEL used in test)
 
 
@@ -96,3 +97,42 @@ def test_draw_does_not_raise(pygame_env):
     screen = StartScreen(pygame_env, sm, _FakeAudio())
     screen.update(0.016)
     screen.draw()
+
+
+def test_has_chrome_and_draws(pygame_env):
+    """StartScreen owns a Chrome widget and draw() renders it without error."""
+    sm = StateMachine(GameState.START)
+    screen = StartScreen(pygame_env, sm, _FakeAudio())
+    assert screen._chrome is not None
+    # The VOL panel is closed by default, so draw() needs no volume attrs.
+    screen.draw()
+
+
+def test_easy_button_selects_easy(pygame_env, monkeypatch):
+    """Clicking the EASY button sets settings.hard_mode False."""
+    monkeypatch.setattr(settings, "hard_mode", True)
+    sm = StateMachine(GameState.START)
+    screen = StartScreen(pygame_env, sm, _FakeAudio())
+
+    event = pygame.event.Event(
+        pygame.MOUSEBUTTONDOWN, button=1, pos=screen._easy_btn.center
+    )
+    screen.handle_event(event)
+
+    assert settings.hard_mode is False
+    assert sm.state is GameState.START  # clicking a difficulty button doesn't start
+
+
+def test_hard_button_selects_hard(pygame_env, monkeypatch):
+    """Clicking the HARD button sets settings.hard_mode True."""
+    monkeypatch.setattr(settings, "hard_mode", False)
+    sm = StateMachine(GameState.START)
+    screen = StartScreen(pygame_env, sm, _FakeAudio())
+
+    event = pygame.event.Event(
+        pygame.MOUSEBUTTONDOWN, button=1, pos=screen._hard_btn.center
+    )
+    screen.handle_event(event)
+
+    assert settings.hard_mode is True
+    assert sm.state is GameState.START

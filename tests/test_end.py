@@ -109,3 +109,11 @@ def test_draw_lose_does_not_raise(pygame_env):
     sm = StateMachine(GameState.END)
     screen = EndScreen(pygame_env, sm, _FakeAudio(), score=3, win=False)
     screen.draw()
+
+
+def test_chrome_present_and_draws(pygame_env):
+    """EndScreen owns a Chrome widget and draw() (incl. chrome) runs cleanly."""
+    sm = StateMachine(GameState.END)
+    screen = EndScreen(pygame_env, sm, _FakeAudio(), score=7, win=True)
+    assert screen._chrome is not None
+    screen.draw()  # exercises chrome.draw() without error

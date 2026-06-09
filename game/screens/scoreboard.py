@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import pygame
 from game import assets, config, fonts, scores
+from game.screens.chrome import Chrome
 from game.state_machine import GameState
 
 
@@ -33,6 +34,8 @@ class ScoreboardScreen:
             else None
         )
 
+        self._chrome = Chrome(self.screen, self.audio, self.sm, show_return=True)
+
     # ------------------------------------------------------------------
     def _setup_fonts(self) -> None:
         self._font_title  = fonts.load(60)
@@ -42,6 +45,10 @@ class ScoreboardScreen:
 
     # ------------------------------------------------------------------
     def handle_event(self, event: pygame.event.Event) -> None:
+        if self._chrome.handle_event(event):
+            return
+        if self._chrome.is_blocking():
+            return
         if event.type != pygame.KEYDOWN:
             return
         if not self._submitted:
@@ -68,6 +75,7 @@ class ScoreboardScreen:
             self._draw_view()
         else:
             self._draw_entry()
+        self._chrome.draw()
 
     # ------------------------------------------------------------------  entry phase
     def _draw_entry(self) -> None:

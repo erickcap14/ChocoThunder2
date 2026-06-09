@@ -19,6 +19,8 @@ import pygame
 from game import assets, config, fonts
 from game.entities import NPC, Obstacle, Player, Poo, PowerUp, clamp_rect
 from game.levels import LEVELS
+from game.screens.chrome import Chrome
+from game.settings import settings
 from game.state_machine import GameState
 
 _HUD_H = 50  # px reserved at the top for score + timer
@@ -77,6 +79,8 @@ class PlayScreen:
         # set of arrow keys currently held for direct steering.
         self._mouse_held: bool = False
         self._held_dirs: set[int] = set()
+
+        self._chrome = Chrome(self.screen, self.audio, self.sm, show_return=True)
 
         self._build_level(self.level)
 
@@ -212,6 +216,10 @@ class PlayScreen:
     # ------------------------------------------------------------------
 
     def handle_event(self, event: pygame.event.Event) -> None:
+        if self._chrome.handle_event(event):
+            return
+        if self._chrome.is_blocking():
+            return
         if event.type == pygame.MOUSEMOTION:
             if self._mouse_held:
                 # Click-drag: keep retargeting Sally to the latest cursor position.
@@ -241,7 +249,7 @@ class PlayScreen:
         self._poo_cooldown_remaining = config.POO_COOLDOWN_SECONDS
 
     def update(self, dt: float) -> None:
-        if self._help_visible or self.test_mode:
+        if self._help_visible or self.test_mode or self._chrome.is_blocking():
             # Freeze game logic but keep sprites cycling their walk frames.
             self._player.animate(dt)
             for npc in self._npcs:
@@ -304,7 +312,7 @@ class PlayScreen:
             self._player.set_invincible(True)
             self.audio.play_sfx("powerup_fart")
 
-        if not self._player.is_invincible:
+        if settings.hard_mode and not self._player.is_invincible:
             if pygame.sprite.spritecollide(self._player, self._npcs, False):
                 # Losing keeps its original behaviour: cut the music on game over.
                 self.audio.play_sfx("lose_life")
@@ -421,6 +429,8 @@ class PlayScreen:
 
         if self._help_visible:
             self._draw_help_overlay()
+
+        self._chrome.draw()
 
     def _draw_help_overlay(self) -> None:
         line_h = self._font_help.get_linesize()

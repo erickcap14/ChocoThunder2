@@ -89,3 +89,11 @@ def test_score_nonzero_shows(pygame_env):
     screen = PreLevelScreen(pygame_env, sm, _FakeAudio(), level=2, score=42)
     assert screen.score == 42
     screen.draw()
+
+
+def test_chrome_present_and_draws(pygame_env):
+    """The screen owns a Chrome widget and draws with it without error."""
+    sm = StateMachine(GameState.PRELEVEL)
+    screen = PreLevelScreen(pygame_env, sm, _FakeAudio(), level=1, score=0)
+    assert screen._chrome is not None
+    screen.draw()

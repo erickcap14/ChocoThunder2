@@ -10,6 +10,7 @@ import pygame
 
 from game import config, fonts
 from game.levels import LEVELS
+from game.screens.chrome import Chrome
 from game.screens.transition import draw_backdrop
 from game.state_machine import GameState
 
@@ -41,6 +42,8 @@ class PreLevelScreen:
         idx = max(0, min(self.level - 1, len(LEVELS) - 1))
         self.audio.play_music(LEVELS[idx].music)
 
+        self._chrome = Chrome(self.screen, self.audio, self.sm, show_return=True)
+
     # ------------------------------------------------------------------
     def _setup_fonts(self) -> None:
         self._font_title  = fonts.load(72)
@@ -50,6 +53,10 @@ class PreLevelScreen:
 
     # ------------------------------------------------------------------
     def handle_event(self, event: pygame.event.Event) -> None:
+        if self._chrome.handle_event(event):
+            return
+        if self._chrome.is_blocking():
+            return
         if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
             self.sm.force_state(GameState.RUNNING)
 
@@ -84,6 +91,8 @@ class PreLevelScreen:
             config.GREEN,
             y=630,
         )
+
+        self._chrome.draw()
 
     # ------------------------------------------------------------------
     def _blit_centered(

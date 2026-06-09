@@ -12,6 +12,7 @@ import pygame
 
 from game import assets, config, fonts
 from game.levels import LEVELS
+from game.screens.chrome import Chrome
 from game.state_machine import GameState
 
 _PROMPT = "Press Enter to Continue"
@@ -55,6 +56,8 @@ class TransitionScreen:
         idx = max(0, min(self.level - 1, len(LEVELS) - 1))
         self.audio.play_music(LEVELS[idx].music)
 
+        self._chrome = Chrome(self.screen, self.audio, self.sm, show_return=True)
+
     # ------------------------------------------------------------------
     def _setup_fonts(self) -> None:
         self._font_title  = fonts.load(72)
@@ -64,6 +67,10 @@ class TransitionScreen:
 
     # ------------------------------------------------------------------
     def handle_event(self, event: pygame.event.Event) -> None:
+        if self._chrome.handle_event(event):
+            return
+        if self._chrome.is_blocking():
+            return
         if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
             if self.level >= len(LEVELS):
                 self.sm.force_state(GameState.END)
@@ -99,6 +106,8 @@ class TransitionScreen:
             config.GREEN,
             y=630,
         )
+
+        self._chrome.draw()
 
     # ------------------------------------------------------------------
     def _blit_centered(

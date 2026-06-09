@@ -8,13 +8,17 @@ from __future__ import annotations
 
 import pygame
 
-from game import assets
+from game import assets, config
 
 
 class AudioManager:
     def __init__(self):
         self.music_on: bool = True
         self.sfx_on: bool = True
+        # Volume levels (0.0–1.0), adjustable in-game via the volume panel and
+        # shared across every screen (the AudioManager is a single instance).
+        self.music_volume: float = config.DEFAULT_MUSIC_VOLUME
+        self.sfx_volume: float = config.DEFAULT_SFX_VOLUME
         # Audio assets are OGG (Vorbis), which both desktop pygame-ce and
         # pygbag's SDL_mixer can decode — so audio runs in the browser too.
         # Mixer is only unavailable in the headless/dummy-driver case, where
@@ -26,6 +30,7 @@ class AudioManager:
         self._current_track: str | None = None
         if self._mixer_ok:
             self._preload_sfx()
+            pygame.mixer.music.set_volume(self.music_volume)
 
     # ------------------------------------------------------------------
     def _preload_sfx(self) -> None:
@@ -38,7 +43,9 @@ class AudioManager:
             path = assets.sfx_path(filename)
             if path.exists():
                 try:
-                    self._sounds[name] = assets.load_sound(path)
+                    sound = assets.load_sound(path)
+                    sound.set_volume(self.sfx_volume)
+                    self._sounds[name] = sound
                 except pygame.error:
                     pass
 
@@ -65,6 +72,7 @@ class AudioManager:
             return
         try:
             pygame.mixer.music.load(str(path))
+            pygame.mixer.music.set_volume(self.music_volume)
             pygame.mixer.music.play(loops)
             self._current_track = filename
         except pygame.error:
@@ -87,6 +95,27 @@ class AudioManager:
         if sound is not None:
             try:
                 sound.play()
+            except pygame.error:
+                pass
+
+    def set_music_volume(self, volume: float) -> None:
+        """Set the music level (clamped to 0.0–1.0) and apply it live."""
+        self.music_volume = max(0.0, min(1.0, volume))
+        if not self._mixer_ok:
+            return
+        try:
+            pygame.mixer.music.set_volume(self.music_volume)
+        except pygame.error:
+            pass
+
+    def set_sfx_volume(self, volume: float) -> None:
+        """Set the SFX level (clamped to 0.0–1.0) and apply it to every loaded sound."""
+        self.sfx_volume = max(0.0, min(1.0, volume))
+        if not self._mixer_ok:
+            return
+        for sound in self._sounds.values():
+            try:
+                sound.set_volume(self.sfx_volume)
             except pygame.error:
                 pass
 

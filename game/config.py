@@ -72,6 +72,10 @@ SPLAT_FADE_SECONDS  = 3.0   # a splat lingers on the floor this long, then disap
 SCORE_DEFAULT = 1               # points for a normal surprise
 SCORE_BONUS = 5                 # points for a surprise while invincible
 
+# --- Audio volume ----------------------------------------------------------
+DEFAULT_MUSIC_VOLUME = 0.7      # 0.0–1.0 starting music level (adjustable in-game)
+DEFAULT_SFX_VOLUME = 0.7        # 0.0–1.0 starting SFX level (adjustable in-game)
+
 # Candidate obstacle placement — a grid in the play area, inside the perimeter
 # walls/decor baked into the room backgrounds (decor hugs the edges). Obstacles are
 # chosen from these so they (a) clear the player's centre spawn and (b) stay spaced.

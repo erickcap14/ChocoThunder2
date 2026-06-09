@@ -15,6 +15,7 @@ from __future__ import annotations
 import pygame
 
 from game import assets, config, fonts
+from game.screens.chrome import Chrome
 from game.state_machine import GameState
 
 
@@ -37,6 +38,8 @@ class EndScreen:
         self._setup_bg()
         self._setup_fonts()
         self._setup_overlay()
+
+        self._chrome = Chrome(self.screen, self.audio, self.sm, show_return=True)
 
     # ------------------------------------------------------------------
     def _setup_bg(self) -> None:
@@ -62,6 +65,10 @@ class EndScreen:
 
     # ------------------------------------------------------------------
     def handle_event(self, event: pygame.event.Event) -> None:
+        if self._chrome.handle_event(event):
+            return
+        if self._chrome.is_blocking():
+            return
         if event.type == pygame.KEYDOWN and event.key in (
             pygame.K_RETURN,
             pygame.K_SPACE,
@@ -101,6 +108,8 @@ class EndScreen:
             config.GREEN,
             y=630,
         )
+
+        self._chrome.draw()
 
     def _blit_centered(
         self, font: pygame.font.Font, text: str, color: tuple, y: int

@@ -252,3 +252,10 @@ def test_draw_view_phase_does_not_raise(pygame_env, tmp_scores):
     screen._submitted = True
     screen.update(0.016)
     screen.draw()  # must not raise
+
+
+def test_chrome_present_and_draws(pygame_env, tmp_scores):
+    """ScoreboardScreen owns a Chrome widget and draw() (incl. chrome) runs cleanly."""
+    screen = _make_screen(pygame_env, score=5)
+    assert screen._chrome is not None
+    screen.draw()  # exercises chrome.draw() without error
