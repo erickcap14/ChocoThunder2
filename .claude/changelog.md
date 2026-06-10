@@ -2,6 +2,29 @@
 
 All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 
+## [Unreleased] — T136 complete: Phase 8 art verification sign-off
+
+### Verified
+- **Tests:** 157/157 green, including all 6 `ART_SET` fallback tests
+  (pixellab→assets per-asset fallback for fonts/sounds/powerups/surprises,
+  empty-dir fallback, `npc_available` direction checks).
+- **In-engine renders:** all 4 levels rendered headlessly through the real
+  `PlayScreen` with `CT2_ART_SET=pixellab`
+  (`testscreenshots/t136_pixellab_level{1-4}.png`) — maps, obstacles, Sally,
+  and tenants composited correctly; user reviewed and signed off.
+- **Offline preserved:** zero network/PixelLab API code in `game/`,
+  `main.py`, `web_main.py` (grep for urllib/requests/httpx/socket/API hosts —
+  only a docstring hit). All PixelLab art is committed files.
+
+### Notes
+- T136's "both art sets" wording predates commit `6811bb9`, which retired the
+  original art set (assets/ keeps only fonts/sounds/powerups/surprises);
+  `CT2_ART_SET=original` therefore has no maps by design, and the fallback
+  machinery is what the tests verify. Phase 8 (Artwork Upgrade) is fully
+  closed: T130–T136 all done.
+
+---
+
 ## [Unreleased] — T113 complete: WASM gameplay verified in-browser
 
 ### Fixed

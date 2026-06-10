@@ -164,7 +164,7 @@
 | T133 | `art_obstacles` — **confirm → generate** furniture/obstacle sprites (`pixellab/obstacles/<room>/`) | [x] | T136 | T131 | beads `ChocoThunder2-cgo`; Story 15; collision sizes unchanged |
 | T134 | `art_transitions` — **confirm → generate** upgraded transition-screen artwork | [x] | T136 | T131 | beads `ChocoThunder2-2rm`; Story 16 |
 | T135 | `art_startscreen` — **confirm → generate** polished start/title artwork | [x] | T136 | T131 | beads `ChocoThunder2-ash`; Story 17 |
-| T136 | Phase 8 verification: pytest green incl. `ART_SET` fallback; review screenshots for both art sets; confirm no runtime PixelLab calls (offline preserved) | [ ] | — | T131,T132,T133,T134,T135 | Art-phase sign-off; feeds Phase 7 iOS build |
+| T136 | Phase 8 verification: pytest green incl. `ART_SET` fallback; review screenshots for both art sets; confirm no runtime PixelLab calls (offline preserved) | [x] | — | T131,T132,T133,T134,T135 | DONE (user signed off): 157 tests green incl. 6 ART_SET fallback tests; all 4 levels rendered in-engine (`testscreenshots/t136_pixellab_level{1-4}.png`); zero network/PixelLab code in runtime. "Both art sets" superseded by 6811bb9 (original art retired; assets/ keeps fonts/sounds/powerups/surprises only — fallback covered by tests) |
 
 ---
 
@@ -290,7 +290,7 @@ T135 → T136
 | Metric | Count |
 |--------|-------|
 | Total | 77 |
-| Done | 73 |
+| Done | 74 |
 | In Progress | 0 |
-| Remaining | 3 |
+| Remaining | 2 |
 | Blocked | 1 |
