@@ -13,6 +13,11 @@ the desktop entry point live in ``main.py``; this file drives the async loop.
 
 import asyncio
 
+# pygbag's runtime dependency scanner only reads this file's top-level imports
+# to decide which WASM packages to fetch — without this line the browser build
+# resolves ``pygame`` to an empty stub and App() fails at pygame.init().
+import pygame  # noqa: F401
+
 
 async def main() -> None:
     from game.app import App

@@ -2,6 +2,47 @@
 
 All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 
+## [Unreleased] — T113 complete: WASM gameplay verified in-browser
+
+### Fixed
+- **WASM entry point never started (the real T113 blocker).** The gray
+  "stuck" screen was never the UME gate: pygbag's loader always sources
+  `assets/main.py` from the archive, so building from the repo root packed the
+  *desktop* `main.py` as the web entry — its `if __name__ == "__main__"` guard
+  never fires under `shell.source`, so the bundle loaded and silently did
+  nothing. (Chrome's autoplay policy usually auto-unlocked UME without any
+  click at all.)
+- **`web_main.py` now imports pygame at top level.** pygbag's in-browser
+  dependency scanner only reads the entry file's top-level imports to decide
+  which WASM wheels to fetch; without it, `pygame` resolved to an empty stub
+  and `App()` died at `pygame.init()`.
+- **macOS AppleDouble files crashed level build.** `._*.png` metadata files
+  smuggled into the tar by macOS `tar` are extracted as real files by Python's
+  `tarfile` in the browser FS, win the alphabetical obstacle glob, and crash
+  `pygame.image.load` ("Unsupported image format"). Fixed with
+  `COPYFILE_DISABLE=1` during packing.
+
+### Added
+- **`scripts/build_web.sh`** — reproducible web build: stages `web_main.py`
+  *as* `main.py` with `game/`, `assets/`, `pixellab/`; tars without
+  AppleDouble files; pairs with the committed pygbag 0.9.3 loader; mirrors the
+  pygame-ce wheel into `build/web/cdn/` (on localhost the loader rewrites the
+  CDN to `http://localhost:8000/cdn/`, so serve `build/web` on port 8000).
+  Bypasses `pygbag --build` entirely — its template fetch hangs forever on
+  macOS (urllib SSL `CERTIFICATE_VERIFY_FAILED`).
+- **`web/index.html` + `web/favicon.png`** — committed pygbag 0.9.3 loader
+  template (previously only lived in gitignored `build/`).
+- **Verification screenshots** `testscreenshots/wasm_t113_{startscreen,play,move}.png`
+  — animated start screen, live Level 1 gameplay (HUD, NPC, cake, ticking
+  timer), and arrow-key movement, all driven via Playwright in a real browser.
+
+### Verified
+- Full in-browser flow: boot → UME click → animated start screen → Space →
+  Level 1 card → Enter → live gameplay with keyboard input. T113 closed.
+- 157 tests still pass.
+
+---
+
 ## [Unreleased] — pygbag.ini exclusions, T113 UME-gate investigation
 
 ### Added

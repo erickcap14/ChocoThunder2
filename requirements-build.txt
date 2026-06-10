@@ -1,8 +1,13 @@
 # Build-only tooling for the Phase 7 WASM/iPad packaging path.
 # NOT runtime dependencies — kept out of requirements.txt so the desktop game
-# and test suite install stays minimal. Install only when building the web bundle:
-#     pip install -r requirements-build.txt
-#     python -m pygbag --build web_main.py
+# and test suite install stays minimal.
 #
-# pygbag compiles the Python/pygame-ce game to WebAssembly (Emscripten + CPython-wasm).
+# Build the web bundle with:
+#     ./scripts/build_web.sh
+#     python3 -m http.server 8000 -d build/web   # local test (port 8000 required)
+#
+# Do NOT build with `python -m pygbag --build web_main.py` from the repo root:
+# pygbag's loader always sources assets/main.py, so that packs the desktop
+# entry (which never starts under pygbag) — see scripts/build_web.sh header.
+# pygbag stays listed for its runtime CDN/loader versioning reference.
 pygbag>=0.9,<1
