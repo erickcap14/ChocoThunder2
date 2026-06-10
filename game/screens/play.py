@@ -80,6 +80,20 @@ class PlayScreen:
         self._mouse_held: bool = False
         self._held_dirs: set[int] = set()
 
+        # Touch layer (T111): on-screen poop button, bottom-right. Tapping it fires
+        # _place_poo instead of retargeting Sally; None on desktop (Space key only).
+        self._poo_btn: pygame.Rect | None = None
+        if config.touch_ui_enabled():
+            size = 96
+            self._poo_btn = pygame.Rect(
+                config.SCREEN_WIDTH - size - 24,
+                config.SCREEN_HEIGHT - size - 24,
+                size, size,
+            )
+            self._poo_btn_icon = assets.load_frames(
+                assets.surprises_dir(powered=False), (size - 34, size - 34)
+            )[0]
+
         self._chrome = Chrome(self.screen, self.audio, self.sm, show_return=True)
 
         self._build_level(self.level)
@@ -227,7 +241,10 @@ class PlayScreen:
             else:
                 self._help_visible = self._help_btn.collidepoint(event.pos)
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            if not self._help_visible:
+            if self._poo_btn is not None and self._poo_btn.collidepoint(event.pos):
+                if not self._help_visible and self._poo_cooldown_remaining <= 0.0:
+                    self._place_poo()
+            elif not self._help_visible:
                 self._mouse_held = True
                 self._player.set_target(event.pos)
         elif event.type == pygame.MOUSEBUTTONUP:
@@ -427,10 +444,38 @@ class PlayScreen:
                  (_HUD_H - inv_surf.get_height()) // 2),
             )
 
+        if self._poo_btn is not None:
+            self._draw_poo_button()
+
         if self._help_visible:
             self._draw_help_overlay()
 
         self._chrome.draw()
+
+    def _draw_poo_button(self) -> None:
+        """Touch-layer poop button: brown disc, dimmed while on cooldown."""
+        ready = self._poo_cooldown_remaining <= 0.0
+        radius = self._poo_btn.width // 2
+        disc = pygame.Surface(self._poo_btn.size, pygame.SRCALPHA)
+        pygame.draw.circle(
+            disc,
+            (*config.BROWN, 210 if ready else 90),
+            (radius, radius),
+            radius,
+        )
+        self.screen.blit(disc, self._poo_btn.topleft)
+        pygame.draw.circle(
+            self.screen,
+            config.WHITE if ready else config.DARK_GREY,
+            self._poo_btn.center,
+            radius,
+            width=3,
+        )
+        icon = self._poo_btn_icon
+        if not ready:
+            icon = icon.copy()
+            icon.set_alpha(110)
+        self.screen.blit(icon, icon.get_rect(center=self._poo_btn.center))
 
     def _draw_help_overlay(self) -> None:
         line_h = self._font_help.get_linesize()

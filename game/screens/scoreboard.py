@@ -12,6 +12,10 @@ from game import assets, config, fonts, scores
 from game.screens.chrome import Chrome
 from game.state_machine import GameState
 
+# Touch layer: tablets can't pop a keyboard for a pygame canvas, so a tap
+# submits whatever was typed (usually nothing) under this default name.
+_TOUCH_DEFAULT_NAME = "SALLY"
+
 
 class ScoreboardScreen:
     def __init__(self, screen: pygame.Surface, state_machine, audio, score: int):
@@ -49,9 +53,16 @@ class ScoreboardScreen:
             return
         if self._chrome.is_blocking():
             return
-        if event.type != pygame.KEYDOWN:
-            return
+        tap = config.touch_ui_enabled() and event.type == pygame.MOUSEBUTTONDOWN
         if not self._submitted:
+            if tap:
+                self._entries = scores.add_score(
+                    self._name.strip() or _TOUCH_DEFAULT_NAME, self.score
+                )
+                self._submitted = True
+                return
+            if event.type != pygame.KEYDOWN:
+                return
             if event.key == pygame.K_RETURN and self._name.strip():
                 self._entries = scores.add_score(self._name.strip(), self.score)
                 self._submitted = True
@@ -60,7 +71,10 @@ class ScoreboardScreen:
             elif event.unicode and event.unicode.isprintable() and len(self._name) < 20:
                 self._name += event.unicode
         else:
-            if event.key in (pygame.K_RETURN, pygame.K_SPACE):
+            if tap or (
+                event.type == pygame.KEYDOWN
+                and event.key in (pygame.K_RETURN, pygame.K_SPACE)
+            ):
                 self.sm.force_state(GameState.START)
 
     def update(self, dt: float) -> None:  # no-op
@@ -111,7 +125,9 @@ class ScoreboardScreen:
         # Prompt
         self._blit_centered(
             self._font_prompt,
-            "Press Enter to submit",
+            f"Tap to submit as {_TOUCH_DEFAULT_NAME}"
+            if config.touch_ui_enabled() and not self._name.strip()
+            else "Press Enter to submit",
             config.GREEN,
             y=config.SCREEN_HEIGHT - 70,
         )
@@ -144,7 +160,9 @@ class ScoreboardScreen:
         # Prompt
         self._blit_centered(
             self._font_prompt,
-            "Press Enter to Play Again",
+            "Tap to Play Again"
+            if config.touch_ui_enabled()
+            else "Press Enter to Play Again",
             config.GREEN,
             y=config.SCREEN_HEIGHT - 70,
         )

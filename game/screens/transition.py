@@ -16,6 +16,7 @@ from game.screens.chrome import Chrome
 from game.state_machine import GameState
 
 _PROMPT = "Press Enter to Continue"
+_PROMPT_TOUCH = "Tap to Continue"
 
 
 def draw_backdrop(screen: pygame.Surface, level: int) -> None:
@@ -71,7 +72,10 @@ class TransitionScreen:
             return
         if self._chrome.is_blocking():
             return
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+        advance = event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN
+        if config.touch_ui_enabled() and event.type == pygame.MOUSEBUTTONDOWN:
+            advance = True  # touch layer: a tap is the Enter gesture
+        if advance:
             if self.level >= len(LEVELS):
                 self.sm.force_state(GameState.END)
             else:
@@ -102,7 +106,7 @@ class TransitionScreen:
         )
         self._blit_centered(
             self._font_prompt,
-            _PROMPT,
+            _PROMPT_TOUCH if config.touch_ui_enabled() else _PROMPT,
             config.GREEN,
             y=630,
         )

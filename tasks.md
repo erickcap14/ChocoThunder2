@@ -144,7 +144,7 @@
 | ID | Task | Status | Blocks | Blocked By | Notes |
 |----|------|--------|--------|------------|-------|
 | T110 | Compile game to WebAssembly with pygbag (keep Python/pygame code) | [x] | T111 | T104 | Async loop refactor (`web_main.py`, `App.run_async`/`_tick`), MCP gated to desktop, build green. WASM build compiles + loads in browser (cpython312 boots, archive byte-exact, reaches "Ready to start"). In-browser gameplay render unconfirmed in headless Playwright (UME gate) → T113. |
-| T111 | Add touch-control layer (tap→move, on-screen button→poop) | [ ] | T112 | T110 | DEFERRED/exploratory |
+| T111 | Add touch-control layer (tap→move, on-screen button→poop) | [x] | T112 | T110 | DONE: `config.touch_ui_enabled()` (auto-on under emscripten, `CT2_TOUCH_UI=1/0` override). On-screen poop button on PlayScreen (tap = Space, cooldown-dimmed); tap-to-advance + touch prompts on start/prelevel/transition/end/scoreboard; scoreboard tap submits as SALLY (no tablet keyboard). Desktop unchanged (16 new tests incl. desktop-off guards). Verified in WASM browser: `testscreenshots/wasm_t111_*.png` |
 | T112 | Wrap web build as iPad app via PWA / Capacitor | [ ] | — | T111 | Xcode-only (no paid Apple acct): simulator + free-provisioning route. DEFERRED |
 | T113 | Confirm in-browser gameplay render in a real/headed browser (past pygbag UME gate) | [x] | — | T110 | DONE: full gameplay verified in Playwright browser (start screen, Level 1 play, keyboard input). Root cause was never the UME gate — old archive packed desktop `main.py` as entry. Fixed via `import pygame` in `web_main.py` + `scripts/build_web.sh` (staged build, no AppleDouble files, local CDN mirror). Screenshots: `testscreenshots/wasm_t113_*.png` |
 | T114 | Convert MP3 audio assets → OGG and re-enable audio under WASM | [x] | — | T110 | Done during T110: all assets already OGG; audio.py comment confirms browser SDL_mixer works |
@@ -290,7 +290,7 @@ T135 → T136
 | Metric | Count |
 |--------|-------|
 | Total | 77 |
-| Done | 74 |
+| Done | 75 |
 | In Progress | 0 |
-| Remaining | 2 |
-| Blocked | 1 |
+| Remaining | 1 |
+| Blocked | 0 |

@@ -2,6 +2,37 @@
 
 All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 
+## [Unreleased] — T111: touch-control layer for iPad
+
+### Added
+- **`config.touch_ui_enabled()`** — touch layer toggle: auto-on under the
+  WASM/browser build (`sys.platform == "emscripten"`), `CT2_TOUCH_UI=1/0`
+  forces it for desktop testing. Desktop behavior is unchanged when off.
+- **On-screen poop button** (PlayScreen, bottom-right): brown disc with the
+  poo sprite, tap = Space (places a surprise, respects the 1s cooldown,
+  dims while cooling down). Taps on the button never retarget Sally;
+  taps anywhere else still move her (tap-to-move came free via SDL's
+  touch→mouse translation).
+- **Tap-to-advance** on every key-gated screen: start (tap off the EASY/HARD
+  buttons starts the game), prelevel, transition, end. Scoreboard: a tap
+  submits the typed name or "SALLY" as the no-keyboard default, then a tap
+  returns to start. All prompts switch wording under touch
+  ("Tap to Play", "Tap to Begin", "Tap to submit as SALLY", …).
+- **16 new tests** (`tests/test_touch_ui.py`) covering button placement/
+  cooldown/no-retarget, every tap-to-advance flow, and desktop-off guards.
+
+### Verified
+- 173 tests pass (157 + 16).
+- Full clicks-only browser run of the WASM build: "Tap to Play" → "Tap to
+  Begin" → tap-to-move (no accidental poo) → poop-button tap (score 0→1,
+  button dims for cooldown). Screenshots `testscreenshots/wasm_t111_*.png`.
+- Hands-off observation window showed no phantom input events; an earlier
+  anomaly traced to pygbag queueing pre-boot clicks and replaying them once
+  Python is ready — drive browser verification with single clicks after the
+  page title flips to the game caption.
+
+---
+
 ## [Unreleased] — T136 complete: Phase 8 art verification sign-off
 
 ### Verified

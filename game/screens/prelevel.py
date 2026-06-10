@@ -15,6 +15,7 @@ from game.screens.transition import draw_backdrop
 from game.state_machine import GameState
 
 _PROMPT = "Press Enter to Begin"
+_PROMPT_TOUCH = "Tap to Begin"
 
 
 class PreLevelScreen:
@@ -57,7 +58,10 @@ class PreLevelScreen:
             return
         if self._chrome.is_blocking():
             return
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+        advance = event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN
+        if config.touch_ui_enabled() and event.type == pygame.MOUSEBUTTONDOWN:
+            advance = True  # touch layer: a tap is the Enter gesture
+        if advance:
             self.sm.force_state(GameState.RUNNING)
 
     def update(self, dt: float) -> None:  # noqa: ARG002
@@ -87,7 +91,7 @@ class PreLevelScreen:
             )
         self._blit_centered(
             self._font_prompt,
-            _PROMPT,
+            _PROMPT_TOUCH if config.touch_ui_enabled() else _PROMPT,
             config.GREEN,
             y=630,
         )

@@ -6,6 +6,7 @@ files lives here so the rest of the codebase stays declarative.
 """
 
 import os
+import sys
 from pathlib import Path
 
 # --- Paths -----------------------------------------------------------------
@@ -27,6 +28,21 @@ ART_SET = os.getenv("CT2_ART_SET", "pixellab")  # only "pixellab" is fully stock
 def art_root() -> Path:
     """Active art root, read at call time so tests can monkeypatch ART_SET."""
     return PIXELLAB if ART_SET == "pixellab" else ASSETS
+
+# --- Touch UI (Phase 7 iPad) -------------------------------------------------
+# Touch devices have no keyboard: when enabled, every key-gated screen also
+# accepts a tap as its Enter/Space "advance" gesture and the play screen shows
+# an on-screen poop button. "auto" activates it only under the WASM/browser
+# build (emscripten); CT2_TOUCH_UI=1/0 forces it on/off (desktop testing).
+TOUCH_UI = os.getenv("CT2_TOUCH_UI", "auto")
+
+
+def touch_ui_enabled() -> bool:
+    """Active touch layer, read at call time so tests can monkeypatch TOUCH_UI."""
+    if TOUCH_UI == "auto":
+        return sys.platform == "emscripten"
+    return TOUCH_UI == "1"
+
 
 # IPC files used by the Game State MCP bridge
 STATE_FILE = IMPL / "game_state.json"

@@ -69,10 +69,13 @@ class EndScreen:
             return
         if self._chrome.is_blocking():
             return
-        if event.type == pygame.KEYDOWN and event.key in (
+        advance = event.type == pygame.KEYDOWN and event.key in (
             pygame.K_RETURN,
             pygame.K_SPACE,
-        ):
+        )
+        if config.touch_ui_enabled() and event.type == pygame.MOUSEBUTTONDOWN:
+            advance = True  # touch layer: a tap is the Enter gesture
+        if advance:
             self.sm.force_state(GameState.SCOREBOARD)
 
     def update(self, dt: float) -> None:  # no-op
@@ -104,7 +107,9 @@ class EndScreen:
         # Scoreboard prompt near the bottom.
         self._blit_centered(
             self._font_prompt,
-            "Press Enter to view the Scoreboard",
+            "Tap to view the Scoreboard"
+            if config.touch_ui_enabled()
+            else "Press Enter to view the Scoreboard",
             config.GREEN,
             y=630,
         )

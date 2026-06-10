@@ -39,6 +39,7 @@ _CONTROLS = (
 )
 _DIFFICULTY_CAPTION = "Easy: tenants can't catch you    Hard: caught = game over"
 _PROMPT = "Press Space Bar to Play"
+_PROMPT_TOUCH = "Tap to Play"
 
 # Chase cast, drawn back-to-front; (folder, visible height px, x, run fps). Heights are
 # roughly proportional: a small terrier, adult tenants, a looming cartoon T-rex.
@@ -202,6 +203,8 @@ class StartScreen:
         if self._chrome.is_blocking():
             return
 
+        start = event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE
+
         if event.type == pygame.MOUSEBUTTONDOWN:
             if self._easy_btn.collidepoint(event.pos):
                 settings.hard_mode = False
@@ -209,8 +212,10 @@ class StartScreen:
             if self._hard_btn.collidepoint(event.pos):
                 settings.hard_mode = True
                 return
+            if config.touch_ui_enabled():
+                start = True  # touch layer: a tap off the buttons starts the game
 
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+        if start:
             # Leave Thunderstruck playing: it's Level 1's track too, so it carries
             # seamlessly from here through Level 1's transition, play, and complete.
             self.sm.force_state(GameState.PRELEVEL)
@@ -283,7 +288,12 @@ class StartScreen:
 
         self._draw_difficulty()
 
-        self._blit_centered(self._font_prompt, _PROMPT, config.GREEN, y=self._prompt_y)
+        self._blit_centered(
+            self._font_prompt,
+            _PROMPT_TOUCH if config.touch_ui_enabled() else _PROMPT,
+            config.GREEN,
+            y=self._prompt_y,
+        )
 
         self._chrome.draw()
 
