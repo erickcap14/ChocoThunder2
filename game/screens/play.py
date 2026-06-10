@@ -35,6 +35,17 @@ _HELP_LINES = (
     "Eat a cake  —  become invincible (bonus points!)",
     "Dodge the tenants  —  caught = game over",
 )
+_HELP_LINES_TOUCH = (
+    "Controls",
+    "Tap or drag  —  send Sally there",
+    "Tap Sally  —  drop a chocolate surprise",
+    "Eat a cake  —  become invincible (bonus points!)",
+    "Dodge the tenants  —  caught = game over",
+)
+
+
+def _help_lines() -> tuple[str, ...]:
+    return _HELP_LINES_TOUCH if config.touch_ui_enabled() else _HELP_LINES
 
 
 class PlayScreen:
@@ -80,19 +91,9 @@ class PlayScreen:
         self._mouse_held: bool = False
         self._held_dirs: set[int] = set()
 
-        # Touch layer (T111): on-screen poop button, bottom-right. Tapping it fires
-        # _place_poo instead of retargeting Sally; None on desktop (Space key only).
-        self._poo_btn: pygame.Rect | None = None
-        if config.touch_ui_enabled():
-            size = 96
-            self._poo_btn = pygame.Rect(
-                config.SCREEN_WIDTH - size - 24,
-                config.SCREEN_HEIGHT - size - 24,
-                size, size,
-            )
-            self._poo_btn_icon = assets.load_frames(
-                assets.surprises_dir(powered=False), (size - 34, size - 34)
-            )[0]
+        # Touch layer (T111): tapping Sally herself drops a surprise (she puffs up
+        # briefly as feedback); desktop keeps the Space key only.
+        self._touch_poo: bool = config.touch_ui_enabled()
 
         self._chrome = Chrome(self.screen, self.audio, self.sm, show_return=True)
 
@@ -241,8 +242,9 @@ class PlayScreen:
             else:
                 self._help_visible = self._help_btn.collidepoint(event.pos)
         elif event.type == pygame.MOUSEBUTTONDOWN:
-            if self._poo_btn is not None and self._poo_btn.collidepoint(event.pos):
+            if self._touch_poo and self._player.render_rect().collidepoint(event.pos):
                 if not self._help_visible and self._poo_cooldown_remaining <= 0.0:
+                    self._player.tap_pulse()
                     self._place_poo()
             elif not self._help_visible:
                 self._mouse_held = True
@@ -444,45 +446,18 @@ class PlayScreen:
                  (_HUD_H - inv_surf.get_height()) // 2),
             )
 
-        if self._poo_btn is not None:
-            self._draw_poo_button()
-
         if self._help_visible:
             self._draw_help_overlay()
 
         self._chrome.draw()
 
-    def _draw_poo_button(self) -> None:
-        """Touch-layer poop button: brown disc, dimmed while on cooldown."""
-        ready = self._poo_cooldown_remaining <= 0.0
-        radius = self._poo_btn.width // 2
-        disc = pygame.Surface(self._poo_btn.size, pygame.SRCALPHA)
-        pygame.draw.circle(
-            disc,
-            (*config.BROWN, 210 if ready else 90),
-            (radius, radius),
-            radius,
-        )
-        self.screen.blit(disc, self._poo_btn.topleft)
-        pygame.draw.circle(
-            self.screen,
-            config.WHITE if ready else config.DARK_GREY,
-            self._poo_btn.center,
-            radius,
-            width=3,
-        )
-        icon = self._poo_btn_icon
-        if not ready:
-            icon = icon.copy()
-            icon.set_alpha(110)
-        self.screen.blit(icon, icon.get_rect(center=self._poo_btn.center))
-
     def _draw_help_overlay(self) -> None:
+        lines = _help_lines()
         line_h = self._font_help.get_linesize()
         pad = 28
         # Panel is 640px wide; at size 22 the longest line is 562px — fits with margin.
         panel_w = 640
-        panel_h = line_h * len(_HELP_LINES) + pad * 2 + 12
+        panel_h = line_h * len(lines) + pad * 2 + 12
         panel = pygame.Surface((panel_w, panel_h), pygame.SRCALPHA)
         panel.fill((10, 10, 30, 220))
         panel_rect = panel.get_rect(
@@ -492,7 +467,7 @@ class PlayScreen:
         pygame.draw.rect(self.screen, config.WHITE, panel_rect, width=2, border_radius=8)
 
         y = panel_rect.top + pad
-        for i, line in enumerate(_HELP_LINES):
+        for i, line in enumerate(lines):
             color = (255, 220, 60) if i == 0 else config.WHITE
             surf = self._font_help.render(line, True, color)
             rect = surf.get_rect(centerx=config.SCREEN_WIDTH // 2, top=y)

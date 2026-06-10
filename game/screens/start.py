@@ -37,6 +37,17 @@ _CONTROLS = (
     "  Space Bar        —  leave a chocolate surprise",
     "  Eat a cake       —  become invincible (bonus!)",
 )
+_CONTROLS_TOUCH = (
+    "Controls:",
+    "  Tap              —  send Sally to that spot",
+    "  Touch + drag     —  Sally follows your finger",
+    "  Tap Sally        —  leave a chocolate surprise",
+    "  Eat a cake       —  become invincible (bonus!)",
+)
+
+
+def _controls() -> tuple[str, ...]:
+    return _CONTROLS_TOUCH if config.touch_ui_enabled() else _CONTROLS
 _DIFFICULTY_CAPTION = "Easy: tenants can't catch you    Hard: caught = game over"
 _PROMPT = "Press Space Bar to Play"
 _PROMPT_TOUCH = "Tap to Play"
@@ -170,7 +181,7 @@ class StartScreen:
         cap_gap = 10      # buttons -> caption gap
         self._btn_h = 44
 
-        text_block = self._body_line_h * (len(_BLURB) + len(_CONTROLS)) + gap
+        text_block = self._body_line_h * (len(_BLURB) + len(_controls())) + gap
         cap_h = self._caption_font.get_linesize()
         h = pad + text_block + btn_gap + self._btn_h + cap_gap + cap_h + pad
 
@@ -183,7 +194,7 @@ class StartScreen:
         self._text_top = self._overlay_rect.top + pad
         controls_bottom = (
             self._text_top + self._body_line_h * len(_BLURB) + gap
-            + self._body_line_h * len(_CONTROLS)
+            + self._body_line_h * len(_controls())
         )
 
         # Easy / Hard buttons, centred side by side below the controls text.
@@ -281,7 +292,7 @@ class StartScreen:
             self._blit_centered(self._font_body, line, config.WHITE, y=y)
             y += self._body_line_h
         y += 14
-        for line in _CONTROLS:
+        for line in _controls():
             color = config.WHITE if not line.startswith("  ") else (200, 200, 200)
             self._blit_centered(self._font_body, line, color, y=y)
             y += self._body_line_h

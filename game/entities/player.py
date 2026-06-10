@@ -32,6 +32,7 @@ class Player(DirectionalSprite):
         self._move_dir: pygame.Vector2 = pygame.Vector2(0, 0)  # arrow-key steer
         self.is_invincible: bool = False
         self._invincible_remaining: float = 0.0
+        self._pulse_remaining: float = 0.0  # tap-on-Sally feedback (touch layer)
 
     @staticmethod
     def _load_powered_frames():
@@ -65,8 +66,29 @@ class Player(DirectionalSprite):
         self.is_invincible = state
         self._invincible_remaining = config.INVINCIBLE_SECONDS if state else 0.0
 
+    def render_rect(self) -> pygame.Rect:
+        """The drawn sprite's rect (115px, vs the 40px hitbox) — the touch layer
+        uses it as Sally's tappable area so fingers have something to hit."""
+        return self.image.get_rect(center=self.rect.center)
+
+    def tap_pulse(self) -> None:
+        """Touch layer feedback: Sally puffs up a tiny bit, decaying in update()."""
+        self._pulse_remaining = config.SALLY_TAP_PULSE_SECONDS
+
+    def draw(self, surface: pygame.Surface) -> None:
+        if self._pulse_remaining <= 0.0:
+            super().draw(surface)
+            return
+        grow = 1.0 + config.SALLY_TAP_PULSE_SCALE * (
+            self._pulse_remaining / config.SALLY_TAP_PULSE_SECONDS
+        )
+        w, h = self.image.get_size()
+        img = pygame.transform.smoothscale(self.image, (int(w * grow), int(h * grow)))
+        surface.blit(img, img.get_rect(center=self.rect.center))
+
     def update(self, dt: float, bounds: pygame.Rect) -> None:
         self._apply_powered_skin()
+        self._pulse_remaining = max(0.0, self._pulse_remaining - dt)
         current = pygame.Vector2(self.rect.center)
 
         # Arrow keys steer directly and win over the click/drag target; otherwise

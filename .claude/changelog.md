@@ -2,6 +2,33 @@
 
 All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 
+## [Unreleased] — T111 revision: tap Sally to drop a surprise (replaces button)
+
+### Changed
+- **Touch surprise mechanic** (user-requested): instead of an on-screen poop
+  button, you now **tap Sally herself** — she puffs up a tiny bit
+  (`SALLY_TAP_PULSE_SCALE` = 12%, decaying over `SALLY_TAP_PULSE_SECONDS` =
+  0.25s via `Player.tap_pulse`) and leaves a surprise. The tappable area is
+  her drawn 115px sprite (`Player.render_rect`), not the 40px hitbox, so
+  fingers have something to hit. Tap-on-Sally never retargets her; the 1s
+  poo cooldown still applies. The on-screen button and its drawing code are
+  removed.
+- **Touch-worded control text**: start-screen controls panel and the play
+  screen's help overlay now show touch instructions under the touch layer
+  ("Tap Sally — leave a chocolate surprise", "Touch + drag — Sally follows
+  your finger"); desktop wording unchanged.
+
+### Verified
+- 174 tests pass (17 touch tests, incl. render-edge tap, pulse decay,
+  cooldown, desktop-off guards).
+- Live browser session: the WASM build was played hands-on through Level 3
+  (score 96) using the tap-Sally mechanic. (Investigation note: a suspected
+  "phantom input" bug turned out to be real user input — the Playwright
+  browser is headed and shares the user's desktop, so verify with the user
+  hands-off or rely on headless tests.)
+
+---
+
 ## [Unreleased] — T111: touch-control layer for iPad
 
 ### Added

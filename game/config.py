@@ -78,6 +78,10 @@ OBSTACLE_RENDER_OVERRIDES = {
 POO_SIZE = (50, 60)
 POWERUP_SIZE = (50, 60)
 
+# Touch layer: tapping Sally drops a surprise; she puffs up briefly as feedback.
+SALLY_TAP_PULSE_SECONDS = 0.25  # how long the tap pulse lasts
+SALLY_TAP_PULSE_SCALE = 0.12    # peak extra drawn size (12%), decays back to normal
+
 POWERUP_SPAWN_SECONDS = 5.0     # cake appears this often
 INVINCIBLE_SECONDS = 3.0        # real invincibility window granted by a cake
 POO_COOLDOWN_SECONDS = 1.0      # min time between surprises

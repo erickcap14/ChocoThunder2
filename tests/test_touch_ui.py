@@ -3,9 +3,9 @@
 The layer activates via ``config.touch_ui_enabled()``: "auto" means
 emscripten-only, "1"/"0" force it on/off. Tests monkeypatch ``config.TOUCH_UI``
 directly. Touch mode adds:
-  - an on-screen poop button on the play screen (tap = Space),
+  - tap Sally herself to drop a surprise (she puffs up briefly as feedback),
   - tap-to-advance on start/prelevel/transition/end/scoreboard.
-Desktop mode ("0") must behave exactly as before — no button, taps ignored.
+Desktop mode ("0") must behave exactly as before — taps only move Sally.
 """
 
 from __future__ import annotations
@@ -55,40 +55,48 @@ def _tap(pos) -> pygame.event.Event:
     return pygame.event.Event(pygame.MOUSEBUTTONDOWN, button=1, pos=pos)
 
 
-# A tap position in open floor: clear of the HUD bar, chrome buttons (top
-# right), and the bottom-right poop button.
+# A tap position in open floor: clear of the HUD bar, the chrome buttons (top
+# right), and Sally's centre spawn.
 _FLOOR = (400, 400)
 
 
 # ---------------------------------------------------------------------------
-# Play screen: poop button
+# Play screen: tap Sally to drop a surprise
 # ---------------------------------------------------------------------------
 
-def test_desktop_play_has_no_poo_button(pygame_env, touch_off):
-    ps = PlayScreen(pygame_env, StateMachine(GameState.RUNNING), _FakeAudio())
-    assert ps._poo_btn is None
-
-
-def test_touch_play_has_poo_button_and_draws(pygame_env, touch_on):
-    ps = PlayScreen(pygame_env, StateMachine(GameState.RUNNING), _FakeAudio())
-    assert ps._poo_btn is not None
-    ps.draw()  # must not raise with the button visible
-
-
-def test_poo_button_tap_places_poo_without_moving_sally(pygame_env, touch_on):
+def test_touch_tap_on_sally_places_poo_and_pulses(pygame_env, touch_on):
     ps = PlayScreen(pygame_env, StateMachine(GameState.RUNNING), _FakeAudio())
     target_before = pygame.Vector2(ps._player._target)
-    ps.handle_event(_tap(ps._poo_btn.center))
+    ps.handle_event(_tap(ps._player.rect.center))
     assert len(ps._poos) == 1
-    assert ps._player._target == target_before
+    assert ps._player._pulse_remaining > 0.0
+    assert ps._player._target == target_before  # tap on Sally never retargets her
     assert not ps._mouse_held
+    ps.draw()  # must not raise while the pulse is active
 
 
-def test_poo_button_respects_cooldown(pygame_env, touch_on):
+def test_touch_tap_on_sally_render_edge_counts(pygame_env, touch_on):
+    """The tappable area is the drawn sprite (115px), not the 40px hitbox."""
     ps = PlayScreen(pygame_env, StateMachine(GameState.RUNNING), _FakeAudio())
-    ps.handle_event(_tap(ps._poo_btn.center))
-    ps.handle_event(_tap(ps._poo_btn.center))  # still on cooldown
+    cx, cy = ps._player.rect.center
+    edge = (cx + config.PLAYER_RENDER_SIZE[0] // 2 - 5, cy)
+    assert ps._player.render_rect().collidepoint(edge)
+    ps.handle_event(_tap(edge))
     assert len(ps._poos) == 1
+
+
+def test_touch_tap_on_sally_respects_cooldown(pygame_env, touch_on):
+    ps = PlayScreen(pygame_env, StateMachine(GameState.RUNNING), _FakeAudio())
+    ps.handle_event(_tap(ps._player.rect.center))
+    ps.handle_event(_tap(ps._player.rect.center))  # still on cooldown
+    assert len(ps._poos) == 1
+
+
+def test_tap_pulse_decays_back_to_normal(pygame_env, touch_on):
+    ps = PlayScreen(pygame_env, StateMachine(GameState.RUNNING), _FakeAudio())
+    ps.handle_event(_tap(ps._player.rect.center))
+    ps._player.update(config.SALLY_TAP_PULSE_SECONDS + 0.1, ps._play_bounds)
+    assert ps._player._pulse_remaining == 0.0
 
 
 def test_touch_tap_on_floor_still_moves_sally(pygame_env, touch_on):
@@ -96,6 +104,14 @@ def test_touch_tap_on_floor_still_moves_sally(pygame_env, touch_on):
     ps.handle_event(_tap(_FLOOR))
     assert ps._player._target == pygame.Vector2(_FLOOR)
     assert len(ps._poos) == 0
+
+
+def test_desktop_click_on_sally_only_moves_her(pygame_env, touch_off):
+    ps = PlayScreen(pygame_env, StateMachine(GameState.RUNNING), _FakeAudio())
+    pos = ps._player.rect.center
+    ps.handle_event(_tap(pos))
+    assert len(ps._poos) == 0
+    assert ps._player._target == pygame.Vector2(pos)
 
 
 # ---------------------------------------------------------------------------
