@@ -23,8 +23,8 @@ from game.state_machine import GameState
 
 _SCROLL_SPEED = 80  # px/sec; background scrolls left
 
-_TITLE_1 = "CHOCOLATE THUNDER 2"
-_TITLE_2 = "Electric Boogaloo"
+_TITLE_1 = "SALLY'S REVENGE"
+_TITLE_2 = ""
 _BLURB = (
     "You are Sally, an adorable white terrier.  Sneak around the house,",
     "leave chocolate surprises for points, and dodge the tenants!",
@@ -284,8 +284,7 @@ class StartScreen:
 
         self.screen.blit(self._overlay, self._overlay_rect)
 
-        fonts.blit_outlined(self.screen, self._font_title, _TITLE_1, y=80)
-        fonts.blit_outlined(self.screen, self._font_sub,   _TITLE_2, y=148)
+        fonts.blit_outlined(self.screen, self._font_title, _TITLE_1, y=100)
 
         y = self._text_top
         for line in _BLURB:

@@ -1,6 +1,6 @@
 <img src="web/icons/icon-192.png" align="right" width="96" alt="App icon — Sally on grass">
 
-# ChocolateThunder2: ElectricBoogaloo
+# Sally's Revenge
 
 You are **Sally**, an adorable white terrier. Sneak around the house, leave
 "chocolate surprises" for points, eat cake for a real invincibility boost, and

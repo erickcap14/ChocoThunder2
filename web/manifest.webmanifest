@@ -1,6 +1,6 @@
 {
-    "name": "ChocolateThunder2: ElectricBoogaloo",
-    "short_name": "ChocoThunder2",
+    "name": "Sally's Revenge",
+    "short_name": "Sally's Revenge",
     "description": "You are Sally, an adorable white terrier. Sneak around the house, leave chocolate surprises for points, and dodge the tenants!",
     "start_url": "./index.html",
     "scope": "./",

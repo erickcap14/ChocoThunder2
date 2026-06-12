@@ -53,7 +53,7 @@ TEST_LOG_FILE = IMPL / "test_log.json"
 SCREEN_WIDTH = 1200
 SCREEN_HEIGHT = 720
 FPS = 60
-CAPTION = "ChocolateThunder2: ElectricBoogaloo"
+CAPTION = "Sally's Revenge"
 
 # --- Gameplay tuning (ported from the original, now named) -----------------
 LEVEL_SECONDS = 60          # countdown per level
