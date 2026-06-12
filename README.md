@@ -73,14 +73,35 @@ Capacitor, boots the simulator (default *iPad Air 11-inch (M2)* — override
 with `CT2_IPAD_DEVICE="iPad Pro 13-inch (M4)"`), installs, and launches.
 The game takes ~20 s to boot to the start screen.
 
-## Install on a real iPad
+## Install on iPad
 
-Two routes — full details in [`ios-app/README.md`](ios-app/README.md).
+### Recommended — PWA via GitHub Pages (free, permanent, no Mac required)
 
-### Route 1 — native app via free provisioning (no paid Apple account)
+The game is automatically deployed to GitHub Pages on every push. The iPad
+installs it once and plays fully offline from then on — no Mac, no expiry,
+no re-signing.
 
-A free Apple ID can sideload the app onto your own iPad. It expires after
-**7 days**; re-deploy from Xcode to renew.
+**One-time install on the iPad:**
+
+1. Open **Safari** on the iPad and go to:
+   `https://erickcap14.github.io/ChocoThunder2/`
+2. Tap the **Share** button (box with arrow pointing up).
+3. Tap **Add to Home Screen**.
+4. Tap **Add**.
+
+That's it. The game icon appears on the home screen and launches like a
+native app — fullscreen, no browser chrome, works offline.
+
+**Updating the game:** push a code change to `master` → GitHub rebuilds
+automatically → the iPad pulls the update silently in the background next
+time it has Wi-Fi.
+
+---
+
+### Alternative — native app via free Xcode provisioning (expires every 7 days)
+
+A free Apple ID can sideload the native Capacitor shell onto your iPad.
+Certificate expires after **7 days** and must be renewed from Xcode.
 
 1. `./scripts/build_ios.sh` — builds the web bundle and stages it into the
    Xcode project.
@@ -89,22 +110,12 @@ A free Apple ID can sideload the app onto your own iPad. It expires after
    (creates a free *Personal Team*).
 4. Select the **App** target ▸ *Signing & Capabilities* ▸ check
    **Automatically manage signing** ▸ Team = your Personal Team.
-   (If the bundle id collides, tweak it — e.g. append `.dev`.)
 5. Connect the iPad via USB, unlock it, tap **Trust**.
 6. On the iPad: Settings ▸ Privacy & Security ▸ **Developer Mode** → on
    (appears after the first deploy attempt; requires a reboot).
 7. Pick the iPad as the run destination in Xcode and press **Run** (⌘R).
 8. First launch only: Settings ▸ General ▸ **VPN & Device Management** ▸
    trust your developer certificate.
-
-### Route 2 — PWA from Safari (no Xcode, no expiry)
-
-1. `./scripts/build_web.sh`
-2. Serve it where the iPad can reach it:
-   `python3 -m http.server 8000 -d build/web` (Mac and iPad on the same Wi-Fi).
-3. On the iPad, open `http://<your-mac-ip>:8000` in Safari.
-4. **Share ▸ Add to Home Screen.** The service worker precaches everything,
-   so the installed app runs fully offline afterwards.
 
 ## Test
 
