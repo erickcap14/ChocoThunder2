@@ -27,6 +27,8 @@ Would you like me to set it up now? (This is a one-time setup that works across 
 This is a **native pygame desktop app** — there is no dev server. Skip any dev-server checks.
 - Confirm `.venv/` exists (if not, run `pip install -r requirements.txt`)
 - Note that the game is launched with `./run.sh` or `python main.py` on demand, not as a background service
+- **Launchers** (each has a matching zsh alias): `./run.sh` (`ct2_desktop`) — desktop game; `./run_test.sh` (`ct2_test`) — 16-screen UI walkthrough; `./run_ipad.sh` (`ct2_ipad`) — builds the offline web bundle + Capacitor app and launches it in the iPad simulator (T112; `CT2_IPAD_DEVICE` overrides the default iPad Air 11-inch (M2))
+- **Only if the session involves iPad/web work:** the simulator needs an iOS runtime — check with `xcrun simctl list runtimes` (empty = download ~8 GB via `xcodebuild -downloadPlatform iOS`). The web bundle's CDN mirror in `build/web/cdn/` is download-cached on first `./scripts/build_web.sh` run (needs network once). See `bd memories ipad` for the full pipeline gotchas and `ios-app/README.md` for real-device free provisioning.
 
 ### 2. Git Status Check
 - Run `git status` to show current branch and any uncommitted changes
