@@ -2,6 +2,30 @@
 
 All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 
+## [Unreleased] — ct2_ipad test loop + touch prompts as real buttons
+
+### Added
+- **`run_ipad.sh` + `ct2_ipad` alias** (matching `run.sh`/`ct2_desktop`,
+  `run_test.sh`/`ct2_test`): one command to test the iPad ship — builds the
+  web bundle + Capacitor app (`scripts/build_ios.sh`), boots the simulator
+  (`CT2_IPAD_DEVICE` overrides the default iPad Air 11" M2), reinstalls,
+  opens Simulator.app, and launches the game.
+- **`fonts.blit_prompt()`** — shared advance-prompt helper. Under the touch
+  UI every "Tap to …" prompt (Play / Begin / Continue / view the Scoreboard /
+  submit as SALLY / Play Again) now renders as an **obvious green pill button**
+  (white border + label, styled like the EASY/HARD buttons); desktop keeps the
+  plain green key-instruction text. Tap-anywhere still advances — the button
+  is the visual affordance.
+
+### Verified
+- 176 tests pass (2 new: touch prompt draws the pill fill, desktop doesn't).
+- Headless renders reviewed (`testscreenshots/touch_btn_{start,prelevel}.png`);
+  full `run_ipad.sh` loop rebuilt + relaunched the app in the simulator.
+
+### Beads
+- `ChocoThunder2-5uf` (script/alias) and `ChocoThunder2-6ja` (prompt buttons)
+  closed.
+
 ## [Unreleased] — T112: iPad app (Capacitor shell + PWA) — Phase 7 complete
 
 ### Added

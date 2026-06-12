@@ -13,7 +13,7 @@ from __future__ import annotations
 import pygame
 import pytest
 
-from game import config
+from game import config, fonts
 from game.screens.end import EndScreen
 from game.screens.play import PlayScreen
 from game.screens.prelevel import PreLevelScreen
@@ -205,3 +205,25 @@ def test_desktop_click_does_not_submit_scoreboard(
     screen = ScoreboardScreen(pygame_env, sm, _FakeAudio(), score=7)
     screen.handle_event(_tap(_FLOOR))
     assert not screen._submitted
+
+
+# ---------------------------------------------------------------- prompt button
+def _prompt_pixels(touchish):
+    """Render a prompt on a black surface and return the surface + label rect."""
+    surface = pygame.Surface((config.SCREEN_WIDTH, config.SCREEN_HEIGHT))
+    rect = fonts.blit_prompt(surface, fonts.load(40), "Tap to Play", y=600)
+    return surface, rect
+
+
+def test_touch_prompt_draws_pill_button(pygame_env, touch_on):
+    surface, rect = _prompt_pixels(True)
+    # The padding band around the label is filled with the button colour.
+    assert surface.get_at((rect.left - 10, rect.centery))[:3] == fonts.PROMPT_FILL
+    assert surface.get_at((rect.right + 10, rect.centery))[:3] == fonts.PROMPT_FILL
+
+
+def test_desktop_prompt_has_no_button(pygame_env, touch_off):
+    surface, rect = _prompt_pixels(False)
+    # Outside the text there is only the bare background — no button fill.
+    assert surface.get_at((rect.left - 10, rect.centery))[:3] == (0, 0, 0)
+    assert surface.get_at((rect.right + 10, rect.centery))[:3] == (0, 0, 0)

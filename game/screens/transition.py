@@ -104,10 +104,10 @@ class TransitionScreen:
             config.WHITE,
             y=385,
         )
-        self._blit_centered(
+        fonts.blit_prompt(
+            self.screen,
             self._font_prompt,
             _PROMPT_TOUCH if config.touch_ui_enabled() else _PROMPT,
-            config.GREEN,
             y=630,
         )
 

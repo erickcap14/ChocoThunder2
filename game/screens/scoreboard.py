@@ -123,12 +123,12 @@ class ScoreboardScreen:
         )
 
         # Prompt
-        self._blit_centered(
+        fonts.blit_prompt(
+            self.screen,
             self._font_prompt,
             f"Tap to submit as {_TOUCH_DEFAULT_NAME}"
             if config.touch_ui_enabled() and not self._name.strip()
             else "Press Enter to submit",
-            config.GREEN,
             y=config.SCREEN_HEIGHT - 70,
         )
 
@@ -158,12 +158,12 @@ class ScoreboardScreen:
             self.screen.blit(score_surf, score_surf.get_rect(right=col_score, top=y))
 
         # Prompt
-        self._blit_centered(
+        fonts.blit_prompt(
+            self.screen,
             self._font_prompt,
             "Tap to Play Again"
             if config.touch_ui_enabled()
             else "Press Enter to Play Again",
-            config.GREEN,
             y=config.SCREEN_HEIGHT - 70,
         )
 

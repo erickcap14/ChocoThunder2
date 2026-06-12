@@ -149,6 +149,8 @@
 | T113 | Confirm in-browser gameplay render in a real/headed browser (past pygbag UME gate) | [x] | — | T110 | DONE: full gameplay verified in Playwright browser (start screen, Level 1 play, keyboard input). Root cause was never the UME gate — old archive packed desktop `main.py` as entry. Fixed via `import pygame` in `web_main.py` + `scripts/build_web.sh` (staged build, no AppleDouble files, local CDN mirror). Screenshots: `testscreenshots/wasm_t113_*.png` |
 | T114 | Convert MP3 audio assets → OGG and re-enable audio under WASM | [x] | — | T110 | Done during T110: all assets already OGG; audio.py comment confirms browser SDL_mixer works |
 | T115 | Persist `scores.txt` under WASM via IndexedDB/localStorage | [x] | — | T110 | Done during T110: scores.py already has full localStorage backend for sys.platform==emscripten |
+| T116 | `run_ipad.sh` + `ct2_ipad` alias — one-shot iPad simulator test loop | [x] | — | T112 | DONE (ChocoThunder2-5uf): builds via scripts/build_ios.sh, boots sim (CT2_IPAD_DEVICE override), reinstalls + launches, opens Simulator.app |
+| T117 | Touch prompts render as visible pill buttons (Tap to Play/Begin/Continue/…) | [x] | — | T111 | DONE (ChocoThunder2-6ja): shared fonts.blit_prompt() — green pill + white border under touch UI on all 6 advance prompts; desktop text unchanged; 176 tests |
 
 ---
 
@@ -289,8 +291,8 @@ T135 → T136
 
 | Metric | Count |
 |--------|-------|
-| Total | 76 |
-| Done | 76 |
+| Total | 78 |
+| Done | 78 |
 | In Progress | 0 |
 | Remaining | 0 |
 | Blocked | 0 |

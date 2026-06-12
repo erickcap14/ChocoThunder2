@@ -105,12 +105,12 @@ class EndScreen:
         self._blit_centered(self._font_body, flavour, config.WHITE, y=380)
 
         # Scoreboard prompt near the bottom.
-        self._blit_centered(
+        fonts.blit_prompt(
+            self.screen,
             self._font_prompt,
             "Tap to view the Scoreboard"
             if config.touch_ui_enabled()
             else "Press Enter to view the Scoreboard",
-            config.GREEN,
             y=630,
         )
 
