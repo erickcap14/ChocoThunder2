@@ -1,0 +1,24 @@
+{
+    "name": "ChocolateThunder2: ElectricBoogaloo",
+    "short_name": "ChocoThunder2",
+    "description": "You are Sally, an adorable white terrier. Sneak around the house, leave chocolate surprises for points, and dodge the tenants!",
+    "start_url": "./index.html",
+    "scope": "./",
+    "display": "fullscreen",
+    "orientation": "landscape",
+    "background_color": "#7f7f7f",
+    "theme_color": "#60a940",
+    "icons": [
+        {
+            "src": "icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}

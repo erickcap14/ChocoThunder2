@@ -1,0 +1,11 @@
+{
+    "appId": "com.erickcap.chocothunder2",
+    "appName": "ChocoThunder2",
+    "webDir": "www",
+    "loggingBehavior": "debug",
+    "ios": {
+        "contentInset": "never",
+        "backgroundColor": "#7f7f7f",
+        "webContentsDebuggingEnabled": true
+    }
+}

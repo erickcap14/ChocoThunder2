@@ -24,6 +24,8 @@ These are **not** runtime dependencies. They live in `requirements-build.txt` (n
 | Category | Component | Version Constraint | License | Usage |
 |:---|:---|:---|:---|:---|
 | **WASM Packager** | `pygbag` | `>=0.9, <1` | MIT | Compiles the Python/pygame-ce game to WebAssembly (Emscripten + CPython-wasm) for the browser/iPad build. Build-only; never imported by the desktop game. |
+| **WASM Runtime (mirrored)** | pygbag CDN runtime (`pythons.js`, CPython 3.12 wasm, xterm.js, browserfs) | `0.9.3` (pinned files) | MIT (pygbag) / MIT (xterm.js) / MIT (BrowserFS) | T112: `scripts/build_web.sh` mirrors the pygbag 0.9.3 loader + runtime from `pygame-web.github.io` into `build/web/cdn/` so the shipped bundle is fully offline (zero outbound requests, per security.md). Downloaded at build time, cached, never committed. |
+| **iPad Shell** | `@capacitor/core`, `@capacitor/cli`, `@capacitor/ios` | `^8.4` | MIT | T112: wraps `build/web/` in a native iOS WKWebView app (`ios-app/`). npm dev-dependency of the wrapper only; the Python game never imports it. Swift packages resolved via SPM (`capacitor-swift-pm` 8.4.0, MIT). |
 
 > **LGPL obligation (now live for Phase 7):** the pygbag WASM artifact bundles `pygame-ce`
 > (LGPL-2.1). Any distributed web/iPad build **must ship the LGPL-2.1 notice**. Confirm

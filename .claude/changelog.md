@@ -2,6 +2,54 @@
 
 All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 
+## [Unreleased] — T112: iPad app (Capacitor shell + PWA) — Phase 7 complete
+
+### Added
+- **Fully-offline web bundle.** `scripts/build_web.sh` now mirrors the entire
+  pygbag 0.9.3 CDN subset (loader, CPython 3.12 WASM runtime, xterm console,
+  wheel index, pygame-ce wheel) into `build/web/cdn/` (cached, build-time
+  download — never committed) and appends a `PYGPI` env patch to the mirrored
+  `cpythonrc.py` so the wheel repository resolves locally for any origin. The
+  shipped game now makes **zero network requests** (security.md requirement);
+  `web/index.html` loads everything relative. Notable: `PYGPI` must be set in
+  `cpythonrc.py` (VM postrun) — pygbag's PEP 723 scan of the page script fires
+  `async_repos()` *before* that script runs; and the URL must be built from
+  `protocol+host+dirname(pathname)` because Capacitor's origin has no path.
+  (`browserfs.min.js` dropped — it 404s upstream and was never needed.)
+- **PWA install path** (Safari "Add to Home Screen"): `web/manifest.webmanifest`,
+  apple-touch/manifest icons composed from the shared standalone Sally
+  (`scripts/make_icons.py`, Sally on grass), and a build-generated `sw.js`
+  that precaches all 24 bundle files keyed to the archive checksum — the
+  installed PWA runs fully offline.
+- **Capacitor iPad app** (`ios-app/`, Capacitor 8.4, SPM — no CocoaPods):
+  WKWebView shell loading the offline bundle from `capacitor://localhost`.
+  `GameViewController` allows media without a user gesture and
+  `web/index.html` skips pygbag's UME "click/touch to start" gate under the
+  `capacitor:` scheme (the probe's `empty.ogg` can never decode on iOS, so the
+  gate would never auto-clear). Landscape-locked, Sally app icon, template
+  AppDelegate fixed for Capacitor 8.4's removed Universal-Links overload.
+- **`scripts/build_ios.sh`** — one-shot bundle→www→`cap copy`→`xcodebuild`
+  (the bundle is baked into the .app at build time: always rebuild+reinstall,
+  `cap copy` alone never updates an installed app).
+- **`ios-app/README.md`** — simulator workflow + real-iPad **free
+  provisioning** steps (personal team, 7-day expiry) and the no-Xcode PWA
+  alternative.
+
+### Verified
+- 174 tests pass (desktop unchanged).
+- Browser bundle boots on `localhost:8000` with **zero external requests**
+  (`testscreenshots/wasm_t112_offline_start.png`); service worker active with
+  all 24 assets precached.
+- **Game runs in the iPad Air 11" (M2) simulator** (iOS 18.3.1): full boot to
+  the animated start screen with touch-worded controls, all fetches served
+  from `capacitor://localhost` (`testscreenshots/ipad_t112_start.png`).
+  Console captured via `simctl launch --console-pty` + Capacitor
+  `loggingBehavior: debug`.
+
+### Beads
+- `ChocoThunder2-9om` (T112) **closed** — **Phase 7 (iPad/iOS packaging) is
+  fully complete**; the entire tasks.md backlog (77/77) is done.
+
 ## [Unreleased] — T111 revision: tap Sally to drop a surprise (replaces button)
 
 ### Changed

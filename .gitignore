@@ -29,3 +29,13 @@ scores.txt
 # Secrets (PixelLab MCP token, etc.) — never commit
 .env
 .env.local
+
+# Capacitor iPad shell (T112): generated/derived artifacts
+ios-app/node_modules/
+ios-app/www/
+ios-app/ios/App/build/
+ios-app/ios/App/App/public/
+ios-app/ios/App/App/capacitor.config.json
+ios-app/ios/App/App.xcodeproj/xcuserdata/
+ios-app/ios/App/App.xcodeproj/project.xcworkspace/xcuserdata/
+ios-app/ios/DerivedData/

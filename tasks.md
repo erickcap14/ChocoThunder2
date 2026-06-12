@@ -145,7 +145,7 @@
 |----|------|--------|--------|------------|-------|
 | T110 | Compile game to WebAssembly with pygbag (keep Python/pygame code) | [x] | T111 | T104 | Async loop refactor (`web_main.py`, `App.run_async`/`_tick`), MCP gated to desktop, build green. WASM build compiles + loads in browser (cpython312 boots, archive byte-exact, reaches "Ready to start"). In-browser gameplay render unconfirmed in headless Playwright (UME gate) → T113. |
 | T111 | Add touch-control layer (tap→move, tap Sally→surprise) | [x] | T112 | T110 | DONE: `config.touch_ui_enabled()` (auto-on under emscripten, `CT2_TOUCH_UI=1/0` override). Surprise mechanic per user: tap Sally herself (115px drawn sprite is the tap target) — she puffs up ~12% briefly (`Player.tap_pulse`) and drops a surprise; replaced the earlier on-screen button. Tap-to-advance + touch prompts on start/prelevel/transition/end/scoreboard; scoreboard tap submits as SALLY (no tablet keyboard). Desktop unchanged (17 tests incl. desktop-off guards). |
-| T112 | Wrap web build as iPad app via PWA / Capacitor | [ ] | — | T111 | Xcode-only (no paid Apple acct): simulator + free-provisioning route. DEFERRED |
+| T112 | Wrap web build as iPad app via PWA / Capacitor | [x] | — | T111 | DONE (ChocoThunder2-9om): fully-offline bundle (local pygbag CDN mirror + PYGPI cpythonrc patch), PWA (manifest + generated sw.js precache + Sally icons), Capacitor 8.4/SPM shell verified booting in iPad Air M2 simulator (`scripts/build_ios.sh`). Real-iPad free-provisioning steps in ios-app/README.md. |
 | T113 | Confirm in-browser gameplay render in a real/headed browser (past pygbag UME gate) | [x] | — | T110 | DONE: full gameplay verified in Playwright browser (start screen, Level 1 play, keyboard input). Root cause was never the UME gate — old archive packed desktop `main.py` as entry. Fixed via `import pygame` in `web_main.py` + `scripts/build_web.sh` (staged build, no AppleDouble files, local CDN mirror). Screenshots: `testscreenshots/wasm_t113_*.png` |
 | T114 | Convert MP3 audio assets → OGG and re-enable audio under WASM | [x] | — | T110 | Done during T110: all assets already OGG; audio.py comment confirms browser SDL_mixer works |
 | T115 | Persist `scores.txt` under WASM via IndexedDB/localStorage | [x] | — | T110 | Done during T110: scores.py already has full localStorage backend for sys.platform==emscripten |
@@ -289,8 +289,8 @@ T135 → T136
 
 | Metric | Count |
 |--------|-------|
-| Total | 77 |
-| Done | 75 |
+| Total | 76 |
+| Done | 76 |
 | In Progress | 0 |
-| Remaining | 1 |
+| Remaining | 0 |
 | Blocked | 0 |
