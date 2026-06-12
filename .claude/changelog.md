@@ -2,6 +2,19 @@
 
 All notable changes to ChocolateThunder2: ElectricBoogaloo are documented here.
 
+## [Unreleased] — README rewrite: screenshots + deployment guide
+
+### Changed
+- **`README.md` rewritten** (ChocoThunder2-mz5): screenshot gallery (start
+  screen, Level 1, intro card, Level 4 garden, win screen, leaderboard — all
+  reused from committed `testscreenshots/`), desktop+touch control table,
+  every run target with its zsh alias (`ct2_desktop`/`ct2_test`/`ct2_ipad`),
+  the WASM build/serve recipe, and the full **real-iPad install guide**
+  (free-provisioning walkthrough + PWA add-to-home-screen route). Project
+  layout table updated for the Phase 7/8 tree (`web/`, `ios-app/`,
+  `pixellab/`, `scripts/`); stale root `prd.md` reference fixed to
+  `.claude/prd.md`.
+
 ## [Unreleased] — ct2_ipad test loop + touch prompts as real buttons
 
 ### Added
